@@ -1,0 +1,38 @@
+html {
+	padding: 0px;
+}
+
+body {
+	font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+	font-size: 100%;
+	color: #7a4500;
+	margin: 0px;
+}
+h4 {
+	margin-top: 10px;
+	margin-bottom: 0px;
+}
+ul {
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-left: 5px;
+	padding-left: 5px;
+	list-style-position: inside;
+}
+#warning-message {
+	background: #faa;
+	text-align: center;
+	display: none;
+}
+#indentation {
+	margin: 5px;
+}
+#navigation,
+#current-image,
+#testing-area-text,
+#testing-area-links {
+	display: none;
+}
+button:disabled {
+	color: lightgrey;
+}

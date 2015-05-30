@@ -1,0 +1,13 @@
+Changelog
+
+Version 2.1
+- Fixed an issue with images not clearing between searches
+
+Version 2.0
+- Added support to get results from more than one booru. The results are roughly combined based on date.
+- Added a "Sites to Search" section
+- Added site e621
+- Fixed navigations occurring when hitting left/right/enter keys while on max width/height textboxes
+
+Version 1.0
+- Created initial system

@@ -1,0 +1,19 @@
+{
+	"manifest_version": 2,
+
+	"name": "Booru Slideshow",
+	"description": "View a slideshow from a Booru site based on your search.",
+	"version": "2.1",
+
+	"browser_action":
+	{
+		"default_icon": "icon.png",
+		"default_popup": "popup.html"
+	},
+	
+	"permissions":
+	[
+		"https://danbooru.donmai.us/",
+		"https://e621.net/"
+	]
+}

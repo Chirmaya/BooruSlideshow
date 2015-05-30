@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Booru Slideshow</title>
+		<link rel="stylesheet" type="text/css" href="slideshow.css">
+		<script src="slideshow_interface_ui.js"></script>
+		<script src="slideshow_objects.js"></script>
+		<script src="slideshow_functions.js"></script>
+		<script src="slideshow.js"></script>
+	</head>
+	
+	<body>
+		<p id="warning-message"></p>
+		<img id="current-image" />
+		<div id="indentation">
+			<div id="navigation">
+				<span id="current-image-number">3</span> of <span id="total-image-number">2485</span><br />
+				<button id="first-button">&lt;&lt;</button>
+				<button id="previous-button">&lt;</button>
+				<button id="play-button">&#9658;</button>
+				<button id="pause-button">&#9612;&#9612;</button>
+				<button id="next-button">&gt;</button>
+				<button id="last-button">&gt;&gt;</button>
+			</div>
+			<div id="search">
+				<input id="search-text" /><br />
+				<button id="search-button">Search</button>
+			</div>
+			<div id="sites-to-search">
+				<h4>Sites to Search</h4>
+				<label><input type="checkbox" name="sites-to-search" value="DANB" checked />https://danbooru.donmai.us/</label><br />
+				<label><input type="checkbox" name="sites-to-search" value="E621" />https://e621.net/</label>
+			</div>
+			<div id="options">
+				<h4>Options</h4>
+				Seconds per Image
+				<input id="seconds-per-image" type="number" min="1" value=6 /><br />
+				Max. Width
+				<input id="max-width" type="number" min="1" /><br />
+				Max. Height
+				<input id="max-height" type="number" min="1" />
+			</div>
+			<pre id="testing-area-text"></pre>
+			<div id="testing-area-links"></div>
+			<h4>Tips</h4>
+			<ul>
+				<li>You can use left/right arrow keys to navigate (when off the textboxes)</li>
+				<li>You can use Enter to play/pause (when off the textboxes)</li>
+				<li>Full-screen (F11)</li>
+				<li>Try not to do more than 100 searches per hour (API limit)</li>
+			</ul>
+		</div>
+	</body>
+</html>
+
