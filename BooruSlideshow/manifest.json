@@ -3,7 +3,7 @@
 
 	"name": "Booru Slideshow",
 	"description": "View a slideshow from a Booru site based on your search.",
-	"version": "2.1",
+	"version": "3.0",
 
 	"browser_action":
 	{
