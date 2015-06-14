@@ -6,11 +6,15 @@ var isPlaying = false;
 var timer = null;
 var searchText = "";
 
+var SITE_SAFEBOORU = 'SAFE';
 var SITE_DANBOORU = 'DANB';
+var SITE_GELBOORU = 'GELB';
 var SITE_E621 = 'E621';
 
 var sitesManager = new SitesManager(20);
+sitesManager.addSite(SITE_SAFEBOORU, 'http://safebooru.org', 100);
 sitesManager.addSite(SITE_DANBOORU, 'https://danbooru.donmai.us', 100);
+sitesManager.addSite(SITE_GELBOORU, 'http://gelbooru.com', 100);
 sitesManager.addSite(SITE_E621, 'https://e621.net', 100);
 
 function userPressedSearchButton()
@@ -181,9 +185,18 @@ function getCurrentImageNumber()
 
 function showCurrentImage()
 {
-	var currentPost = sitesManager.getCurrentPost();
-	
-	displayImage(currentPost.fileUrl, currentPost.id);
+	if (sitesManager.getNumberOfSortedPosts() > 0)
+	{
+		var currentPost = sitesManager.getCurrentPost();
+		
+		displayImage(currentPost.fileUrl, currentPost.id);
+		
+		sitesManager.preloadNextImageIfPossible();
+	}
+	else
+	{
+		displayWarningMessage('No images were found.');
+	}
 }
 
 function updateNavigation()

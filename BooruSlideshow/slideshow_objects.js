@@ -8,6 +8,31 @@ var Post = function (id, fileUrl, previewFileUrl, postOnSiteUrl, imageWidth, ima
 	this.imageWidth = imageWidth;
 	this.imageHeight = imageHeight;
 	this.date = date;
+	this.isPreloaded = false;
+	this.isPreloading = false;
+	this.preloadImage = null;
+}
+
+Post.prototype.preload = function()
+{
+	if (!this.isPreloaded && !this.isPreloading)
+	{
+		this.isPreloading = true;
+		
+		this.preloadImage = new Image();
+		
+		this.preloadImage.onload = function() {
+			this.isPreloaded = true;
+			this.isPreloading = false;
+		}
+		
+		this.preloadImage.onerror = function() {
+			this.isPreloading = false;
+			console.log('image failed to preload');
+		}
+		
+		this.preloadImage.src = this.fileUrl;
+	}
 }
 
 Post.prototype.toString = function postToString()
@@ -301,6 +326,18 @@ SitesManager.prototype.areThereMoreLoadableImages = function()
 	return false;
 }
 
+SitesManager.prototype.preloadNextImageIfPossible = function()
+{
+	if (this.currentImageNumber <= this.getTotalImageNumber())
+	{
+		var nextPost = this.allSortedPosts[this.currentImageNumber];
+		
+		nextPost.preload();
+	}
+}
+
+
+
 
 
 
@@ -320,6 +357,9 @@ SiteManager.prototype.buildRequestUrl = function(searchText, pageNumber)
 {
 	switch (this.id)
 	{
+		case SITE_SAFEBOORU:
+		case SITE_GELBOORU:
+			return this.url + '/index.php?page=dapi&s=post&q=index&tags=' + searchText + '&pid=' + (pageNumber - 1) + '&limit=' + this.pageLimit;
 		case SITE_DANBOORU:
 			return this.url + '/posts.json?tags=' + searchText + '&page=' + pageNumber + '&limit=' + this.pageLimit;
 		case SITE_E621:
@@ -389,8 +429,9 @@ SiteManager.prototype.makeWebsiteRequest = function(url, doneSearchingSiteCallba
 		siteManager.lastPageLoaded++;
 		displayDebugText('pageNumber = ' + siteManager.lastPageLoaded);
 		displayDebugText(siteManager.id);
-		var jsonText = siteManager.xhr.responseText;
-		siteManager.addPosts(jsonText);
+		
+		var responseText = siteManager.xhr.responseText;
+		siteManager.addPosts(responseText);
 		
 		displayDebugText(siteManager.id + ' total image number =  ' + siteManager.getTotalImageNumber());
 		
@@ -405,26 +446,64 @@ SiteManager.prototype.makeWebsiteRequest = function(url, doneSearchingSiteCallba
 	this.xhr.send();
 }
 
-SiteManager.prototype.addPosts = function(jsonText)
+SiteManager.prototype.addPosts = function(responseText)
 {
-	var json = JSON.parse(jsonText);
-	displayDebugText('site ' + this.id + ' has ' + json.length + ' json objects');
-	this.hasExhaustedSearch = (json.length < this.pageLimit);
-	
-	for (var i = 0; i < json.length; i++)
+	if (this.id == SITE_SAFEBOORU || this.id == SITE_GELBOORU)
 	{
-		var jsonObject = json[i];
-		
-		this.addPost(jsonObject);
+		this.addXmlPosts(responseText);
 	}
-	
-	/*if (this.hasExhaustedSearch && totalImageNumber() == 0)
+	else
 	{
-		displayWarningMessage('No images were found');
-	}*/
+		this.addJsonPosts(responseText);
+	}
+}
+	
+SiteManager.prototype.addXmlPosts = function(xmlResponseText)
+{
+	parser = new DOMParser();
+	xml = parser.parseFromString(xmlResponseText, "text/xml");
+	
+	var xmlPosts = xml.getElementsByTagName("post");
+	
+	displayDebugText('site ' + this.id + ' has ' + xmlPosts.length + ' xml objects');
+	this.hasExhaustedSearch = (xmlPosts.length < this.pageLimit);
+	
+	for (var i = 0; i < xmlPosts.length; i++)
+	{
+		var xmlPost = xmlPosts[i];
+		
+		this.addXmlPost(xmlPost);
+	}
 }
 
-SiteManager.prototype.addPost = function(jsonObject)
+SiteManager.prototype.addJsonPosts = function(jsonResponseText)
+{
+	var jsonPosts = JSON.parse(jsonResponseText);
+	displayDebugText('site ' + this.id + ' has ' + jsonPosts.length + ' json objects');
+	this.hasExhaustedSearch = (jsonPosts.length < this.pageLimit);
+	
+	for (var i = 0; i < jsonPosts.length; i++)
+	{
+		var jsonPost = jsonPosts[i];
+		
+		this.addJsonPost(jsonPost);
+	}
+}
+
+SiteManager.prototype.addXmlPost = function(jsonObject)
+{
+	switch (this.id)
+	{
+		case SITE_SAFEBOORU:
+			this.addPostSafebooru(jsonObject);
+			break;
+		case SITE_GELBOORU:
+			this.addPostGelbooru(jsonObject);
+			break;
+	}
+}
+
+SiteManager.prototype.addJsonPost = function(jsonObject)
 {
 	switch (this.id)
 	{
@@ -437,52 +516,107 @@ SiteManager.prototype.addPost = function(jsonObject)
 	}
 }
 
+SiteManager.prototype.addPostSafebooru = function(xmlPost)
+{
+	if (xmlPost.hasAttribute('file_url') &&
+		xmlPost.hasAttribute('preview_url'))
+	{
+		var fileExtension = xmlPost.getAttribute('file_url').substring(xmlPost.getAttribute('file_url').length - 4);
+		
+		if (fileExtension != '.zip' && // No zip files!
+			fileExtension != '.swf' && // No flash files!
+			fileExtension != 'webm') // No video files!
+		{
+			var newPost = new Post(
+				xmlPost.getAttribute('id'),
+				xmlPost.getAttribute('file_url'),
+				xmlPost.getAttribute('preview_url'),
+				this.url + '/index.php?page=post&s=view&id=' + xmlPost.getAttribute('id'),
+				xmlPost.getAttribute('width'),
+				xmlPost.getAttribute('height'),
+				new Date(xmlPost.getAttribute('created_at'))
+			);
+			this.allPosts.push(newPost);
+		}
+	}
+}
+
+SiteManager.prototype.addPostGelbooru = function(xmlPost)
+{
+	if (xmlPost.hasAttribute('file_url') &&
+		xmlPost.hasAttribute('preview_url'))
+	{
+		var fileExtension = xmlPost.getAttribute('file_url').substring(xmlPost.getAttribute('file_url').length - 4);
+	
+		if (fileExtension != '.zip' && // No zip files!
+			fileExtension != '.swf' && // No flash files!
+			fileExtension != 'webm') // No video files!
+		{
+			var newPost = new Post(
+				xmlPost.getAttribute('id'),
+				xmlPost.getAttribute('file_url'),
+				xmlPost.getAttribute('preview_url'),
+				this.url + '/index.php?page=post&s=view&id=' + xmlPost.getAttribute('id'),
+				xmlPost.getAttribute('width'),
+				xmlPost.getAttribute('height'),
+				new Date(xmlPost.getAttribute('created_at'))
+			);
+			this.allPosts.push(newPost);
+		}
+	}
+}
+
 SiteManager.prototype.addPostDanbooru = function(jsonObject)
 {
-	// Filter out results that don't display as images
 	if (jsonObject.hasOwnProperty('file_url') &&
-		//jsonObject.hasOwnProperty('large_file_url') &&
-		jsonObject.hasOwnProperty('preview_file_url') &&
-		jsonObject.file_url.substring(jsonObject.file_url.length - 3) != 'zip') // No .zip files!
+		jsonObject.hasOwnProperty('preview_file_url'))
 	{
-		var newPost = new Post(
-			jsonObject.id,
-			this.url + jsonObject.file_url,
-			this.url + jsonObject.preview_file_url,
-			this.url + '/posts/' + jsonObject.id,
-			jsonObject.image_width,
-			jsonObject.image_height,
-			new Date(jsonObject.created_at)
-		);
-		this.allPosts.push(newPost);
+		var fileExtension = jsonObject.file_url.substring(jsonObject.file_url.length - 4);
 		
-		//displayLink(newPost.id, newPost.fileUrl, newPost.previewFileUrl);
+		// Filter out results that don't display as images
+		if (fileExtension != '.zip' && // No zip files!
+			fileExtension != '.swf' && // No flash files!
+			fileExtension != 'webm') // No video files!
+		{
+			var newPost = new Post(
+				jsonObject.id,
+				this.url + jsonObject.file_url,
+				this.url + jsonObject.preview_file_url,
+				this.url + '/posts/' + jsonObject.id,
+				jsonObject.image_width,
+				jsonObject.image_height,
+				new Date(jsonObject.created_at)
+			);
+			this.allPosts.push(newPost);
+		}
 	}
 }
 
 SiteManager.prototype.addPostE621 = function(jsonObject)
 {
-	var fileExtension = jsonObject.file_url.substring(jsonObject.file_url.length - 4);
-	
-	// Filter out results that don't display as images
 	if (jsonObject.hasOwnProperty('file_url') &&
-		jsonObject.hasOwnProperty('preview_url') &&
-		fileExtension != '.zip' && // No zip files
-		fileExtension != '.swf' && // No flash files
-		fileExtension != 'webm') // No video files
+		jsonObject.hasOwnProperty('preview_url'))
 	{
-		var newPost = new Post(
-			jsonObject.id,
-			jsonObject.file_url,
-			jsonObject.preview_url,
-			this.url + '/post/show/' + jsonObject.id,
-			jsonObject.width,
-			jsonObject.height,
-			convertSDateToDate(jsonObject.created_at.s)
-		);
-		this.allPosts.push(newPost);
+		var fileExtension = jsonObject.file_url.substring(jsonObject.file_url.length - 4);
 		
-		//displayLink(newPost.id, newPost.fileUrl, newPost.previewFileUrl);
+		// Filter out results that don't display as images
+		if (fileExtension != '.zip' && // No zip files
+			fileExtension != '.swf' && // No flash files
+			fileExtension != 'webm') // No video files
+		{
+			var newPost = new Post(
+				jsonObject.id,
+				jsonObject.file_url,
+				jsonObject.preview_url,
+				this.url + '/post/show/' + jsonObject.id,
+				jsonObject.width,
+				jsonObject.height,
+				convertSDateToDate(jsonObject.created_at.s)
+			);
+			this.allPosts.push(newPost);
+			
+			//displayLink(newPost.id, newPost.fileUrl, newPost.previewFileUrl);
+		}
 	}
 }
 

@@ -13,7 +13,9 @@
 	
 	"permissions":
 	[
+		"http://safebooru.org/",
 		"https://danbooru.donmai.us/",
+		"http://gelbooru.com/",
 		"https://e621.net/"
 	]
 }
