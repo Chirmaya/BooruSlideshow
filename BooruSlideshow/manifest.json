@@ -3,19 +3,27 @@
 
 	"name": "Booru Slideshow",
 	"description": "View a slideshow from a Booru site based on your search.",
-	"version": "3.0",
+	"version": "3.1",
 
 	"browser_action":
 	{
-		"default_icon": "icon.png",
+		"default_icon": "bs_icon_19.png",
 		"default_popup": "popup.html"
+	},
+	
+	"icons":
+	{
+		"16": "bs_icon_16.png",
+		"48": "bs_icon_48.png",
+		"128": "bs_icon_128.png"
 	},
 	
 	"permissions":
 	[
-		"http://safebooru.org/",
 		"https://danbooru.donmai.us/",
+		"https://e621.net/",
 		"http://gelbooru.com/",
-		"https://e621.net/"
+		"http://rule34.xxx/",
+		"http://safebooru.org/"
 	]
 }

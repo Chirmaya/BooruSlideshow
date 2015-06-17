@@ -1,5 +1,11 @@
 Changelog
 
+Version 3.1
+* Added icons for the favicon and the extension list
+* Added support for site:
+	rule34.xxx
+* Sorted sites list by name
+
 Version 3.0
 * Added an image preloader to make the timing of the slideshow much more accurate
 * Added support for sites:

@@ -357,8 +357,9 @@ SiteManager.prototype.buildRequestUrl = function(searchText, pageNumber)
 {
 	switch (this.id)
 	{
-		case SITE_SAFEBOORU:
 		case SITE_GELBOORU:
+		case SITE_RULE34:
+		case SITE_SAFEBOORU:
 			return this.url + '/index.php?page=dapi&s=post&q=index&tags=' + searchText + '&pid=' + (pageNumber - 1) + '&limit=' + this.pageLimit;
 		case SITE_DANBOORU:
 			return this.url + '/posts.json?tags=' + searchText + '&page=' + pageNumber + '&limit=' + this.pageLimit;
@@ -448,7 +449,7 @@ SiteManager.prototype.makeWebsiteRequest = function(url, doneSearchingSiteCallba
 
 SiteManager.prototype.addPosts = function(responseText)
 {
-	if (this.id == SITE_SAFEBOORU || this.id == SITE_GELBOORU)
+	if (this.id == SITE_GELBOORU || this.id == SITE_RULE34 || this.id == SITE_SAFEBOORU)
 	{
 		this.addXmlPosts(responseText);
 	}
@@ -492,7 +493,8 @@ SiteManager.prototype.addJsonPosts = function(jsonResponseText)
 
 SiteManager.prototype.addXmlPost = function(jsonObject)
 {
-	switch (this.id)
+	this.addPostGelRuleSafe(jsonObject);
+	/*switch (this.id)
 	{
 		case SITE_SAFEBOORU:
 			this.addPostSafebooru(jsonObject);
@@ -500,7 +502,7 @@ SiteManager.prototype.addXmlPost = function(jsonObject)
 		case SITE_GELBOORU:
 			this.addPostGelbooru(jsonObject);
 			break;
-	}
+	}*/
 }
 
 SiteManager.prototype.addJsonPost = function(jsonObject)
@@ -516,7 +518,7 @@ SiteManager.prototype.addJsonPost = function(jsonObject)
 	}
 }
 
-SiteManager.prototype.addPostSafebooru = function(xmlPost)
+SiteManager.prototype.addPostGelRuleSafe = function(xmlPost)
 {
 	if (xmlPost.hasAttribute('file_url') &&
 		xmlPost.hasAttribute('preview_url'))
@@ -541,7 +543,7 @@ SiteManager.prototype.addPostSafebooru = function(xmlPost)
 	}
 }
 
-SiteManager.prototype.addPostGelbooru = function(xmlPost)
+/*SiteManager.prototype.addPostGelbooru = function(xmlPost)
 {
 	if (xmlPost.hasAttribute('file_url') &&
 		xmlPost.hasAttribute('preview_url'))
@@ -564,7 +566,7 @@ SiteManager.prototype.addPostGelbooru = function(xmlPost)
 			this.allPosts.push(newPost);
 		}
 	}
-}
+}*/
 
 SiteManager.prototype.addPostDanbooru = function(jsonObject)
 {
