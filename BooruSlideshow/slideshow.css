@@ -26,6 +26,7 @@ ul {
 }
 #indentation {
 	margin: 5px;
+	clear: both;
 }
 #navigation,
 #current-image,
@@ -35,4 +36,21 @@ ul {
 }
 button:disabled {
 	color: lightgrey;
+}
+
+#image-wrapper {
+	position:relative;
+	display: inline;
+	overflow: hidden;
+	clear: both;
+}
+
+#loading-animation {
+	display: none;
+	margin: auto;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
 }

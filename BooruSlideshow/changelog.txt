@@ -1,5 +1,11 @@
 Changelog
 
+Version 3.3
+* Fixed a bug where loading animations were displayed when a warning message was displayed
+
+Version 3.2
+* Added loading animation
+
 Version 3.1
 * Added icons for the favicon and the extension list
 * Added support for site:

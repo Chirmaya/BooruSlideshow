@@ -6,6 +6,8 @@ function startup()
 {
 	setupEventListeners();
 	
+	setupLoadingAnimation();
+	
 	setFocusToSearchBox();
 }
 

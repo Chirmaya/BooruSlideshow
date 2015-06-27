@@ -6,6 +6,8 @@ function setFocusToSearchBox()
 // Displays
 function displayWarningMessage(message)
 {
+	hideLoadingAnimation();
+	
 	var warningMessageElement = document.getElementById('warning-message');
 	warningMessageElement.innerHTML = message;
 	warningMessageElement.style.display = 'block';
@@ -13,7 +15,10 @@ function displayWarningMessage(message)
 
 function displayImage(imgUrl, id)
 {
+	showLoadingAnimation();
+	
 	var currentImage = document.getElementById('current-image');
+	
 	currentImage.src  = imgUrl;
 	currentImage.setAttribute('alt', id);
 	currentImage.setAttribute('title', id);
@@ -36,6 +41,20 @@ function displayImage(imgUrl, id)
 		var maxHeight = parseInt(maxHeightText);
 		currentImage.style.maxHeight = maxHeight + 'px';
 	}
+}
+
+function hideLoadingAnimation()
+{
+	var loadingAnimation = document.getElementById('loading-animation');
+	
+	loadingAnimation.style.display = "none";
+}
+
+function showLoadingAnimation()
+{
+	var loadingAnimation = document.getElementById('loading-animation');
+	
+	loadingAnimation.style.display = "inline";
 }
 
 function displayDebugText(text)

@@ -313,3 +313,12 @@ function hasNextImage()
 {
 	return (totalImageNumber() >= getCurrentImageNumber() + 1);
 }
+
+function setupLoadingAnimation()
+{
+	var currentImage = document.getElementById('current-image');
+	
+	currentImage.onload = function() {
+		hideLoadingAnimation();
+	}
+}
