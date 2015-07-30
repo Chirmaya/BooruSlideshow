@@ -4,6 +4,7 @@ var MILLISECONDS_PER_SECOND = 1000;
 var numberOfImagesToAlwaysHaveReadyToDisplay = 20;
 var isPlaying = false;
 var timer = null;
+var timerMs = 0;
 var searchText = "";
 
 
@@ -25,33 +26,79 @@ function userPressedSearchButton()
 {
 	sitesManager.resetConnections();
 	clearUI();
+	userPressedPauseButton();
 	updateNavigation();
 	performSearch();
 }
 
 function userPressedFirstButton()
 {
+	restartSlideshowIfOn();
+	moveToFirstImage();
+}
+
+function moveToFirstImage()
+{
 	setCurrentImageNumberToFirst();
-	
-	showCurrentImage()
-	
+	showCurrentImage();
 	updateNavigation();
 }
 
 function userPressedPreviousButton()
 {
+	restartSlideshowIfOn();
+	moveToPreviousImage();
+}
+
+function moveToPreviousImage()
+{
 	decreaseCurrentImageNumber();
-	
 	showCurrentImage()
-	
 	updateNavigation();
+}
+
+function userPressedNextButton()
+{
+	restartSlideshowIfOn();
+	moveToNextImage();
+}
+
+function moveToNextImage()
+{
+	increaseCurrentImageNumber();
+	showCurrentImage();
+	updateNavigation();
+}
+
+function userPressedLastButton()
+{
+	restartSlideshowIfOn();
+	moveToLastImage();
+}
+
+function moveToLastImage()
+{
+	setCurrentImageNumberToLast();
+	showCurrentImage();
+	updateNavigation();
+}
+
+function restartSlideshowIfOn()
+{
+	if (isPlaying)
+	{
+		clearTimeout(timer);
+		sitesManager.clearCallbacksForPreloadingImages();
+		
+		userPressedPlayButton();
+	}
 }
 
 function userPressedPlayButton()
 {
 	var secondsPerImage = getSecondsPerImage();
 	
-	if (secondsPerImage != null)
+	if (secondsPerImage != null && secondsPerImage > 0)
 	{
 		startSlideshow(secondsPerImage);
 	}
@@ -59,47 +106,51 @@ function userPressedPlayButton()
 
 function startSlideshow(secondsPerImage)
 {
+	tryToStartCountdown(secondsPerImage);
+	
+	isPlaying = true;
+	updatePlayPauseButtons();
+}
+
+function tryToStartCountdown(secondsPerImage)
+{
+	if (sitesManager.isCurrentImageLoaded())
+	{
+		startCountdown(secondsPerImage);
+	}
+	else
+	{
+		sitesManager.runCodeWhenCurrentImageFinishesLoading(function(){
+			startCountdown(secondsPerImage);
+		});
+	}
+}
+
+function startCountdown(secondsPerImage)
+{
 	var millisecondsPerImage = secondsPerImage * MILLISECONDS_PER_SECOND;
 	
-	timer = setInterval(function() {
+	timer = setTimeout(function() {
 		if (hasNextImage())
 		{
-			userPressedNextButton();
+			moveToNextImage();
 		}
 		else
 		{
-			userPressedFirstButton();
+			moveToFirstImage();
 		}
+		
+		tryToStartCountdown(secondsPerImage);
 	}, millisecondsPerImage);
-	
-	isPlaying = true;
-	updatePlayPauseButtons()
 }
 
 function userPressedPauseButton()
 {
-	clearInterval(timer);
+	clearTimeout(timer);
+	sitesManager.clearCallbacksForPreloadingImages();
 	
 	isPlaying = false;
 	updatePlayPauseButtons()
-}
-
-function userPressedNextButton()
-{
-	increaseCurrentImageNumber();
-	
-	showCurrentImage()
-	
-	updateNavigation();
-}
-
-function userPressedLastButton()
-{
-	setCurrentImageNumberToLast();
-	
-	showCurrentImage()
-	
-	updateNavigation();
 }
 
 function userPressedLeft()
@@ -158,13 +209,13 @@ function performSearch()
 
 function setCurrentImageNumberToFirst()
 {
-	sitesManager.setCurrentImageNumberToFirst();
+	sitesManager.moveToFirstImage();
 	updateNavigation();
 }
 
 function setCurrentImageNumberToLast()
 {
-	sitesManager.setCurrentImageNumberToLast(function() {
+	sitesManager.moveToLastImage(function() {
 		updateNavigation();
 	});
 }
@@ -178,7 +229,7 @@ function increaseCurrentImageNumber()
 
 function decreaseCurrentImageNumber()
 {
-	sitesManager.decreaseCurrentImageNumber();
+	sitesManager.moveToPreviousImage();
 	updateNavigation();
 }
 
@@ -194,8 +245,6 @@ function showCurrentImage()
 		var currentPost = sitesManager.getCurrentPost();
 		
 		displayImage(currentPost.fileUrl, currentPost.id);
-		
-		sitesManager.preloadNextImageIfPossible();
 	}
 	else
 	{

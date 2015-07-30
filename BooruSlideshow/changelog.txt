@@ -1,5 +1,12 @@
 Changelog
 
+Plans for next update
+* (Bug fix) Slideshow continues playing while loading more images (group of 100+)
+* (New feature) Thumbnail list for nearby images
+
+Version 3.4
+* Fixed the slideshow from continuing while images are still loading
+
 Version 3.3
 * Fixed a bug where loading animations were displayed when a warning message was displayed
 

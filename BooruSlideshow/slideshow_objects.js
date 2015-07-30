@@ -11,6 +11,7 @@ var Post = function (id, fileUrl, previewFileUrl, postOnSiteUrl, imageWidth, ima
 	this.isPreloaded = false;
 	this.isPreloading = false;
 	this.preloadImage = null;
+	this.callbackToRunAfterPreloadingFinishes = null;
 }
 
 Post.prototype.preload = function()
@@ -21,14 +22,20 @@ Post.prototype.preload = function()
 		
 		this.preloadImage = new Image();
 		
+		var post = this;
+		
 		this.preloadImage.onload = function() {
-			this.isPreloaded = true;
-			this.isPreloading = false;
+			post.isPreloaded = true;
+			post.isPreloading = false;
+			
+			if (post.callbackToRunAfterPreloadingFinishes != null)
+			{
+				post.callbackToRunAfterPreloadingFinishes.call();
+			}
 		}
 		
 		this.preloadImage.onerror = function() {
 			this.isPreloading = false;
-			console.log('image failed to preload');
 		}
 		
 		this.preloadImage.src = this.fileUrl;
@@ -146,7 +153,7 @@ SitesManager.prototype.performSearch = function(searchText, doneSearchingAllSite
 	var sitesManager = this;
 	
 	this.performSearchUntilWeHaveEnoughPosts(function() {
-		sitesManager.setCurrentImageNumberToFirst();
+		sitesManager.setCurrentImageNumber(1);
 		doneSearchingAllSitesCallback.call(sitesManager);
 	});
 }
@@ -267,19 +274,22 @@ SitesManager.prototype.getTotalImageNumber = function()
 	return this.allSortedPosts.length;
 }
 
-SitesManager.prototype.setCurrentImageNumberToFirst = function()
+SitesManager.prototype.moveToFirstImage = function()
 {
-	this.currentImageNumber = 1;
+	this.setCurrentImageNumber(1);
 }
 
-SitesManager.prototype.setCurrentImageNumberToLast = function(callbackForAfterPossiblyLoadingMoreImages)
+SitesManager.prototype.moveToLastImage = function(callbackForAfterPossiblyLoadingMoreImages)
 {
-	this.currentImageNumber = this.getTotalImageNumber();
+	var totalImageNumber = this.getTotalImageNumber();
+	this.setCurrentImageNumber(totalImageNumber);
 	
 	var sitesManager = this;
 	
 	this.performSearchUntilWeHaveEnoughPosts(function() {
 		callbackForAfterPossiblyLoadingMoreImages.call(sitesManager);
+		
+		this.preloadNextImageIfNeeded();
 	});
 }
 
@@ -287,20 +297,55 @@ SitesManager.prototype.increaseCurrentImageNumber = function(callbackForAfterPos
 {
 	if (this.currentImageNumber <= this.getTotalImageNumber())
 	{
-		this.currentImageNumber++;
+		this.setCurrentImageNumber(this.currentImageNumber + 1);
 		
 		var sitesManager = this;
 		
 		this.performSearchUntilWeHaveEnoughPosts(function() {
 			callbackForAfterPossiblyLoadingMoreImages.call(sitesManager);
+			
+			this.preloadNextImageIfNeeded();
 		});
 	}
 }
 
-SitesManager.prototype.decreaseCurrentImageNumber = function()
+SitesManager.prototype.moveToPreviousImage = function()
 {
 	if (this.currentImageNumber > 1)
-		this.currentImageNumber--;
+	{
+		this.setCurrentImageNumber(this.currentImageNumber - 1);
+	}
+}
+
+SitesManager.prototype.moveToSpecificImage = function(specificImageNumber)
+{
+	if (specificImageNumber > 0 && specificImageNumber <= this.getTotalImageNumber())
+	{
+		this.setCurrentImageNumber(specificImageNumber);
+	}
+}
+
+SitesManager.prototype.setCurrentImageNumber = function(newCurrentImageNumber)
+{
+	this.clearCallbacksForPreloadingImages();
+	this.currentImageNumber = newCurrentImageNumber;
+	this.preloadCurrentImageIfNeeded();
+	this.preloadNextImageIfNeeded();
+}
+
+SitesManager.prototype.clearCallbacksForPreloadingImages = function()
+{
+	if (this.currentImageNumber > 0)
+	{
+		var currentPost = this.getCurrentPost();
+		currentPost.callbackToRunAfterPreloadingFinishes = null;
+	}
+}
+
+SitesManager.prototype.runCodeWhenCurrentImageFinishesLoading = function(callback)
+{
+	var currentPost = this.getCurrentPost();
+	currentPost.callbackToRunAfterPreloadingFinishes = callback;
 }
 
 SitesManager.prototype.getCurrentPost = function()
@@ -326,9 +371,16 @@ SitesManager.prototype.areThereMoreLoadableImages = function()
 	return false;
 }
 
-SitesManager.prototype.preloadNextImageIfPossible = function()
+SitesManager.prototype.preloadCurrentImageIfNeeded = function()
 {
-	if (this.currentImageNumber <= this.getTotalImageNumber())
+	var currentPost = this.allSortedPosts[this.currentImageNumber - 1];
+	
+	currentPost.preload();
+}
+
+SitesManager.prototype.preloadNextImageIfNeeded = function()
+{
+	if (this.currentImageNumber < this.getTotalImageNumber())
 	{
 		var nextPost = this.allSortedPosts[this.currentImageNumber];
 		
@@ -336,7 +388,13 @@ SitesManager.prototype.preloadNextImageIfPossible = function()
 	}
 }
 
-
+SitesManager.prototype.isCurrentImageLoaded = function()
+{
+	if (this.currentImageNumber > 0)
+	{
+		return this.getCurrentPost().isPreloaded;
+	}
+}
 
 
 
