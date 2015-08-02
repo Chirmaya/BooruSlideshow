@@ -145,7 +145,6 @@ SitesManager.prototype.resetConnections = function()
 
 SitesManager.prototype.performSearch = function(searchText, doneSearchingAllSitesCallback)
 {
-	
 	this.searchText = searchText;
 	
 	displayDebugText('Searching ' + this.siteManagersCurrentlySearching + ' sites');
@@ -153,7 +152,11 @@ SitesManager.prototype.performSearch = function(searchText, doneSearchingAllSite
 	var sitesManager = this;
 	
 	this.performSearchUntilWeHaveEnoughPosts(function() {
-		sitesManager.setCurrentImageNumber(1);
+		if (this.allSortedPosts.length > 0)
+		{
+			sitesManager.setCurrentImageNumber(1);
+		}
+		
 		doneSearchingAllSitesCallback.call(sitesManager);
 	});
 }

@@ -2,7 +2,13 @@ Changelog
 
 Plans for next update
 * (Bug fix) Slideshow continues playing while loading more images (group of 100+)
+* (Bug fix) Slideshow stopping after skipping through images too fast
 * (New feature) Thumbnail list for nearby images
+* (UI change) Make pause button not ugly.
+
+Version 4.0
+* Updated display.
+* Minor bug fixes
 
 Version 3.4
 * Fixed the slideshow from continuing while images are still loading

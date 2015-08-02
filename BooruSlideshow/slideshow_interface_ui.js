@@ -32,6 +32,10 @@ function displayImage(imgUrl, id)
 		var maxWidth = parseInt(maxWidthText);
 		currentImage.style.maxWidth = maxWidth + 'px';
 	}
+	else
+	{
+		currentImage.style.maxWidth = null;
+	}
 	
 	var maxHeightText = document.getElementById('max-height').value;
 	
@@ -40,6 +44,10 @@ function displayImage(imgUrl, id)
 	{
 		var maxHeight = parseInt(maxHeightText);
 		currentImage.style.maxHeight = maxHeight + 'px';
+	}
+	else
+	{
+		currentImage.style.maxHeight = null;
 	}
 }
 
