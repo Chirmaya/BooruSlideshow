@@ -7,7 +7,7 @@ Plans for next update
 * (UI change) Make pause button not ugly.
 
 Version 4.0
-* Updated display.
+* Updated display
 * Minor bug fixes
 
 Version 3.4
