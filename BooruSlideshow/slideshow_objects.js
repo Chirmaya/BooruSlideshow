@@ -30,7 +30,7 @@ Post.prototype.preload = function()
 			
 			if (post.callbackToRunAfterPreloadingFinishes != null)
 			{
-				post.callbackToRunAfterPreloadingFinishes.call();
+				post.callbackToRunAfterPreloadingFinishes.call(post);
 			}
 		}
 		
@@ -40,6 +40,21 @@ Post.prototype.preload = function()
 		
 		this.preloadImage.src = this.fileUrl;
 	}
+}
+
+Post.prototype.addCallback = function(callback)
+{
+	if (this.callbackToRunAfterPreloadingFinishes != null)
+	{
+		console.log('overwrote existing callback of post.');
+	}
+	
+	this.callbackToRunAfterPreloadingFinishes = callback;
+}
+
+Post.prototype.clearCallback = function()
+{
+	this.callbackToRunAfterPreloadingFinishes = null;
 }
 
 Post.prototype.toString = function postToString()
@@ -341,14 +356,19 @@ SitesManager.prototype.clearCallbacksForPreloadingImages = function()
 	if (this.currentImageNumber > 0)
 	{
 		var currentPost = this.getCurrentPost();
-		currentPost.callbackToRunAfterPreloadingFinishes = null;
+		currentPost.clearCallback();
 	}
 }
 
 SitesManager.prototype.runCodeWhenCurrentImageFinishesLoading = function(callback)
 {
 	var currentPost = this.getCurrentPost();
-	currentPost.callbackToRunAfterPreloadingFinishes = callback;
+	currentPost.addCallback(function(){
+		if (currentPost == this.getCurrentPost())
+		{
+			callback.call();
+		}
+	});
 }
 
 SitesManager.prototype.getCurrentPost = function()
@@ -356,6 +376,14 @@ SitesManager.prototype.getCurrentPost = function()
 	if (this.currentImageNumber > 0)
 	{
 		return this.allSortedPosts[this.currentImageNumber - 1];
+	}
+}
+
+SitesManager.prototype.getNextPosts = function(numberOfPosts)
+{
+	if (this.currentImageNumber > 0)
+	{
+		return this.allSortedPosts.slice(this.currentImageNumber, this.currentImageNumber + numberOfPosts);
 	}
 }
 
@@ -385,9 +413,55 @@ SitesManager.prototype.preloadNextImageIfNeeded = function()
 {
 	if (this.currentImageNumber < this.getTotalImageNumber())
 	{
-		var nextPost = this.allSortedPosts[this.currentImageNumber];
+		var currentPost = this.getCurrentPost();
+		this.preloadNextUnpreloadedImageIfInRange(10);
+	}
+}
+
+SitesManager.prototype.preloadNextUnpreloadedImageIfInRange = function(range)
+{
+	if (this.currentImageNumber < this.getTotalImageNumber())
+	{
+		var nextPosts = this.getNextPosts(range);
 		
-		nextPost.preload();
+		for (var i = 0; i < nextPosts.length; i++)
+		{
+			var post = nextPosts[i];
+			
+			if (!post.isPreloaded)
+			{
+				post.preload();
+				break;
+			}
+		}
+	}
+}
+
+SitesManager.prototype.preloadNextUnpreloadedImageAfterThisOneIfInRange = function(startingPost, range)
+{
+	if (this.currentImageNumber < this.getTotalImageNumber())
+	{
+		var nextPosts = this.getNextPosts(range);
+		var foundStartingPost = false;
+		
+		for (var i = 0; i < nextPosts.length; i++)
+		{
+			var post = nextPosts[i];
+			
+			if (foundStartingPost)
+			{
+				if (!post.isPreloaded)
+				{
+					post.preload();
+					break;
+				}
+			}
+			
+			if (startingPost == post)
+			{
+				foundStartingPost = true;
+			}
+		}
 	}
 }
 
@@ -555,15 +629,6 @@ SiteManager.prototype.addJsonPosts = function(jsonResponseText)
 SiteManager.prototype.addXmlPost = function(jsonObject)
 {
 	this.addPostGelRuleSafe(jsonObject);
-	/*switch (this.id)
-	{
-		case SITE_SAFEBOORU:
-			this.addPostSafebooru(jsonObject);
-			break;
-		case SITE_GELBOORU:
-			this.addPostGelbooru(jsonObject);
-			break;
-	}*/
 }
 
 SiteManager.prototype.addJsonPost = function(jsonObject)
@@ -603,31 +668,6 @@ SiteManager.prototype.addPostGelRuleSafe = function(xmlPost)
 		}
 	}
 }
-
-/*SiteManager.prototype.addPostGelbooru = function(xmlPost)
-{
-	if (xmlPost.hasAttribute('file_url') &&
-		xmlPost.hasAttribute('preview_url'))
-	{
-		var fileExtension = xmlPost.getAttribute('file_url').substring(xmlPost.getAttribute('file_url').length - 4);
-	
-		if (fileExtension != '.zip' && // No zip files!
-			fileExtension != '.swf' && // No flash files!
-			fileExtension != 'webm') // No video files!
-		{
-			var newPost = new Post(
-				xmlPost.getAttribute('id'),
-				xmlPost.getAttribute('file_url'),
-				xmlPost.getAttribute('preview_url'),
-				this.url + '/index.php?page=post&s=view&id=' + xmlPost.getAttribute('id'),
-				xmlPost.getAttribute('width'),
-				xmlPost.getAttribute('height'),
-				new Date(xmlPost.getAttribute('created_at'))
-			);
-			this.allPosts.push(newPost);
-		}
-	}
-}*/
 
 SiteManager.prototype.addPostDanbooru = function(jsonObject)
 {
@@ -692,9 +732,6 @@ SiteManager.prototype.hasntExhaustedSearch = function()
 {
 	return this.isEnabled && !this.hasExhaustedSearch;
 }
-
-
-
 
 
 function convertSDateToDate(sDate)

@@ -13,13 +13,13 @@ function displayWarningMessage(message)
 	warningMessageElement.style.display = 'block';
 }
 
-function displayImage(imgUrl, id)
+function displayImage(imageUrl, id)
 {
 	showLoadingAnimation();
 	
 	var currentImage = document.getElementById('current-image');
 	
-	currentImage.src  = imgUrl;
+	currentImage.src  = imageUrl;
 	currentImage.setAttribute('alt', id);
 	currentImage.setAttribute('title', id);
 	currentImage.style.display = 'inline';
@@ -49,6 +49,45 @@ function displayImage(imgUrl, id)
 	{
 		currentImage.style.maxHeight = null;
 	}
+}
+
+function displayThumbnail(thumbnailImageUrl, id, showGreyedOut)
+{
+	var thumbnailList = document.getElementById('thumbnail-list');
+	
+	var newThumbnail = document.createElement("div");
+	newThumbnail.classList.add("thumbnail");
+	newThumbnail.setAttribute('title', id);
+	
+	var newThumbnailImage = document.createElement("img");
+	newThumbnailImage.id = 'thumbnail-image-' + id
+	newThumbnailImage.classList.add("thumbnail-image");
+	newThumbnailImage.src  = thumbnailImageUrl;
+	
+	if (showGreyedOut)
+	{
+		newThumbnailImage.classList.add("thumbnail-image-greyed-out");
+	}
+	
+	
+	newThumbnail.appendChild(newThumbnailImage);
+	thumbnailList.appendChild(newThumbnail);
+}
+
+function removeThumbnailGreyness(id)
+{
+	var thumbnail = document.getElementById('thumbnail-image-' + id);
+	
+	if (thumbnail != null)
+	{
+		removeClass(thumbnail, 'thumbnail-image-greyed-out');
+	}
+}
+
+function removeClass(element, classToRemove)
+{
+	var regex = new RegExp('(?:^|\\s)' + classToRemove + '(?!\\S)')
+	element.className = element.className.replace(regex, '');
 }
 
 function hideLoadingAnimation()
@@ -92,6 +131,7 @@ function clearUI()
 {
 	clearWarningMessage();
 	clearImage();
+	clearThumbnails();
 	clearDebugText();
 	clearDisplayLinks();
 }
@@ -110,6 +150,16 @@ function clearImage()
 	currentImage.removeAttribute('alt');
 	currentImage.removeAttribute('title');
 	currentImage.style.display = 'none';
+}
+
+function clearThumbnails()
+{
+	var thumbnailList = document.getElementById('thumbnail-list');
+	
+	while (thumbnailList.firstChild)
+	{
+		thumbnailList.removeChild(thumbnailList.firstChild);
+	}
 }
 
 function clearDebugText()
@@ -198,7 +248,6 @@ function getSelectedSites()
 	return sitesToSearch;
 }
 
-// Sets
 function setCurrentNumberDisplay(currentImageNumber)
 {
 	var currentNumberElement = document.getElementById('current-image-number');

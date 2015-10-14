@@ -40,7 +40,7 @@ function userPressedFirstButton()
 function moveToFirstImage()
 {
 	setCurrentImageNumberToFirst();
-	showCurrentImage();
+	updateImages();
 	updateNavigation();
 }
 
@@ -53,7 +53,7 @@ function userPressedPreviousButton()
 function moveToPreviousImage()
 {
 	decreaseCurrentImageNumber();
-	showCurrentImage()
+	updateImages()
 	updateNavigation();
 }
 
@@ -66,7 +66,7 @@ function userPressedNextButton()
 function moveToNextImage()
 {
 	increaseCurrentImageNumber();
-	showCurrentImage();
+	updateImages();
 	updateNavigation();
 }
 
@@ -79,7 +79,7 @@ function userPressedLastButton()
 function moveToLastImage()
 {
 	setCurrentImageNumberToLast();
-	showCurrentImage();
+	updateImages();
 	updateNavigation();
 }
 
@@ -202,7 +202,7 @@ function performSearch()
 		displayDebugText('Finished searching all sites.');
 		displayDebugText(sitesManager.getTotalImageNumber() + ' images are ready to be displayed.');
 		
-		showCurrentImage();
+		updateImages();
 		updateNavigation();
 	});
 }
@@ -238,6 +238,12 @@ function getCurrentImageNumber()
 	return sitesManager.currentImageNumber;
 }
 
+function updateImages()
+{
+	showCurrentImage();
+	showThumbnails();
+}
+
 function showCurrentImage()
 {
 	if (sitesManager.getNumberOfSortedPosts() > 0)
@@ -249,6 +255,32 @@ function showCurrentImage()
 	else
 	{
 		displayWarningMessage('No images were found.');
+	}
+}
+
+function showThumbnails()
+{
+	clearThumbnails();
+	
+	if (sitesManager.getNumberOfSortedPosts() > 1)
+	{
+		var numberOfThumbnails = 10;
+		var nextPosts = sitesManager.getNextPosts(numberOfThumbnails);
+		
+		for (var i = 0; i < nextPosts.length; i++)
+		{
+			var post = nextPosts[i];
+			
+			var showGreyedOut = !post.isPreloaded
+			displayThumbnail(post.previewFileUrl, post.id, showGreyedOut);
+			
+			post.clearCallback();
+			post.addCallback(function(){
+				var post = this;
+				removeThumbnailGreyness(post.id);
+				sitesManager.preloadNextUnpreloadedImageAfterThisOneIfInRange(post, 10);
+			});
+		}
 	}
 }
 

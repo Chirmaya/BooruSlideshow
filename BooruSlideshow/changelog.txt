@@ -1,10 +1,14 @@
 Changelog
 
-Plans for next update
-* (Bug fix) Slideshow continues playing while loading more images (group of 100+)
-* (Bug fix) Slideshow stopping after skipping through images too fast
-* (New feature) Thumbnail list for nearby images
-* (UI change) Make pause button not ugly.
+Plans for future updates
+* [UI change] Make pause button not ugly.
+* [Feature] Make options collapsible
+* [Feature] Remove duplicates when searching multiple sites
+* Bug fixes!
+
+Version 4.1
+* [New feature] Thumbnail list for nearby images
+* [New feature] Preloading of all nearby images
 
 Version 4.0
 * Updated display
