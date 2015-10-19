@@ -8,6 +8,8 @@ function startup()
 	
 	setupLoadingAnimation();
 	
+	loadUserSettings();
+	
 	setFocusToSearchBox();
 }
 

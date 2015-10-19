@@ -24,7 +24,7 @@ function displayImage(imageUrl, id)
 	currentImage.setAttribute('title', id);
 	currentImage.style.display = 'inline';
 	
-	var maxWidthText = document.getElementById('max-width').value;
+	var maxWidthText = getMaxWidth();
 	
 	if ((maxWidthText != '') &&
 		(!isNaN(maxWidthText)))
@@ -58,9 +58,19 @@ function displayThumbnail(thumbnailImageUrl, id, showGreyedOut)
 	var newThumbnail = document.createElement("div");
 	newThumbnail.classList.add("thumbnail");
 	newThumbnail.setAttribute('title', id);
+	newThumbnail.onclick = function() {
+		if (sitesManager.isNextImagePreloaded)
+		{
+			if (sitesManager.tryToMoveToPreloadedImage(id))
+			{
+				updateImages();
+				updateNavigation();
+			}
+		}
+	};
 	
 	var newThumbnailImage = document.createElement("img");
-	newThumbnailImage.id = 'thumbnail-image-' + id
+	newThumbnailImage.id = 'thumbnail-image-' + id;
 	newThumbnailImage.classList.add("thumbnail-image");
 	newThumbnailImage.src  = thumbnailImageUrl;
 	
@@ -68,7 +78,6 @@ function displayThumbnail(thumbnailImageUrl, id, showGreyedOut)
 	{
 		newThumbnailImage.classList.add("thumbnail-image-greyed-out");
 	}
-	
 	
 	newThumbnail.appendChild(newThumbnailImage);
 	thumbnailList.appendChild(newThumbnail);
@@ -248,8 +257,74 @@ function getSelectedSites()
 	return sitesToSearch;
 }
 
+function getMaxWidth()
+{
+	return document.getElementById('max-width').value;
+}
+
+function getMaxHeight()
+{
+	return document.getElementById('max-height').value;
+}
+
 function setCurrentNumberDisplay(currentImageNumber)
 {
 	var currentNumberElement = document.getElementById('current-image-number');
 	currentNumberElement.innerHTML = currentImageNumber;
+}
+
+function setSecondsPerImage(secondsPerImage)
+{
+	var secondsPerImageElement = document.getElementById('seconds-per-image');
+	secondsPerImageElement.value = secondsPerImage;
+}
+
+function setMaxWidth(maxWidth)
+{
+	var maxWidthElement = document.getElementById('max-width');
+	maxWidthElement.value = maxWidth;
+}
+
+function setMaxHeight(maxHeight)
+{
+	var maxHeightElement = document.getElementById('max-height');
+	maxHeightElement.value = maxHeight;
+}
+
+function setSelectedSites(sitesToSet)
+{
+	var sitesToSearchElements = document.getElementsByName('sites-to-search');
+	
+	for (var i = 0; i < sitesToSet.length; i++)
+	{
+		
+		
+		for (var j = 0; j < sitesToSearchElements.length; j++)
+		{
+			var siteElement = sitesToSearchElements[j];
+			
+			if (siteElement.value == siteToSet)
+			{
+				siteElement.checked = true;
+				break;
+			}
+		}
+	}
+	
+	for (var i = 0; i < sitesToSearchElements.length; i++)
+	{
+		var siteElement = sitesToSearchElements[i];
+		
+		siteElement.checked = false;
+		
+		for (var j = 0; j < sitesToSet.length; j++)
+		{
+			var siteToSet = sitesToSet[j];
+			
+			if (siteElement.value == siteToSet)
+			{
+				siteElement.checked = true;
+			}
+		}
+	}
 }

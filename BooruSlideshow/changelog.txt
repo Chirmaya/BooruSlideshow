@@ -1,10 +1,14 @@
 Changelog
 
 Plans for future updates
-* [UI change] Make pause button not ugly.
 * [Feature] Make options collapsible
 * [Feature] Remove duplicates when searching multiple sites
 * Bug fixes!
+
+Version 4.2
+* [New feature] Selected Sites and Options are now saved
+* [New feature] Clicking on a thumbnail for a loaded image takes you to it
+* [UI change] Made pause button not as ugly
 
 Version 4.1
 * [New feature] Thumbnail list for nearby images

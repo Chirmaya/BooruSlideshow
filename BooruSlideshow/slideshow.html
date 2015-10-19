@@ -21,7 +21,7 @@
 				<button class="nav-button" id="first-button">&lt;&lt;</button>
 				<button class="nav-button" id="previous-button">&lt;</button>
 				<button class="nav-button" id="play-button">&#9658;</button>
-				<button class="nav-button" id="pause-button">&#9612;&#9612;</button>
+				<button class="nav-button" id="pause-button">&#9646;&#9646;</button>
 				<button class="nav-button" id="next-button">&gt;</button>
 				<button class="nav-button" id="last-button">&gt;&gt;</button>
 			</div>
@@ -34,50 +34,50 @@
 				<button id="search-button">Search</button>
 			</div>
 			<div id="module-container">
-			<div id="sites-to-search">
-				<h4>Sites to Search</h4>
+				<div id="sites-to-search">
+					<h4>Sites to Search</h4>
+					<ul>
+						<li><label><input id="checkbox" type="checkbox" name="sites-to-search" value="DANB" />danbooru.donmai.us</label></li>
+						<li><label><input id="checkbox" type="checkbox" name="sites-to-search" value="E621" />e621.net</label></li>
+						<li><label><input id="checkbox" type="checkbox" name="sites-to-search" value="GELB" />gelbooru.com</label></li>
+						<li><label><input id="checkbox" type="checkbox" name="sites-to-search" value="RULE" />rule34.xxx</label></li>
+						<li><label><input id="checkbox" type="checkbox" name="sites-to-search" value="SAFE" checked />safebooru.org</label></li>
+					</ul>
+				</div>
+				<div id="options">
+					<h4>Options</h4>
+					<ul>
+						<li>
+							Seconds per Image
+							<br />
+							<input id="seconds-per-image" type="number" min="1" value=6 />
+						</li>
+						<li>
+							Max. Width
+							<br />
+							<input id="max-width" type="number" min="1" /><br />
+						</li>
+						<li>
+							Max. Height
+							<br />
+							<input id="max-height" type="number" min="1" />
+						</li>
+					</ul>
+				</div>
+				<pre id="testing-area-text"></pre>
+				<div id="testing-area-links"></div>
+				
+				<div id="tips">
+				<h4>Tips</h4>
 				<ul>
-					<li><label><input id="checkbox" type="checkbox" name="sites-to-search" value="DANB" />danbooru.donmai.us</label></li>
-					<li><label><input id="checkbox" type="checkbox" name="sites-to-search" value="E621" />e621.net</label></li>
-					<li><label><input id="checkbox" type="checkbox" name="sites-to-search" value="GELB" />gelbooru.com</label></li>
-					<li><label><input id="checkbox" type="checkbox" name="sites-to-search" value="RULE" />rule34.xxx</label></li>
-					<li><label><input id="checkbox" type="checkbox" name="sites-to-search" value="SAFE" checked />safebooru.org</label></li>
+					<li>Full-screen (F11)</li>
+					<li>Left and right arrow keys navigate (when off the textboxes)</li>
+					<li>Enter plays/pauses (when off the textboxes)</li>
+					<li>Issues or suggestions: chirmayanashaar@gmail.com</li>
 				</ul>
-			</div>
-			<div id="options">
-				<h4>Options</h4>
-				<ul>
-					<li>
-						Seconds per Image
-						<br />
-						<input id="seconds-per-image" type="number" min="1" value=6 />
-					</li>
-					<li>
-						Max. Width
-						<br />
-						<input id="max-width" type="number" min="1" /><br />
-					</li>
-					<li>
-						Max. Height
-						<br />
-						<input id="max-height" type="number" min="1" />
-					</li>
-				</ul>
-			</div>
-			<pre id="testing-area-text"></pre>
-			<div id="testing-area-links"></div>
-            
-            <div id="tips">
-			<h4>Tips</h4>
-			<ul>
-				<li>You can use left/right arrow keys to navigate (when off the textboxes)</li>
-				<li>You can use Enter to play/pause (when off the textboxes)</li>
-				<li>Full-screen (F11)</li>
-				<li>Try not to do more than 100 searches per hour (API limit)</li>
-			</ul>
+				</div>
             </div>
-            </div>
-            </div>
+           </div>
 	</body>
 </html>
 

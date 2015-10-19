@@ -14,7 +14,7 @@ var SITE_GELBOORU = 'GELB';
 var SITE_RULE34 = 'RULE';
 var SITE_SAFEBOORU = 'SAFE';
 
-var sitesManager = new SitesManager(20);
+var sitesManager = new SitesManager(20, 10);
 
 sitesManager.addSite(SITE_DANBOORU, 'https://danbooru.donmai.us', 100);
 sitesManager.addSite(SITE_E621, 'https://e621.net', 100);
@@ -29,6 +29,7 @@ function userPressedSearchButton()
 	userPressedPauseButton();
 	updateNavigation();
 	performSearch();
+	saveUserSettings();
 }
 
 function userPressedFirstButton()
@@ -264,8 +265,7 @@ function showThumbnails()
 	
 	if (sitesManager.getNumberOfSortedPosts() > 1)
 	{
-		var numberOfThumbnails = 10;
-		var nextPosts = sitesManager.getNextPosts(numberOfThumbnails);
+		var nextPosts = sitesManager.getNextPostsForThumbnails();
 		
 		for (var i = 0; i < nextPosts.length; i++)
 		{
@@ -278,7 +278,7 @@ function showThumbnails()
 			post.addCallback(function(){
 				var post = this;
 				removeThumbnailGreyness(post.id);
-				sitesManager.preloadNextUnpreloadedImageAfterThisOneIfInRange(post, 10);
+				sitesManager.preloadNextUnpreloadedImageAfterThisOneIfInRange(post);
 			});
 		}
 	}
@@ -402,4 +402,57 @@ function setupLoadingAnimation()
 	currentImage.onload = function() {
 		hideLoadingAnimation();
 	}
+}
+
+function loadUserSettings()
+{
+	chrome.storage.sync.get(['secondsPerImage', 'maxWidth', 'maxHeight', 'sitesToSearch'], function (obj) {
+		if (obj != null)
+		{
+			var secondsPerImage = obj['secondsPerImage'];
+			var maxWidth = obj['maxWidth'];
+			var maxHeight = obj['maxHeight'];
+			var sitesToSearch = obj['sitesToSearch'];
+			
+			if (secondsPerImage != null)
+			{
+				setSecondsPerImage(secondsPerImage);
+			}
+			
+			if (maxWidth != null)
+			{
+				setMaxWidth(maxWidth);
+			}
+			
+			if (maxHeight != null)
+			{
+				setMaxHeight(maxHeight);
+			}
+			
+			if (sitesToSearch != null)
+			{
+				setSelectedSites(sitesToSearch);
+			}
+		}
+	});
+}
+
+function saveUserSettings()
+{
+	saveSecondsPerImage();
+	chrome.storage.sync.set({'maxWidth': getMaxWidth()});
+	chrome.storage.sync.set({'maxHeight': getMaxHeight()});
+	chrome.storage.sync.set({'sitesToSearch': getSelectedSites()});
+}
+
+function saveSecondsPerImage()
+{
+	var secondsPerImage = getSecondsPerImage();
+	
+	if (secondsPerImage == null || secondsPerImage <= 0)
+	{
+		secondsPerImage = 6;
+	}
+	
+	chrome.storage.sync.set({'secondsPerImage': secondsPerImage});
 }

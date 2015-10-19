@@ -67,9 +67,10 @@ Post.prototype.toString = function postToString()
 
 
 // Sites Manager
-var SitesManager = function (numberOfImagesToAlwaysHaveReadyToDisplay)
+var SitesManager = function (numberOfImagesToAlwaysHaveReadyToDisplay, numberOfThumbnails)
 {
 	this.numberOfImagesToAlwaysHaveReadyToDisplay = numberOfImagesToAlwaysHaveReadyToDisplay;
+	this.numberOfThumbnails = numberOfThumbnails;
 	this.siteManagers = [];
 	this.siteManagersCurrentlySearching = 0;
 	this.currentImageNumber = 0;
@@ -343,6 +344,47 @@ SitesManager.prototype.moveToSpecificImage = function(specificImageNumber)
 	}
 }
 
+SitesManager.prototype.isNextImagePreloaded = function(imageId)
+{
+	var nextPosts = this.getNextPostsForThumbnails();
+	
+	for (var i = 0; i <= nextPosts.length; i++)
+	{
+		var nextPost = nextPosts[i];
+		
+		if (nextPost.id == imageId)
+		{
+			return nextPost.isPreloaded;
+		}
+	}
+	
+	return false;
+}
+
+SitesManager.prototype.tryToMoveToPreloadedImage = function(imageId)
+{
+	var nextPosts = this.getNextPostsForThumbnails();
+	
+	for (var i = 0; i < nextPosts.length; i++)
+	{
+		var nextPost = nextPosts[i];
+		
+		if (nextPost.id == imageId)
+		{
+			if (nextPost.isPreloaded)
+			{
+				var imageNumber = this.currentImageNumber + i + 1;
+				
+				this.setCurrentImageNumber(imageNumber);
+				
+				return true;
+			}
+		}
+	}
+	
+	return false;
+}
+
 SitesManager.prototype.setCurrentImageNumber = function(newCurrentImageNumber)
 {
 	this.clearCallbacksForPreloadingImages();
@@ -379,11 +421,11 @@ SitesManager.prototype.getCurrentPost = function()
 	}
 }
 
-SitesManager.prototype.getNextPosts = function(numberOfPosts)
+SitesManager.prototype.getNextPostsForThumbnails = function()
 {
 	if (this.currentImageNumber > 0)
 	{
-		return this.allSortedPosts.slice(this.currentImageNumber, this.currentImageNumber + numberOfPosts);
+		return this.allSortedPosts.slice(this.currentImageNumber, this.currentImageNumber + this.numberOfThumbnails);
 	}
 }
 
@@ -414,15 +456,15 @@ SitesManager.prototype.preloadNextImageIfNeeded = function()
 	if (this.currentImageNumber < this.getTotalImageNumber())
 	{
 		var currentPost = this.getCurrentPost();
-		this.preloadNextUnpreloadedImageIfInRange(10);
+		this.preloadNextUnpreloadedImageIfInRange();
 	}
 }
 
-SitesManager.prototype.preloadNextUnpreloadedImageIfInRange = function(range)
+SitesManager.prototype.preloadNextUnpreloadedImageIfInRange = function()
 {
 	if (this.currentImageNumber < this.getTotalImageNumber())
 	{
-		var nextPosts = this.getNextPosts(range);
+		var nextPosts = this.getNextPostsForThumbnails();
 		
 		for (var i = 0; i < nextPosts.length; i++)
 		{
@@ -437,11 +479,11 @@ SitesManager.prototype.preloadNextUnpreloadedImageIfInRange = function(range)
 	}
 }
 
-SitesManager.prototype.preloadNextUnpreloadedImageAfterThisOneIfInRange = function(startingPost, range)
+SitesManager.prototype.preloadNextUnpreloadedImageAfterThisOneIfInRange = function(startingPost)
 {
 	if (this.currentImageNumber < this.getTotalImageNumber())
 	{
-		var nextPosts = this.getNextPosts(range);
+		var nextPosts = this.getNextPostsForThumbnails();
 		var foundStartingPost = false;
 		
 		for (var i = 0; i < nextPosts.length; i++)
