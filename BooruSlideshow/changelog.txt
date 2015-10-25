@@ -5,6 +5,10 @@ Plans for future updates
 * [Feature] Remove duplicates when searching multiple sites
 * Bug fixes!
 
+Version 4.3
+* [Bug fix] Fixed issues making results from Gelbooru not load (some things on Gelbooru's server changed recently)
+* [UI change] Added message that you need to be logged in to Gelbooru for it to return results
+
 Version 4.2
 * [New feature] Selected Sites and Options are now saved
 * [New feature] Clicking on a thumbnail for a loaded image takes you to it

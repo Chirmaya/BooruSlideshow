@@ -77,6 +77,36 @@ var SitesManager = function (numberOfImagesToAlwaysHaveReadyToDisplay, numberOfT
 	this.allPosts = [];
 	this.numberOfPostsSorted = [];
 	this.searchText = '';
+	
+	this.setupRequestHeaders();
+}
+
+SitesManager.prototype.setupRequestHeaders = function()
+{
+	// Only needed for Gelbooru at the moment
+	var handler = function(details) {
+		details.requestHeaders.push({
+			'name': 'Referer',
+			'value': 'http://gelbooru.com'
+		});
+		return {requestHeaders: details.requestHeaders};
+	};
+	
+	var requestFilter = {
+		urls: ["http://*.gelbooru.com/*"],
+		types: ["image"]
+	};
+	
+	var extraInfoSpec = [
+		"blocking",
+		"requestHeaders"
+	];
+	
+	chrome.webRequest.onBeforeSendHeaders.addListener(
+		handler,
+		requestFilter,
+		extraInfoSpec
+	);
 }
 
 SitesManager.prototype.addSite = function(id, url, pageLimit, numberOfImagesToAlwaysHaveReadyToDisplay)
@@ -574,7 +604,6 @@ SiteManager.prototype.performSearch = function(searchText, doneSearchingSiteCall
 	if (url != null)
 	{
 		displayDebugText(url);
-		
 		this.makeWebsiteRequest(url, doneSearchingSiteCallback);
 	}
 }
@@ -706,6 +735,7 @@ SiteManager.prototype.addPostGelRuleSafe = function(xmlPost)
 				xmlPost.getAttribute('height'),
 				new Date(xmlPost.getAttribute('created_at'))
 			);
+			
 			this.allPosts.push(newPost);
 		}
 	}
