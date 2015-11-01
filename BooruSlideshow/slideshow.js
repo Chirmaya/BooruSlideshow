@@ -38,7 +38,7 @@ function setupSearchEventListeners()
 function setupImageEventListeners()
 {
 	document.getElementById('current-image').addEventListener('click', function() {
-		userPressedCurrentImage();
+		userClickedOnCurrentImage();
 	});
 }
 
@@ -79,11 +79,11 @@ function setupKeyboardButtonEventListeners()
 		{
 			var key = e.which || e.keyCode;
 			if (key == 37)
-				userPressedLeft();
+				userPressedLeftKey();
 			if (key == 39)
-				userPressedRight();
+				userPressedRightKey();
 			if (key == 13)
-				userPressedEnter();
+				userPressedEnterKey();
 		}
 	});
 }

@@ -1,3 +1,14 @@
+::-webkit-scrollbar {
+width: 15px;
+height: 15px;
+}
+::-webkit-scrollbar-track-piece  {
+background-color: #222;
+}
+::-webkit-scrollbar-thumb:vertical {
+background-color: #333;
+}
+
 html {
 	padding: 0px;
 }

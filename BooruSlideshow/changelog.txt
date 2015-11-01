@@ -5,6 +5,13 @@ Plans for future updates
 * [Feature] Remove duplicates when searching multiple sites
 * Bug fixes!
 
+Version 4.4
+* [Feature] Clicking on a thumbnail will try to take you to the image even if it is not yet loaded
+* [Feature] Opening a post by clicking on the image will now pause the slideshow
+* [Bug fix] Slideshow stopping after skipping through images too fast
+* [Bug fix] Slideshow loops back to the first image when clicking Last during a playing slideshow
+* [UI change] Darkened scrollbar so that it is less annoying in fullscreen mode
+
 Version 4.3
 * [Bug fix] Fixed issues making results from Gelbooru not load (some things on Gelbooru's server changed recently)
 * [UI change] Added message that you need to be logged in to Gelbooru for it to return results

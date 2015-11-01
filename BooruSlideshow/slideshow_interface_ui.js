@@ -59,14 +59,15 @@ function displayThumbnail(thumbnailImageUrl, id, showGreyedOut)
 	newThumbnail.classList.add("thumbnail");
 	newThumbnail.setAttribute('title', id);
 	newThumbnail.onclick = function() {
-		if (sitesManager.isNextImagePreloaded)
-		{
-			if (sitesManager.tryToMoveToPreloadedImage(id))
+		//if (sitesManager.isNextImagePreloaded(id))
+		//{
+			if (sitesManager.moveToPreloadedImage(id))
 			{
 				updateImages();
 				updateNavigation();
+				restartSlideshowIfOn();
 			}
-		}
+		//}
 	};
 	
 	var newThumbnailImage = document.createElement("img");
@@ -113,36 +114,12 @@ function showLoadingAnimation()
 	loadingAnimation.style.display = "inline";
 }
 
-function displayDebugText(text)
-{
-	if (IS_DEBUG_ON)
-	{
-		var testingArea = document.getElementById('testing-area-text');
-		
-		if (testingArea.innerHTML == '')
-			testingArea.innerHTML = text;
-		else
-			testingArea.innerHTML = testingArea.innerHTML + "\n" + text;
-		
-		testingArea.style.display = 'block';
-	}
-}
-
-function displayLink(text, url, imgUrl)
-{
-	var testingArea = document.getElementById('testing-area-links');
-	
-	testingArea.innerHTML += '<a href="' + url + '"><img src="' + imgUrl + '" alt="' + text + '"></img></a>';
-}
-
 // Clears
 function clearUI()
 {
 	clearWarningMessage();
 	clearImage();
 	clearThumbnails();
-	clearDebugText();
-	clearDisplayLinks();
 }
 
 function clearWarningMessage()
@@ -169,20 +146,6 @@ function clearThumbnails()
 	{
 		thumbnailList.removeChild(thumbnailList.firstChild);
 	}
-}
-
-function clearDebugText()
-{
-	var testingArea = document.getElementById('testing-area-text');
-	testingArea.innerHTML = '';
-	testingArea.style.display = 'none';
-}
-
-function clearDisplayLinks()
-{
-	var testingArea = document.getElementById('testing-area-links');
-	testingArea.innerHTML = '';
-	testingArea.style.display = 'none';
 }
 
 // Shows

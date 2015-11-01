@@ -44,10 +44,10 @@ Post.prototype.preload = function()
 
 Post.prototype.addCallback = function(callback)
 {
-	if (this.callbackToRunAfterPreloadingFinishes != null)
+	/*if (this.callbackToRunAfterPreloadingFinishes != null)
 	{
 		console.log('overwrote existing callback of post.');
-	}
+	}*/
 	
 	this.callbackToRunAfterPreloadingFinishes = callback;
 }
@@ -77,6 +77,8 @@ var SitesManager = function (numberOfImagesToAlwaysHaveReadyToDisplay, numberOfT
 	this.allPosts = [];
 	this.numberOfPostsSorted = [];
 	this.searchText = '';
+	this.isTryingToLoadMoreImages = false;
+	this.callbackToRunAfterAllSitesFinishedSearching = null;
 	
 	this.setupRequestHeaders();
 }
@@ -132,7 +134,6 @@ SitesManager.prototype.enableSite = function(site)
 		
 		if (siteManager.id == site)
 		{
-			displayDebugText('Enabling site ' + site);
 			siteManager.enable();
 			return;
 		}
@@ -187,13 +188,13 @@ SitesManager.prototype.resetConnections = function()
 	this.allSortedPosts = [];
 	this.numberOfPostsSorted = [];
 	this.searchText = '';
+	this.isTryingToLoadMoreImages = false;
+	this.callbackToRunAfterAllSitesFinishedSearching = null;
 }
 
 SitesManager.prototype.performSearch = function(searchText, doneSearchingAllSitesCallback)
 {
 	this.searchText = searchText;
-	
-	displayDebugText('Searching ' + this.siteManagersCurrentlySearching + ' sites');
 	
 	var sitesManager = this;
 	
@@ -211,6 +212,7 @@ SitesManager.prototype.performSearchUntilWeHaveEnoughPosts = function(doneSearch
 {
 	if (this.doMoreImagesNeedToBeLoaded())
 	{
+		
 		var sitesManager = this;
 		this.searchSites(function() {
 			sitesManager.performSearchUntilWeHaveEnoughPosts(doneSearchingAllSitesCallback);
@@ -235,7 +237,6 @@ SitesManager.prototype.searchSites = function(doneSearchingSitesCallback)
 			var sitesManager = this;
 			
 			siteManager.performSearch(searchText, function() {
-				displayDebugText('siteManagersCurrentlySearching = ' + sitesManager.siteManagersCurrentlySearching);
 				sitesManager.siteManagersCurrentlySearching--;
 				
 				if (sitesManager.siteManagersCurrentlySearching == 0)
@@ -278,7 +279,6 @@ SitesManager.prototype.buildSortedPostList = function()
 			}
 		}
 	}
-	displayDebugText('about to sort');
 	
 	postsToSort.sort(function(a,b) {
 		return b.date.getTime() - a.date.getTime();
@@ -333,10 +333,20 @@ SitesManager.prototype.moveToLastImage = function(callbackForAfterPossiblyLoadin
 	var totalImageNumber = this.getTotalImageNumber();
 	this.setCurrentImageNumber(totalImageNumber);
 	
+	this.isTryingToLoadMoreImages = true;
+	
 	var sitesManager = this;
 	
 	this.performSearchUntilWeHaveEnoughPosts(function() {
 		callbackForAfterPossiblyLoadingMoreImages.call(sitesManager);
+		
+		this.isTryingToLoadMoreImages = false;
+		
+		if (this.callbackToRunAfterAllSitesFinishedSearching != null)
+		{
+			this.callbackToRunAfterAllSitesFinishedSearching.call(sitesManager);
+			this.callbackToRunAfterAllSitesFinishedSearching = null;
+		}
 		
 		this.preloadNextImageIfNeeded();
 	});
@@ -415,6 +425,27 @@ SitesManager.prototype.tryToMoveToPreloadedImage = function(imageId)
 	return false;
 }
 
+SitesManager.prototype.moveToPreloadedImage = function(imageId)
+{
+	var nextPosts = this.getNextPostsForThumbnails();
+	
+	for (var i = 0; i < nextPosts.length; i++)
+	{
+		var nextPost = nextPosts[i];
+		
+		if (nextPost.id == imageId)
+		{
+			var imageNumber = this.currentImageNumber + i + 1;
+			
+			this.setCurrentImageNumber(imageNumber);
+			
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 SitesManager.prototype.setCurrentImageNumber = function(newCurrentImageNumber)
 {
 	this.clearCallbacksForPreloadingImages();
@@ -432,15 +463,27 @@ SitesManager.prototype.clearCallbacksForPreloadingImages = function()
 	}
 }
 
+SitesManager.prototype.clearCallbacksForLoadingImages = function()
+{
+	this.callbackToRunAfterAllSitesFinishedSearching = null;
+}
+
 SitesManager.prototype.runCodeWhenCurrentImageFinishesLoading = function(callback)
 {
 	var currentPost = this.getCurrentPost();
+	var sitesManager = this;
+	
 	currentPost.addCallback(function(){
-		if (currentPost == this.getCurrentPost())
+		if (currentPost == sitesManager.getCurrentPost())
 		{
 			callback.call();
 		}
 	});
+}
+
+SitesManager.prototype.runCodeWhenFinishGettingMoreImages = function(callback)
+{
+	this.callbackToRunAfterAllSitesFinishedSearching = callback
 }
 
 SitesManager.prototype.getCurrentPost = function()
@@ -573,7 +616,7 @@ SiteManager.prototype.buildRequestUrl = function(searchText, pageNumber)
 		case SITE_E621:
 			return this.url + '/post/index.json?tags=' + searchText + '&page=' + pageNumber + '&limit=' + this.pageLimit;
 		default:
-			displayDebugText('Error making the request.');
+			console.log('Error building the URL.');
 			return;
 	}
 }
@@ -603,7 +646,6 @@ SiteManager.prototype.performSearch = function(searchText, doneSearchingSiteCall
 	
 	if (url != null)
 	{
-		displayDebugText(url);
 		this.makeWebsiteRequest(url, doneSearchingSiteCallback);
 	}
 }
@@ -632,21 +674,15 @@ SiteManager.prototype.makeWebsiteRequest = function(url, doneSearchingSiteCallba
 	var siteManager = this;
 	
 	this.xhr.onload = function() {
-		displayDebugText('handle request response');
 		siteManager.lastPageLoaded++;
-		displayDebugText('pageNumber = ' + siteManager.lastPageLoaded);
-		displayDebugText(siteManager.id);
 		
 		var responseText = siteManager.xhr.responseText;
 		siteManager.addPosts(responseText);
-		
-		displayDebugText(siteManager.id + ' total image number =  ' + siteManager.getTotalImageNumber());
 		
 		doneSearchingSiteCallback.call(siteManager);
 	};
 	
 	this.xhr.onerror = function() {
-		displayDebugText('Error making the request.');
 		displayWarningMessage('Error making the request to the website');
 	};
 	
@@ -672,7 +708,6 @@ SiteManager.prototype.addXmlPosts = function(xmlResponseText)
 	
 	var xmlPosts = xml.getElementsByTagName("post");
 	
-	displayDebugText('site ' + this.id + ' has ' + xmlPosts.length + ' xml objects');
 	this.hasExhaustedSearch = (xmlPosts.length < this.pageLimit);
 	
 	for (var i = 0; i < xmlPosts.length; i++)
@@ -686,7 +721,6 @@ SiteManager.prototype.addXmlPosts = function(xmlResponseText)
 SiteManager.prototype.addJsonPosts = function(jsonResponseText)
 {
 	var jsonPosts = JSON.parse(jsonResponseText);
-	displayDebugText('site ' + this.id + ' has ' + jsonPosts.length + ' json objects');
 	this.hasExhaustedSearch = (jsonPosts.length < this.pageLimit);
 	
 	for (var i = 0; i < jsonPosts.length; i++)

@@ -1,4 +1,3 @@
-var IS_DEBUG_ON = false;
 var MILLISECONDS_PER_SECOND = 1000;
 
 var numberOfImagesToAlwaysHaveReadyToDisplay = 20;
@@ -6,7 +5,6 @@ var isPlaying = false;
 var timer = null;
 var timerMs = 0;
 var searchText = "";
-
 
 var SITE_DANBOORU = 'DANB';
 var SITE_E621 = 'E621';
@@ -22,33 +20,76 @@ sitesManager.addSite(SITE_GELBOORU, 'http://gelbooru.com', 100);
 sitesManager.addSite(SITE_RULE34, 'http://rule34.xxx', 100);
 sitesManager.addSite(SITE_SAFEBOORU, 'http://safebooru.org', 100);
 
-function userPressedSearchButton()
-{
-	sitesManager.resetConnections();
-	clearUI();
-	userPressedPauseButton();
-	updateNavigation();
-	performSearch();
-	saveUserSettings();
-}
-
+// User actions
 function userPressedFirstButton()
 {
-	restartSlideshowIfOn();
 	moveToFirstImage();
+	restartSlideshowIfOn();
 }
 
+function userPressedPreviousButton()
+{
+	moveToPreviousImage();
+	restartSlideshowIfOn();
+}
+
+function userPressedNextButton()
+{
+	moveToNextImage();
+	restartSlideshowIfOn();
+}
+
+function userPressedLastButton()
+{
+	moveToLastImage(function(){
+		restartSlideshowIfOn();
+	});
+}
+
+function userPressedPlayButton()
+{
+	attemptToStartSlideshow();
+}
+
+function userPressedPauseButton()
+{
+	pauseSlideshow();
+}
+
+function userPressedSearchButton()
+{
+	attemptToDoSearch();
+}
+
+function userPressedLeftKey()
+{
+	moveToPreviousImage();
+	restartSlideshowIfOn();
+}
+
+function userPressedRightKey()
+{
+	moveToNextImage();
+	restartSlideshowIfOn();
+}
+
+function userPressedEnterKey()
+{
+	tryToPlayOrPause();
+}
+
+function userClickedOnCurrentImage()
+{
+	pauseSlideshow();
+	openCurrentPostInNewWindow();
+}
+
+// Slideshow actions
 function moveToFirstImage()
 {
 	setCurrentImageNumberToFirst();
 	updateImages();
 	updateNavigation();
-}
-
-function userPressedPreviousButton()
-{
-	restartSlideshowIfOn();
-	moveToPreviousImage();
 }
 
 function moveToPreviousImage()
@@ -58,12 +99,6 @@ function moveToPreviousImage()
 	updateNavigation();
 }
 
-function userPressedNextButton()
-{
-	restartSlideshowIfOn();
-	moveToNextImage();
-}
-
 function moveToNextImage()
 {
 	increaseCurrentImageNumber();
@@ -71,17 +106,24 @@ function moveToNextImage()
 	updateNavigation();
 }
 
-function userPressedLastButton()
+function moveToLastImage(callback)
 {
-	restartSlideshowIfOn();
-	moveToLastImage();
+	setCurrentImageNumberToLast(function(){
+		updateNavigation();
+		updateImages();
+		callback.call();
+	});
 }
 
-function moveToLastImage()
+function tryToPlayOrPause()
 {
-	setCurrentImageNumberToLast();
-	updateImages();
-	updateNavigation();
+	if (hasImagesToDisplay())
+	{
+		if (isPlaying)
+			userPressedPauseButton();
+		else
+			userPressedPlayButton();
+	}
 }
 
 function restartSlideshowIfOn()
@@ -95,7 +137,7 @@ function restartSlideshowIfOn()
 	}
 }
 
-function userPressedPlayButton()
+function attemptToStartSlideshow()
 {
 	var secondsPerImage = getSecondsPerImage();
 	
@@ -135,51 +177,41 @@ function startCountdown(secondsPerImage)
 		if (hasNextImage())
 		{
 			moveToNextImage();
+			tryToStartCountdown(secondsPerImage);
+		}
+		else if (isTryingToLoadMoreImages())
+		{
+			sitesManager.runCodeWhenFinishGettingMoreImages(function(){
+				tryToStartCountdown(secondsPerImage);
+			});
 		}
 		else
 		{
 			moveToFirstImage();
+			tryToStartCountdown(secondsPerImage);
 		}
 		
-		tryToStartCountdown(secondsPerImage);
 	}, millisecondsPerImage);
 }
 
-function userPressedPauseButton()
+function pauseSlideshow()
 {
 	clearTimeout(timer);
 	sitesManager.clearCallbacksForPreloadingImages();
+	sitesManager.clearCallbacksForLoadingImages();
 	
 	isPlaying = false;
 	updatePlayPauseButtons()
 }
 
-function userPressedLeft()
+function attemptToDoSearch()
 {
-	userPressedPreviousButton();
-}
-
-function userPressedRight()
-{
-	userPressedNextButton();
-}
-
-function userPressedEnter()
-{
-	if (hasImagesToDisplay())
-	{
-		if (isPlaying)
-			userPressedPauseButton();
-		else
-			userPressedPlayButton();
-	}
-}
-
-function userPressedCurrentImage()
-{
-	var currentPost = sitesManager.getCurrentPost();
-	
-	window.open(currentPost.postOnSiteUrl, '_blank');
+	sitesManager.resetConnections();
+	clearUI();
+	userPressedPauseButton();
+	updateNavigation();
+	performSearch();
+	saveUserSettings();
 }
 
 function performSearch()
@@ -200,9 +232,6 @@ function performSearch()
 	
 	sitesManager.enableSites(selectedSites);
 	sitesManager.performSearch(searchText, function() {
-		displayDebugText('Finished searching all sites.');
-		displayDebugText(sitesManager.getTotalImageNumber() + ' images are ready to be displayed.');
-		
 		updateImages();
 		updateNavigation();
 	});
@@ -211,14 +240,11 @@ function performSearch()
 function setCurrentImageNumberToFirst()
 {
 	sitesManager.moveToFirstImage();
-	updateNavigation();
 }
 
-function setCurrentImageNumberToLast()
+function setCurrentImageNumberToLast(callback)
 {
-	sitesManager.moveToLastImage(function() {
-		updateNavigation();
-	});
+	sitesManager.moveToLastImage(callback);
 }
 
 function increaseCurrentImageNumber()
@@ -375,6 +401,7 @@ function updateNextLastButtons()
 	}
 }
 
+// Support methods
 function totalImageNumber()
 {
 	return sitesManager.getTotalImageNumber();
@@ -395,6 +422,11 @@ function hasNextImage()
 	return (totalImageNumber() >= getCurrentImageNumber() + 1);
 }
 
+function isTryingToLoadMoreImages()
+{
+	return (sitesManager.isTryingToLoadMoreImages);
+}
+
 function setupLoadingAnimation()
 {
 	var currentImage = document.getElementById('current-image');
@@ -404,6 +436,14 @@ function setupLoadingAnimation()
 	}
 }
 
+function openCurrentPostInNewWindow()
+{
+	var currentPost = sitesManager.getCurrentPost();
+	
+	window.open(currentPost.postOnSiteUrl, '_blank');
+}
+
+// User settings
 function loadUserSettings()
 {
 	chrome.storage.sync.get(['secondsPerImage', 'maxWidth', 'maxHeight', 'sitesToSearch'], function (obj) {
