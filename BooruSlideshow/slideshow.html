@@ -2,18 +2,14 @@
 <html>
 	<head>
 		<title>Booru Slideshow</title>
-		<link rel="stylesheet" type="text/css" href="slideshow.css">
-		<script src="slideshow_interface_ui.js"></script>
-		<script src="slideshow_objects.js"></script>
-		<script src="slideshow_functions.js"></script>
-		<script src="slideshow.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/slideshow.css">
 	</head>
 	
 	<body>
 		<p id="warning-message"></p>
 		<div id="image-wrapper">
 			<img id="current-image" />
-			<img id="loading-animation" src="loading.gif" alt="Loading Image" />
+			<img id="loading-animation" src="img/loading.gif" alt="Loading Image" />
 		</div>
 		<div id="indentation">
 			<div id="navigation">
@@ -75,7 +71,14 @@
 				</ul>
 				</div>
             </div>
-           </div>
+        </div>
+		
+		<script src="js/ui/slideshow_interface_ui.js"></script>
+		<script src="js/objects/sites_manager.js"></script>
+		<script src="js/objects/site_manager.js"></script>
+		<script src="js/objects/post.js"></script>
+		<script src="js/slideshow_functions.js"></script>
+		<script src="js/slideshow_initialize.js"></script>
 	</body>
 </html>
 

@@ -8,15 +8,15 @@
 
 	"browser_action":
 	{
-		"default_icon": "bs_icon_19.png",
+		"default_icon": "img/bs_icon_19.png",
 		"default_popup": "popup.html"
 	},
 	
 	"icons":
 	{
-		"16": "bs_icon_16.png",
-		"48": "bs_icon_48.png",
-		"128": "bs_icon_128.png"
+		"16": "img/bs_icon_16.png",
+		"48": "img/bs_icon_48.png",
+		"128": "img/bs_icon_128.png"
 	},
 	
 	"permissions":
