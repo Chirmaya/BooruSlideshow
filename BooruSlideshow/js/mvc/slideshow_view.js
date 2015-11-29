@@ -17,6 +17,7 @@ function SlideshowView(slideshowModel, uiElements) {
     this.secondsPerImageChangedEvent = new Event(this);
     this.maxWidthChangedEvent = new Event(this);
     this.maxHeightChangedEvent = new Event(this);
+    this.autoFitImageChangedEvent = new Event(this);
 
     var _this = this;
 
@@ -43,6 +44,10 @@ function SlideshowView(slideshowModel, uiElements) {
 
     this._model.maxHeightUpdatedEvent.attach(function () {
         _this.updateMaxHeight();
+    });
+
+    this._model.autoFitImageUpdatedEvent.attach(function () {
+        _this.updateAutoFitImage();
     });
 
     // Attach UI element listeners
@@ -139,6 +144,10 @@ function SlideshowView(slideshowModel, uiElements) {
 
     this.uiElements.maxHeightTextBox.addEventListener('change', function() {
         _this.maxHeightChangedEvent.notify();
+    });
+
+    this.uiElements.autoFitImageCheckBox.addEventListener('change', function () {
+        _this.autoFitImageChangedEvent.notify();
     });
 
     this.initialize();
@@ -445,6 +454,14 @@ SlideshowView.prototype = {
         }
 
         this.uiElements.maxHeightTextBox.value = maxHeight;
+    },
+
+    getAutoFitImage: function () {
+        return this.uiElements.autoFitImageCheckBox.checked;
+    },
+
+    updateAutoFitImage: function () {
+        this.uiElements.autoFitImageCheckBox.checked = this._model.autoFitImage;
     },
 
     openUrlInNewWindow: function (url) {

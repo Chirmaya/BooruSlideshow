@@ -142,26 +142,8 @@ button:disabled {
 
 #sites-to-search,
 #options,
-#tips
-{
-	height: 250px;
-}
-
-#sites-to-search {
-	margin-right:2%;
-	font-size: 100%;
-	text-align:center;
-	background: #181a1f;
-    width: 25%;
-	padding: 10px;
-	border-radius: 5px;
-	display: inline-block;
-	vertical-align: middle;
-	overflow:auto;
-}
-	
-#options {
-	margin-right:2%;
+#tips {
+	height: 280px;
 	font-size: 100%;
 	text-align:center;
 	background: #181a1f;
@@ -173,21 +155,14 @@ button:disabled {
 	vertical-align: middle;
 	overflow:auto;
 }
-	
-#tips {
-	font-size: 100%;
-	text-align:center;
-	background: #181a1f;
-    width: 25%;
-	padding: 10px;
-	border-radius: 5px;
-	color:fff;
-	display: inline-block;
-	vertical-align: middle;
-	overflow:auto;
+
+#sites-to-search,
+#options
+{
+	margin-right:2%;
 }
 	
-#options input {
+#options input[type=number] {
 	height: 10%;
 	text-align:center;
 	background: #292d36;

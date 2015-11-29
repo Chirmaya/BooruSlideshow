@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'sitesToSearch': document.getElementsByName('sites-to-search'),
         'secondsPerImageTextBox': document.getElementById('seconds-per-image'),
         'maxWidthTextBox': document.getElementById('max-width'),
-        'maxHeightTextBox': document.getElementById('max-height')
+        'maxHeightTextBox': document.getElementById('max-height'),
+        'autoFitImageCheckBox': document.getElementById('auto-fit-image')
     });
 });

@@ -68,6 +68,10 @@ function SlideshowController(uiElements) {
         _this.maxHeightChanged();
     });
 
+    this._view.autoFitImageChangedEvent.attach(function () {
+        _this.autoFitImageChanged();
+    });
+
     this._model.loadUserSettings();
 }
 
@@ -194,5 +198,10 @@ SlideshowController.prototype = {
         
         this._model.maxHeight = maxHeightText;
         this._model.saveMaxHeight();
+    },
+
+    autoFitImageChanged: function () {
+        this._model.autoFitImage = this._view.getAutoFitImage();
+        this._model.saveAutoFitImage();
     }
 };

@@ -12,6 +12,7 @@ function SlideshowModel() {
     this.secondsPerImage = 6;
     this.maxWidth = null;
     this.maxHeight = null;
+    this.autoFitImage = false;
 
     this.isPlaying = false;
     this.timer = null;
@@ -25,6 +26,7 @@ function SlideshowModel() {
     this.secondsPerImageUpdatedEvent = new Event(this);
     this.maxWidthUpdatedEvent = new Event(this);
     this.maxHeightUpdatedEvent = new Event(this);
+    this.autoFitImageUpdatedEvent = new Event(this);
 
     this.initialize();
 }
@@ -232,13 +234,14 @@ SlideshowModel.prototype = {
     loadUserSettings: function () {
         var _this = this;
 
-        chrome.storage.sync.get(['sitesToSearch', 'secondsPerImage', 'maxWidth', 'maxHeight'], function (obj) {
+        chrome.storage.sync.get(['sitesToSearch', 'secondsPerImage', 'maxWidth', 'maxHeight', 'autoFitImage'], function (obj) {
             if (obj != null)
             {
                 var sitesToSearch = obj['sitesToSearch'];
                 var secondsPerImage = obj['secondsPerImage'];
                 var maxWidth = obj['maxWidth'];
                 var maxHeight = obj['maxHeight'];
+                var autoFitImage = obj['autoFitImage'];
 			    
                 if (sitesToSearch != null)
                 {
@@ -274,6 +277,16 @@ SlideshowModel.prototype = {
 
                     _this.maxHeightUpdatedEvent.notify();
                 }
+                
+                if (autoFitImage != null)
+                {
+                    if (_this.autoFitImage != autoFitImage)
+                    {
+                        _this.autoFitImage = autoFitImage;
+
+                        _this.autoFitImageUpdatedEvent.notify();
+                    }
+                }
             }
         });
     },
@@ -292,5 +305,9 @@ SlideshowModel.prototype = {
 
     saveMaxHeight: function () {
         chrome.storage.sync.set({'maxHeight': this.maxHeight});
+    },
+
+    saveAutoFitImage: function () {
+        chrome.storage.sync.set({'autoFitImage': this.autoFitImage});
     }
 };
