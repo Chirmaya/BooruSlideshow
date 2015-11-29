@@ -133,11 +133,8 @@ SlideshowController.prototype = {
             this._view.displayWarningMessage('No sites were selected to be searched.');
             return;
         }
-        
-        var _this = this;
 
         this._model.performSearch(searchText);
-        // this._model.saveUserSettings();
     },
 
     sitesToSearchChanged: function(checked, site) {

@@ -99,6 +99,7 @@ function SlideshowView(slideshowModel, uiElements) {
         }
 
         if (document.activeElement !== _this.uiElements.searchTextBox &&
+            document.activeElement !== _this.uiElements.searchButton &&
 			document.activeElement !== _this.uiElements.secondsPerImageTextBox &&
 			document.activeElement !== _this.uiElements.maxWidthTextBox &&
 			document.activeElement !== _this.uiElements.maxHeightTextBox) {
@@ -151,6 +152,7 @@ SlideshowView.prototype = {
     clearUI: function () {
         this.clearWarningMessage();
         this.clearImage();
+        this.hideNavigation();
         this.clearThumbnails();
     },
 
