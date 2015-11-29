@@ -117,6 +117,7 @@ SlideshowController.prototype = {
 
     searchButtonClicked: function () {
         this._view.clearUI();
+        this._view.removeFocusFromSearchButton();
 
         var searchText = this._model.searchText;
 

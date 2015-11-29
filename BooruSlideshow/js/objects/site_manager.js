@@ -131,7 +131,7 @@ SiteManager.prototype.addJsonPosts = function(jsonResponseText)
 	
 	for (var i = 0; i < jsonPosts.length; i++)
 	{
-		var jsonPost = jsonPosts[i];
+	    var jsonPost = jsonPosts[i];
 		
 		this.addJsonPost(jsonPost);
 	}

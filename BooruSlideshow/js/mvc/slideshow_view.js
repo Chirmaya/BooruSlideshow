@@ -49,22 +49,6 @@ function SlideshowView(slideshowModel, uiElements) {
     this.uiElements.currentImage.addEventListener('click', function() {
         _this.currentImageClickedEvent.notify();
     });
-
-    this.uiElements.searchTextBox.addEventListener('change', function () {
-        _this.searchTextChangedEvent.notify();
-    });
-
-    this.uiElements.searchTextBox.addEventListener('keypress', function (e) {
-        var key = e.which || e.keyCode;
-
-        if (key == 13) {
-            _this.enterKeyPressedInSearchTextBoxEvent.notify();
-        }
-    });
-
-    this.uiElements.searchButton.addEventListener('click', function() {
-        _this.searchButtonClickedEvent.notify();
-    });
     
     this.uiElements.firstNavButton.addEventListener('click', function() {
         _this.firstNavButtonClickedEvent.notify();
@@ -99,7 +83,6 @@ function SlideshowView(slideshowModel, uiElements) {
         }
 
         if (document.activeElement !== _this.uiElements.searchTextBox &&
-            document.activeElement !== _this.uiElements.searchButton &&
 			document.activeElement !== _this.uiElements.secondsPerImageTextBox &&
 			document.activeElement !== _this.uiElements.maxWidthTextBox &&
 			document.activeElement !== _this.uiElements.maxHeightTextBox) {
@@ -109,8 +92,27 @@ function SlideshowView(slideshowModel, uiElements) {
             if (key == 39)
                 _this.nextNavButtonClickedEvent.notify();
             if (key == 13)
-                _this.enterKeyPressedOutsideOfSearchTextBoxEvent.notify();
+            {
+                if (document.activeElement !== _this.uiElements.searchButton)
+                    _this.enterKeyPressedOutsideOfSearchTextBoxEvent.notify();
+            }
         }
+    });
+
+    this.uiElements.searchTextBox.addEventListener('change', function () {
+        _this.searchTextChangedEvent.notify();
+    });
+
+    this.uiElements.searchTextBox.addEventListener('keypress', function (e) {
+        var key = e.which || e.keyCode;
+
+        if (key == 13) {
+            _this.enterKeyPressedInSearchTextBoxEvent.notify();
+        }
+    });
+
+    this.uiElements.searchButton.addEventListener('click', function () {
+        _this.searchButtonClickedEvent.notify();
     });
 
     var sitesToSearchElements = this.uiElements.sitesToSearch;
@@ -383,6 +385,10 @@ SlideshowView.prototype = {
 
     setFocusToSearchBox: function() {
         this.uiElements.searchTextBox.focus();
+    },
+
+    removeFocusFromSearchButton: function () {
+        this.uiElements.searchButton.blur();
     },
 
     updateSitesToSearch: function () {
