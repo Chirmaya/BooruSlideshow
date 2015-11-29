@@ -3,7 +3,10 @@ Changelog
 Plans for future updates
 * [Feature] Make options collapsible
 * [Feature] Remove duplicates when searching multiple sites
-* Bug fixes!
+
+Version 5.0
+* [Code change] Reworked back end to make it more responsive and easier to manage for future features.
+* [Bug fix] Settings are now saved right after being changed.
 
 Version 4.4
 * [Feature] Clicking on a thumbnail will try to take you to the image even if it is not yet loaded
