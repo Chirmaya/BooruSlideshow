@@ -1,7 +1,7 @@
-var SitesManager = function (numberOfImagesToAlwaysHaveReadyToDisplay, numberOfThumbnails)
+var SitesManager = function (numberOfImagesToAlwaysHaveReadyToDisplay, maxNumberOfThumbnails)
 {
 	this.numberOfImagesToAlwaysHaveReadyToDisplay = numberOfImagesToAlwaysHaveReadyToDisplay;
-	this.numberOfThumbnails = numberOfThumbnails;
+	this.maxNumberOfThumbnails = maxNumberOfThumbnails;
 	this.siteManagers = [];
 	this.siteManagersCurrentlySearching = 0;
 	this.currentImageNumber = 0;
@@ -143,7 +143,6 @@ SitesManager.prototype.performSearchUntilWeHaveEnoughPosts = function(doneSearch
 {
 	if (this.doMoreImagesNeedToBeLoaded())
 	{
-		
 		var sitesManager = this;
 		this.searchSites(function() {
 			sitesManager.performSearchUntilWeHaveEnoughPosts(doneSearchingAllSitesCallback);
@@ -167,7 +166,7 @@ SitesManager.prototype.searchSites = function(doneSearchingSitesCallback)
 		{
 			var sitesManager = this;
 			
-			siteManager.performSearch(searchText, function() {
+			siteManager.performSearch(this.searchText, function() {
 				sitesManager.siteManagersCurrentlySearching--;
 				
 				if (sitesManager.siteManagersCurrentlySearching == 0)
@@ -182,7 +181,6 @@ SitesManager.prototype.searchSites = function(doneSearchingSitesCallback)
 
 SitesManager.prototype.buildSortedPostList = function()
 {
-	var numberOfAlreadySortedPosts = this.getNumberOfSortedPosts();
 	var postsToSort = [];
 	
 	for (var i = 0; i < this.siteManagers.length; i++)
@@ -299,7 +297,7 @@ SitesManager.prototype.increaseCurrentImageNumber = function(callbackForAfterPos
 	}
 }
 
-SitesManager.prototype.moveToPreviousImage = function()
+SitesManager.prototype.decreaseCurrentImageNumber = function()
 {
 	if (this.currentImageNumber > 1)
 	{
@@ -356,7 +354,7 @@ SitesManager.prototype.tryToMoveToPreloadedImage = function(imageId)
 	return false;
 }
 
-SitesManager.prototype.moveToPreloadedImage = function(imageId)
+SitesManager.prototype.moveToImage = function(imageId)
 {
 	var nextPosts = this.getNextPostsForThumbnails();
 	
@@ -429,7 +427,7 @@ SitesManager.prototype.getNextPostsForThumbnails = function()
 {
 	if (this.currentImageNumber > 0)
 	{
-		return this.allSortedPosts.slice(this.currentImageNumber, this.currentImageNumber + this.numberOfThumbnails);
+	    return this.allSortedPosts.slice(this.currentImageNumber, this.currentImageNumber + this.maxNumberOfThumbnails);
 	}
 }
 

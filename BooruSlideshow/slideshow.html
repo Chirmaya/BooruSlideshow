@@ -13,7 +13,7 @@
 		</div>
 		<div id="indentation">
 			<div id="navigation">
-				<span id="current-image-number">3</span> of <span id="total-image-number">2485</span><br />
+				<span id="current-image-number"></span> of <span id="total-image-number"></span><br />
 				<button class="nav-button" id="first-button">&lt;&lt;</button>
 				<button class="nav-button" id="previous-button">&lt;</button>
 				<button class="nav-button" id="play-button">&#9658;</button>
@@ -33,11 +33,11 @@
 				<div id="sites-to-search">
 					<h4>Sites to Search</h4>
 					<ul>
-						<li><label><input id="checkbox" type="checkbox" name="sites-to-search" value="DANB" />danbooru.donmai.us</label></li>
-						<li><label><input id="checkbox" type="checkbox" name="sites-to-search" value="E621" />e621.net</label></li>
-						<li><label><input id="checkbox" type="checkbox" name="sites-to-search" value="GELB" />gelbooru.com (need to be logged in)</label></li>
-						<li><label><input id="checkbox" type="checkbox" name="sites-to-search" value="RULE" />rule34.xxx</label></li>
-						<li><label><input id="checkbox" type="checkbox" name="sites-to-search" value="SAFE" checked />safebooru.org</label></li>
+						<li><label><input type="checkbox" name="sites-to-search" value="DANB" />danbooru.donmai.us</label></li>
+						<li><label><input type="checkbox" name="sites-to-search" value="E621" />e621.net</label></li>
+						<li><label><input type="checkbox" name="sites-to-search" value="GELB" />gelbooru.com (need to be logged in)</label></li>
+						<li><label><input type="checkbox" name="sites-to-search" value="RULE" />rule34.xxx</label></li>
+						<li><label><input type="checkbox" name="sites-to-search" value="SAFE" />safebooru.org</label></li>
 					</ul>
 				</div>
 				<div id="options">
@@ -46,7 +46,7 @@
 						<li>
 							Seconds per Image
 							<br />
-							<input id="seconds-per-image" type="number" min="1" value=6 />
+							<input id="seconds-per-image" type="number" min="1" />
 						</li>
 						<li>
 							Max. Width
@@ -77,6 +77,11 @@
 		<script src="js/objects/sites_manager.js"></script>
 		<script src="js/objects/site_manager.js"></script>
 		<script src="js/objects/post.js"></script>
+		<script src="js/objects/event.js"></script>
+		<script src="js/mvc/slideshow_model.js"></script>
+		<script src="js/mvc/slideshow_view.js"></script>
+		<script src="js/mvc/slideshow_controller.js"></script>
+		<script src="js/globals.js"></script>
 		<script src="js/slideshow_functions.js"></script>
 		<script src="js/slideshow_initialize.js"></script>
 	</body>

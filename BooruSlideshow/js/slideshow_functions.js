@@ -1,25 +1,3 @@
-var MILLISECONDS_PER_SECOND = 1000;
-
-var numberOfImagesToAlwaysHaveReadyToDisplay = 20;
-var isPlaying = false;
-var timer = null;
-var timerMs = 0;
-var searchText = "";
-
-var SITE_DANBOORU = 'DANB';
-var SITE_E621 = 'E621';
-var SITE_GELBOORU = 'GELB';
-var SITE_RULE34 = 'RULE';
-var SITE_SAFEBOORU = 'SAFE';
-
-var sitesManager = new SitesManager(20, 10);
-
-sitesManager.addSite(SITE_DANBOORU, 'https://danbooru.donmai.us', 100);
-sitesManager.addSite(SITE_E621, 'https://e621.net', 100);
-sitesManager.addSite(SITE_GELBOORU, 'http://gelbooru.com', 100);
-sitesManager.addSite(SITE_RULE34, 'http://rule34.xxx', 100);
-sitesManager.addSite(SITE_SAFEBOORU, 'http://safebooru.org', 100);
-
 // User actions
 function userPressedFirstButton()
 {
@@ -256,7 +234,7 @@ function increaseCurrentImageNumber()
 
 function decreaseCurrentImageNumber()
 {
-	sitesManager.moveToPreviousImage();
+	sitesManager.decreaseCurrentImageNumber();
 	updateNavigation();
 }
 
