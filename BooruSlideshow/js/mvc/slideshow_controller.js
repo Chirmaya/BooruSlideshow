@@ -67,6 +67,8 @@ function SlideshowController(uiElements) {
     this._view.maxHeightChangedEvent.attach(function () {
         _this.maxHeightChanged();
     });
+
+    this._model.loadUserSettings();
 }
 
 SlideshowController.prototype = {
@@ -140,8 +142,7 @@ SlideshowController.prototype = {
 
     sitesToSearchChanged: function(checked, site) {
         this._model.sitesToSearch[site] = checked;
-
-        console.log(this._model.getSelectedSitesToSearch());
+        this._model.saveSitesToSearch();
     },
 
     secondsPerImageChanged: function () {
@@ -157,7 +158,7 @@ SlideshowController.prototype = {
             return;
 
         this._model.secondsPerImage = secondsPerImageText;
-        // this._model.saveUserSettings();
+        this._model.saveSecondsPerImage();
     },
 
     maxWidthChanged: function () {
@@ -176,7 +177,7 @@ SlideshowController.prototype = {
             return;
         
         this._model.maxWidth = maxWidthText;
-        // this._model.saveUserSettings();
+        this._model.saveMaxWidth();
     },
 
     maxHeightChanged: function () {
@@ -194,6 +195,6 @@ SlideshowController.prototype = {
             return;
         
         this._model.maxHeight = maxHeightText;
-        // this._model.saveUserSettings();
+        this._model.saveMaxHeight();
     }
 };

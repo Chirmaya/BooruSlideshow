@@ -29,6 +29,22 @@ function SlideshowView(slideshowModel, uiElements) {
         _this.updatePlayPauseButtons();
     });
 
+    this._model.sitesToSearchUpdatedEvent.attach(function () {
+        _this.updateSitesToSearch();
+    });
+
+    this._model.secondsPerImageUpdatedEvent.attach(function () {
+        _this.updateSecondsPerImage();
+    });
+
+    this._model.maxWidthUpdatedEvent.attach(function () {
+        _this.updateMaxWidth();
+    });
+
+    this._model.maxHeightUpdatedEvent.attach(function () {
+        _this.updateMaxHeight();
+    });
+
     // Attach UI element listeners
     this.uiElements.currentImage.addEventListener('click', function() {
         _this.currentImageClickedEvent.notify();

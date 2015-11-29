@@ -9,9 +9,9 @@ function SlideshowModel() {
         [SITE_SAFEBOORU]: true,
     };
 
-    this.secondsPerImage = 2;
+    this.secondsPerImage = 6;
     this.maxWidth = null;
-    this.maxHeight = 500;
+    this.maxHeight = null;
 
     this.isPlaying = false;
     this.timer = null;
@@ -21,6 +21,10 @@ function SlideshowModel() {
 
     this.currentImageChangedEvent = new Event(this);
     this.playingChangedEvent = new Event(this);
+    this.sitesToSearchUpdatedEvent = new Event(this);
+    this.secondsPerImageUpdatedEvent = new Event(this);
+    this.maxWidthUpdatedEvent = new Event(this);
+    this.maxHeightUpdatedEvent = new Event(this);
 
     this.initialize();
 }
@@ -37,8 +41,6 @@ SlideshowModel.prototype = {
         this.sitesManager.addSite(SITE_GELBOORU, 'http://gelbooru.com', 100);
         this.sitesManager.addSite(SITE_RULE34, 'http://rule34.xxx', 100);
         this.sitesManager.addSite(SITE_SAFEBOORU, 'http://safebooru.org', 100);
-
-        // this.loadUserSettings();
     },
 
     performSearch: function (searchText) {
@@ -225,5 +227,70 @@ SlideshowModel.prototype = {
         }
 
         return selectedSitesToSearch;
+    },
+
+    loadUserSettings: function () {
+        var _this = this;
+
+        chrome.storage.sync.get(['sitesToSearch', 'secondsPerImage', 'maxWidth', 'maxHeight'], function (obj) {
+            if (obj != null)
+            {
+                var sitesToSearch = obj['sitesToSearch'];
+                var secondsPerImage = obj['secondsPerImage'];
+                var maxWidth = obj['maxWidth'];
+                var maxHeight = obj['maxHeight'];
+			    
+                if (sitesToSearch != null)
+                {
+                    if (sitesToSearch.hasOwnProperty(SITE_DANBOORU) &&
+                        sitesToSearch.hasOwnProperty(SITE_E621) &&
+                        sitesToSearch.hasOwnProperty(SITE_GELBOORU) &&
+                        sitesToSearch.hasOwnProperty(SITE_RULE34) &&
+                        sitesToSearch.hasOwnProperty(SITE_DANBOORU))
+                    {
+                        _this.sitesToSearch = sitesToSearch;
+
+                        _this.sitesToSearchUpdatedEvent.notify();
+                    }
+                }
+
+                if (_this.secondsPerImage != secondsPerImage)
+                {
+                    _this.secondsPerImage = secondsPerImage;
+
+                    _this.secondsPerImageUpdatedEvent.notify();
+                }
+
+                if (_this.maxWidth != maxWidth)
+                {
+                    _this.maxWidth = maxWidth;
+
+                    _this.maxWidthUpdatedEvent.notify();
+                }
+
+                if (_this.maxHeight != maxHeight)
+                {
+                    _this.maxHeight = maxHeight;
+
+                    _this.maxHeightUpdatedEvent.notify();
+                }
+            }
+        });
+    },
+
+    saveSitesToSearch: function () {
+        chrome.storage.sync.set({'sitesToSearch': this.sitesToSearch});
+    },
+
+    saveSecondsPerImage: function () {
+        chrome.storage.sync.set({'secondsPerImage': this.secondsPerImage});
+    },
+
+    saveMaxWidth: function () {
+        chrome.storage.sync.set({'maxWidth': this.maxWidth});
+    },
+
+    saveMaxHeight: function () {
+        chrome.storage.sync.set({'maxHeight': this.maxHeight});
     }
 };
