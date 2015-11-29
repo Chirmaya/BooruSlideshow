@@ -2,8 +2,6 @@ function SlideshowController(uiElements) {
     this._model = new SlideshowModel();
     this._view = new SlideshowView(this._model, uiElements);
 
-    // this._model.loadUserSettings();
-
     this._view.updateSitesToSearch();
     this._view.updateOptions();
 
@@ -38,8 +36,16 @@ function SlideshowController(uiElements) {
         _this.pauseButtonClicked();
     });
 
+    this._view.enterKeyPressedOutsideOfSearchTextBoxEvent.attach(function () {
+        _this.enterKeyPressedOutsideOfSearchTextBox();
+    });
+
     this._view.searchTextChangedEvent.attach(function () {
         _this.searchTextChanged();
+    });
+
+    this._view.enterKeyPressedInSearchTextBoxEvent.attach(function () {
+        _this.enterKeyPressedInSearchTextBox();
     });
 
     this._view.searchButtonClickedEvent.attach(function () {
@@ -72,22 +78,18 @@ SlideshowController.prototype = {
 
     firstNavButtonClicked: function () {
         this._model.setImageNumberToFirst();
-        //restartSlideshowIfOn();
     },
 
     previousNavButtonClicked: function () {
         this._model.decreaseCurrentImageNumber();
-        ////restartSlideshowIfOn();
     },
 
     nextNavButtonClicked: function () {
         this._model.increaseCurrentImageNumber();
-        //restartSlideshowIfOn();
     },
 
     lastNavButtonClicked: function () {
         this._model.setImageNumberToLast();
-        //restartSlideshowIfOn();
     },
 
     playButtonClicked: function () {
@@ -98,8 +100,17 @@ SlideshowController.prototype = {
         this._model.pauseSlideshow();
     },
 
+    enterKeyPressedOutsideOfSearchTextBox: function () {
+        this._model.tryToPlayOrPause();
+    },
+
     searchTextChanged: function () {
         this._model.searchText = this._view.getSearchText();
+    },
+
+    enterKeyPressedInSearchTextBox: function () {
+        this._model.searchText = this._view.getSearchText();
+        this.searchButtonClicked();
     },
 
     searchButtonClicked: function () {

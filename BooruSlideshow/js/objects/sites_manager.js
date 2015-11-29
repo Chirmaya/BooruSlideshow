@@ -6,6 +6,7 @@ var SitesManager = function (numberOfImagesToAlwaysHaveReadyToDisplay, maxNumber
 	this.siteManagersCurrentlySearching = 0;
 	this.currentImageNumber = 0;
 	this.allPosts = [];
+	this.allSortedPosts = [];
 	this.numberOfPostsSorted = [];
 	this.searchText = '';
 	this.isTryingToLoadMoreImages = false;
@@ -283,7 +284,7 @@ SitesManager.prototype.moveToLastImage = function(callbackForAfterPossiblyLoadin
 
 SitesManager.prototype.increaseCurrentImageNumber = function(callbackForAfterPossiblyLoadingMoreImages)
 {
-	if (this.currentImageNumber <= this.getTotalImageNumber())
+	if (this.currentImageNumber < this.getTotalImageNumber())
 	{
 		this.setCurrentImageNumber(this.currentImageNumber + 1);
 		

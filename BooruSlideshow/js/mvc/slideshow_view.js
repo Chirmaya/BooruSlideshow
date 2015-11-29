@@ -3,7 +3,6 @@ function SlideshowView(slideshowModel, uiElements) {
     this.uiElements = uiElements;
 
     this.currentImageClickedEvent = new Event(this);
-    this.searchTextChangedEvent = new Event(this);
     this.searchButtonClickedEvent = new Event(this);
     this.firstNavButtonClickedEvent = new Event(this);
     this.previousNavButtonClickedEvent = new Event(this);
@@ -11,6 +10,9 @@ function SlideshowView(slideshowModel, uiElements) {
     this.lastNavButtonClickedEvent = new Event(this);
     this.playButtonClickedEvent = new Event(this);
     this.pauseButtonClickedEvent = new Event(this);
+    this.enterKeyPressedOutsideOfSearchTextBoxEvent = new Event(this);
+    this.searchTextChangedEvent = new Event(this);
+    this.enterKeyPressedInSearchTextBoxEvent = new Event(this);
     this.sitesToSearchChangedEvent = new Event(this);
     this.secondsPerImageChangedEvent = new Event(this);
     this.maxWidthChangedEvent = new Event(this);
@@ -34,6 +36,14 @@ function SlideshowView(slideshowModel, uiElements) {
 
     this.uiElements.searchTextBox.addEventListener('change', function () {
         _this.searchTextChangedEvent.notify();
+    });
+
+    this.uiElements.searchTextBox.addEventListener('keypress', function (e) {
+        var key = e.which || e.keyCode;
+
+        if (key == 13) {
+            _this.enterKeyPressedInSearchTextBoxEvent.notify();
+        }
     });
 
     this.uiElements.searchButton.addEventListener('click', function() {
@@ -64,16 +74,38 @@ function SlideshowView(slideshowModel, uiElements) {
         _this.pauseButtonClickedEvent.notify();
     });
 
+    document.addEventListener('keydown', function (e) {
+        var key = e.which || e.keyCode;
+
+        if (!(key == 37 || key == 39 || key == 13))
+        {
+            return;
+        }
+
+        if (document.activeElement !== _this.uiElements.searchTextBox &&
+			document.activeElement !== _this.uiElements.secondsPerImageTextBox &&
+			document.activeElement !== _this.uiElements.maxWidthTextBox &&
+			document.activeElement !== _this.uiElements.maxHeightTextBox) {
+
+            if (key == 37)
+                _this.previousNavButtonClickedEvent.notify();
+            if (key == 39)
+                _this.nextNavButtonClickedEvent.notify();
+            if (key == 13)
+                _this.enterKeyPressedOutsideOfSearchTextBoxEvent.notify();
+        }
+    });
+
     var sitesToSearchElements = this.uiElements.sitesToSearch;
 
     for (var i = 0; i < sitesToSearchElements.length; i++)
     {
         var siteToSearch = sitesToSearchElements[i];
 
-        siteToSearch.addEventListener('change', function (element) {
+        siteToSearch.addEventListener('change', function (e) {
             _this.sitesToSearchChangedEvent.notify({
-                checked: element.target.checked,
-                site: element.target.value
+                checked: e.target.checked,
+                site: e.target.value
             });
         });
     }
@@ -89,13 +121,31 @@ function SlideshowView(slideshowModel, uiElements) {
     this.uiElements.maxHeightTextBox.addEventListener('change', function() {
         _this.maxHeightChangedEvent.notify();
     });
+
+    this.initialize();
 }
 
 SlideshowView.prototype = {
+    initialize: function () {
+        this.setupLoadingAnimation();
+
+        this.setFocusToSearchBox();
+    },
+
+    clearUI: function () {
+        this.clearWarningMessage();
+        this.clearImage();
+        this.clearThumbnails();
+    },
+
     displayWarningMessage: function (message) {
-        //this.hideLoadingAnimation();
         this.uiElements.warningMessage.innerHTML = message;
         this.uiElements.warningMessage.style.display = 'block';
+    },
+
+    clearWarningMessage: function () {
+        this.uiElements.warningMessage.innerHTML = '';
+        this.uiElements.warningMessage.style.display = 'none';
     },
 
     updateImagesAndNavigation: function () {
@@ -108,63 +158,11 @@ SlideshowView.prototype = {
         this.showThumbnails();
     },
 
-    showThumbnails: function () {
-        this.clearThumbnails();
-
-        if (this._model.getImageCount() > 1)
-        {
-            var nextPosts = this._model.getNextPostsForThumbnails();
-            var _this = this;
-
-            for (var i = 0; i < nextPosts.length; i++) {
-                var post = nextPosts[i];
-
-                var showGreyedOut = !post.isPreloaded
-                this.displayThumbnail(post.previewFileUrl, post.id, showGreyedOut);
-
-                post.clearCallback();
-                post.addCallback(function () {
-                    var post = this;
-                    _this.removeThumbnailGreyness(post.id);
-                    _this._model.preloadNextUnpreloadedImageAfterThisOneIfInRange(post);
-                });
-            }
-        }
-    },
-
-    displayThumbnail: function(thumbnailImageUrl, id, showGreyedOut) {
-        var thumbnailList = this.uiElements.thumbnailList;
-	
-        var newThumbnail = document.createElement("div");
-        newThumbnail.classList.add("thumbnail");
-        newThumbnail.setAttribute('title', id);
-
+    setupLoadingAnimation: function () {
         var _this = this;
-        newThumbnail.onclick = function () {
 
-            _this._model.moveToImage(id);
-        };
-	
-        var newThumbnailImage = document.createElement("img");
-        newThumbnailImage.id = 'thumbnail-image-' + id;
-        newThumbnailImage.classList.add("thumbnail-image");
-        newThumbnailImage.src  = thumbnailImageUrl;
-	
-        if (showGreyedOut)
-        {
-            newThumbnailImage.classList.add("thumbnail-image-greyed-out");
-        }
-	
-        newThumbnail.appendChild(newThumbnailImage);
-        thumbnailList.appendChild(newThumbnail);
-    },
-
-    removeThumbnailGreyness: function (id) {
-	    var thumbnail = document.getElementById('thumbnail-image-' + id);
-	
-        if (thumbnail != null)
-        {
-            removeClass(thumbnail, 'thumbnail-image-greyed-out');
+        this.uiElements.currentImage.onload = function () {
+            _this.hideLoadingAnimation();
         }
     },
 
@@ -207,8 +205,20 @@ SlideshowView.prototype = {
         }
     },
 
+    clearImage: function () {
+        var currentImage = this.uiElements.currentImage;
+
+        currentImage.src = '';
+        currentImage.removeAttribute('alt');
+        currentImage.style.display = 'none';
+    },
+
     showLoadingAnimation: function () {
         this.uiElements.loadingAnimation.style.display = 'inline';
+    },
+
+    hideLoadingAnimation: function () {
+        this.uiElements.loadingAnimation.style.display = 'none';
     },
 
     showNavigation: function () {
@@ -275,6 +285,88 @@ SlideshowView.prototype = {
         this.uiElements.lastNavButton.disabled = currentlyOnLastImage;
     },
 
+    hideNavigation: function () {
+        this.uiElements.navigation.style.display = 'none';
+    },
+
+    showThumbnails: function () {
+        this.clearThumbnails();
+
+        if (this._model.getImageCount() > 1) {
+            var nextPosts = this._model.getNextPostsForThumbnails();
+            var _this = this;
+
+            for (var i = 0; i < nextPosts.length; i++) {
+                var post = nextPosts[i];
+
+                var showGreyedOut = !post.isPreloaded
+                this.displayThumbnail(post.previewFileUrl, post.id, showGreyedOut);
+
+                post.clearCallback();
+                post.addCallback(function () {
+                    var post = this;
+                    _this.removeThumbnailGreyness(post.id);
+                    _this._model.preloadNextUnpreloadedImageAfterThisOneIfInRange(post);
+                });
+            }
+        }
+    },
+
+    displayThumbnail: function (thumbnailImageUrl, id, showGreyedOut) {
+        var thumbnailList = this.uiElements.thumbnailList;
+
+        var newThumbnail = document.createElement("div");
+        newThumbnail.classList.add("thumbnail");
+        newThumbnail.setAttribute('title', id);
+
+        var _this = this;
+        newThumbnail.onclick = function () {
+
+            _this._model.moveToImage(id);
+        };
+
+        var newThumbnailImage = document.createElement("img");
+        newThumbnailImage.id = 'thumbnail-image-' + id;
+        newThumbnailImage.classList.add("thumbnail-image");
+        newThumbnailImage.src = thumbnailImageUrl;
+
+        if (showGreyedOut) {
+            newThumbnailImage.classList.add("thumbnail-image-greyed-out");
+        }
+
+        newThumbnail.appendChild(newThumbnailImage);
+        thumbnailList.appendChild(newThumbnail);
+    },
+
+    removeThumbnailGreyness: function (id) {
+        var thumbnail = document.getElementById('thumbnail-image-' + id);
+
+        if (thumbnail != null) {
+            this.removeClass(thumbnail, 'thumbnail-image-greyed-out');
+        }
+    },
+
+    removeClass: function(element, classToRemove) {
+        var regex = new RegExp('(?:^|\\s)' + classToRemove + '(?!\\S)')
+        element.className = element.className.replace(regex, '');
+    },
+
+    clearThumbnails: function () {
+        var thumbnailList = this.uiElements.thumbnailList;
+
+        while (thumbnailList.firstChild) {
+            thumbnailList.removeChild(thumbnailList.firstChild);
+        }
+    },
+
+    getSearchText: function () {
+        return this.uiElements.searchTextBox.value;
+    },
+
+    setFocusToSearchBox: function() {
+        this.uiElements.searchTextBox.focus();
+    },
+
     updateSitesToSearch: function () {
         var sitesToSearchElements = this.uiElements.sitesToSearch;
 
@@ -294,8 +386,16 @@ SlideshowView.prototype = {
         this.updateMaxHeight();
     },
 
+    getSecondsPerImage: function () {
+        return this.uiElements.secondsPerImageTextBox.value;
+    },
+
     updateSecondsPerImage: function () {
         this.uiElements.secondsPerImageTextBox.value = this._model.secondsPerImage;
+    },
+
+    getMaxWidth: function () {
+        return this.uiElements.maxWidthTextBox.value;
     },
 
     updateMaxWidth: function () {
@@ -309,6 +409,10 @@ SlideshowView.prototype = {
         this.uiElements.maxWidthTextBox.value = maxWidth;
     },
 
+    getMaxHeight: function () {
+        return this.uiElements.maxHeightTextBox.value;
+    },
+
     updateMaxHeight: function () {
         var maxHeight = this._model.maxHeight;
 
@@ -319,59 +423,7 @@ SlideshowView.prototype = {
         this.uiElements.maxHeightTextBox.value = maxHeight;
     },
 
-    clearUI: function () {
-        this.clearWarningMessage();
-        this.clearImage();
-        this.clearThumbnails();
-    },
-
-    clearWarningMessage: function() {
-        this.uiElements.warningMessage.innerHTML = '';
-        this.uiElements.warningMessage.style.display = 'none';
-    },
-
-    clearImage: function () {
-        var currentImage = this.uiElements.currentImage;
-        
-        currentImage.src = '';
-        currentImage.removeAttribute('alt');
-        currentImage.style.display = 'none';
-    },
-
-    hideLoadingAnimation: function () {
-        this.uiElements.loadingAnimation.style.display = 'none';
-    },
-
-    clearThumbnails: function () {
-        var thumbnailList = this.uiElements.thumbnailList;
-
-        while (thumbnailList.firstChild)
-        {
-            thumbnailList.removeChild(thumbnailList.firstChild);
-        }
-    },
-
-    hideNavigation: function () {
-        this.uiElements.navigation.style.display = 'none';
-    },
-
     openUrlInNewWindow: function (url) {
         window.open(url, '_blank');
-    },
-
-    getSearchText: function () {
-        return this.uiElements.searchTextBox.value;
-    },
-
-    getSecondsPerImage: function () {
-        return this.uiElements.secondsPerImageTextBox.value;
-    },
-
-    getMaxWidth: function () {
-        return this.uiElements.maxWidthTextBox.value;
-    },
-
-    getMaxHeight: function () {
-        return this.uiElements.maxHeightTextBox.value;
     }
 };

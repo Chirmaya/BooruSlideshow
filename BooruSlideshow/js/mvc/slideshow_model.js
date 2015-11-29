@@ -37,6 +37,8 @@ SlideshowModel.prototype = {
         this.sitesManager.addSite(SITE_GELBOORU, 'http://gelbooru.com', 100);
         this.sitesManager.addSite(SITE_RULE34, 'http://rule34.xxx', 100);
         this.sitesManager.addSite(SITE_SAFEBOORU, 'http://safebooru.org', 100);
+
+        // this.loadUserSettings();
     },
 
     performSearch: function (searchText) {
@@ -98,6 +100,16 @@ SlideshowModel.prototype = {
         this.sitesManager.preloadNextUnpreloadedImageAfterThisOneIfInRange(post);
     },
 
+    tryToPlayOrPause: function () {
+        if (this.hasImagesToDisplay())
+        {
+            if (this.isPlaying)
+                this.pauseSlideshow();
+            else
+                this.startSlideshow();
+        }
+    },
+
     startSlideshow: function () {
         this.tryToStartCountdown();
 
@@ -107,15 +119,16 @@ SlideshowModel.prototype = {
     },
 
     tryToStartCountdown: function () {
-        console.log('tryToStartCountdown')
         if (this.sitesManager.isCurrentImageLoaded())
         {
             this.startCountdown();
         }
         else
         {
+            var _this = this;
+
             this.sitesManager.runCodeWhenCurrentImageFinishesLoading(function(){
-                this.startCountdown();
+                _this.startCountdown();
             });
         }
     },
