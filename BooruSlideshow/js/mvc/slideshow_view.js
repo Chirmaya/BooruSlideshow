@@ -23,6 +23,10 @@ function SlideshowView(slideshowModel, uiElements) {
         _this.updateImagesAndNavigation();
     });
 
+    this._model.playingChangedEvent.attach(function () {
+        _this.updatePlayPauseButtons();
+    });
+
     // Attach UI element listeners
     this.uiElements.currentImage.addEventListener('click', function() {
         _this.currentImageClickedEvent.notify();

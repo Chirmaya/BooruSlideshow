@@ -91,11 +91,11 @@ SlideshowController.prototype = {
     },
 
     playButtonClicked: function () {
-        console.log("playButtonClicked");
+        this._model.startSlideshow();
     },
 
     pauseButtonClicked: function () {
-        console.log("pauseButtonClicked");
+        this._model.pauseSlideshow();
     },
 
     searchTextChanged: function () {
