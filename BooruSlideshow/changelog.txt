@@ -1,5 +1,8 @@
 Changelog
 
+Version 5.1
+* [Bug fix] Opening the image source by clicking on it will once again pause the slideshow.
+
 Version 5.0
 * [Feature] New auto-fit height/width option.
 * [Feature] Changes to options will take effect immediately.

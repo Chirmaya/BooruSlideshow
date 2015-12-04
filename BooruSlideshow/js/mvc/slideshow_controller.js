@@ -80,6 +80,8 @@ SlideshowController.prototype = {
         var currentPost = this._model.getCurrentPost();
 
         this._view.openUrlInNewWindow(currentPost.postOnSiteUrl);
+
+        this._model.pauseSlideshow();
     },
 
     firstNavButtonClicked: function () {
