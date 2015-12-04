@@ -85,7 +85,7 @@ button:disabled {
 	text-align:center;
 	overflow: hidden;
 	clear: both;
-	padding:0px 50px 10px 50px;
+	/*padding:0px 50px 10px 50px;*/
 }
 
 #loading-animation {
@@ -172,6 +172,10 @@ button:disabled {
 	color:#fff;
 	margin-top:10px;
 	display: inline-block;
+}
+
+#options input:disabled {
+	color: #777;
 }
 	
 #module-container {

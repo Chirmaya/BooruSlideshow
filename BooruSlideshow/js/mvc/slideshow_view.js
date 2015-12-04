@@ -51,6 +51,10 @@ function SlideshowView(slideshowModel, uiElements) {
     });
 
     // Attach UI element listeners
+    window.addEventListener('resize', function () {
+        _this.windowResized();
+    });
+
     this.uiElements.currentImage.addEventListener('click', function() {
         _this.currentImageClickedEvent.notify();
     });
@@ -167,6 +171,13 @@ SlideshowView.prototype = {
         this.clearThumbnails();
     },
 
+    windowResized: function() {
+        if (this._model.autoFitImage)
+        {
+            this.tryToUpdateImageSize();
+        }
+    },
+
     displayWarningMessage: function (message) {
         this.uiElements.warningMessage.innerHTML = message;
         this.uiElements.warningMessage.style.display = 'block';
@@ -197,40 +208,80 @@ SlideshowView.prototype = {
 
     displayCurrentImage: function () {
         if (this._model.hasImagesToDisplay()) {
-            var currentPost = this._model.getCurrentPost();
-
-            this.displayImage(currentPost.fileUrl, currentPost.id);
+            this.displayImage();
         }
         else {
             this.displayWarningMessage('No images were found.');
         }
     },
 
-    displayImage: function (imageUrl, postId) {
+    displayImage: function () {
         this.showLoadingAnimation();
 
+        var currentPost = this._model.getCurrentPost();
         var currentImage = this.uiElements.currentImage;
 
-        currentImage.src = imageUrl;
-        currentImage.setAttribute('alt', postId);
+        currentImage.src = currentPost.fileUrl;
+        currentImage.setAttribute('alt', currentPost.id);
         currentImage.style.display = 'inline';
 
-        if (this._model.maxWidth != null)
+        this.updateImageSize();
+    },
+
+    tryToUpdateImageSize: function () {
+        if (this._model.hasImagesToDisplay())
         {
-            var maxWidth = parseInt(this._model.maxWidth);
-            currentImage.style.maxWidth = maxWidth + 'px';
+            this.updateImageSize();
+        }
+    },
+
+    updateImageSize: function () {
+        var currentPost = this._model.getCurrentPost();
+        var currentImage = this.uiElements.currentImage;
+        
+        var autoFitImage = this._model.autoFitImage;
+
+        currentImage.style.width = null;
+        currentImage.style.height = null;
+        currentImage.style.maxWidth = null;
+        currentImage.style.maxHeight = null;
+        
+        if (autoFitImage)
+        {
+            var viewWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            var viewHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+
+            var imageWidth = currentPost.imageWidth;
+            var imageHeight = currentPost.imageHeight;
+
+            var viewRatio = viewWidth / viewHeight;
+            var imageRatio = imageWidth / imageHeight;
+            
+            if (imageRatio > viewRatio)
+            {
+                imageWidth = viewWidth;
+                imageHeight = viewWidth / imageRatio;
+            }
+            else
+            {
+                imageWidth = viewHeight * imageRatio;
+                imageHeight = viewHeight;
+            }
+            
+            currentImage.style.width = imageWidth + 'px';
+            currentImage.style.height = imageHeight + 'px';
         }
         else
         {
-            currentImage.style.maxWidth = null;
-        }
+            if (this._model.maxWidth != null) {
+                var maxWidth = parseInt(this._model.maxWidth);
+                currentImage.style.maxWidth = maxWidth + 'px';
+            }
 
-        if (this._model.maxHeight != null) {
-            var maxHeight = parseInt(this._model.maxHeight);
-            currentImage.style.maxHeight = maxHeight + 'px';
-        }
-        else {
-            currentImage.style.maxHeight = null;
+            if (this._model.maxHeight != null) {
+                var maxHeight = parseInt(this._model.maxHeight);
+                currentImage.style.maxHeight = maxHeight + 'px';
+            }
         }
     },
 
@@ -427,6 +478,13 @@ SlideshowView.prototype = {
         this.uiElements.secondsPerImageTextBox.value = this._model.secondsPerImage;
     },
 
+    enableOrDisableMaxWidthAndHeight: function () {
+        var textBoxesDisabled = !this._model.areMaxWithAndHeightEnabled();
+
+        this.uiElements.maxWidthTextBox.disabled = textBoxesDisabled;
+        this.uiElements.maxHeightTextBox.disabled = textBoxesDisabled;
+    },
+
     getMaxWidth: function () {
         return this.uiElements.maxWidthTextBox.value;
     },
@@ -440,6 +498,7 @@ SlideshowView.prototype = {
         }
         
         this.uiElements.maxWidthTextBox.value = maxWidth;
+        this.tryToUpdateImageSize();
     },
 
     getMaxHeight: function () {
@@ -454,6 +513,7 @@ SlideshowView.prototype = {
         }
 
         this.uiElements.maxHeightTextBox.value = maxHeight;
+        this.tryToUpdateImageSize();
     },
 
     getAutoFitImage: function () {
@@ -462,6 +522,10 @@ SlideshowView.prototype = {
 
     updateAutoFitImage: function () {
         this.uiElements.autoFitImageCheckBox.checked = this._model.autoFitImage;
+
+        this.enableOrDisableMaxWidthAndHeight()
+
+        this.tryToUpdateImageSize();
     },
 
     openUrlInNewWindow: function (url) {

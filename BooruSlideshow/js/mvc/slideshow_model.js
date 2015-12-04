@@ -231,6 +231,10 @@ SlideshowModel.prototype = {
         return selectedSitesToSearch;
     },
 
+    areMaxWithAndHeightEnabled: function () {
+        return !this.autoFitImage;
+    },
+
     setSitesToSearch: function (sitesToSearch) {
         this.sitesToSearch = sitesToSearch;
 

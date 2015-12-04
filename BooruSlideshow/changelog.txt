@@ -1,9 +1,9 @@
 Changelog
 
 Version 5.0
-* [Feature] Auto-fit height/width
-* [Code change] Reworked back end to make it more responsive and easier to manage for future features.
-* [Bug fix] Settings are now saved right after being changed.
+* [Feature] New auto-fit height/width option.
+* [Feature] Changes to options will take effect immediately.
+* [Bug fix] Settings are now saved right after being changed instead of after performing a search.
 
 Version 4.4
 * [Feature] Clicking on a thumbnail will try to take you to the image even if it is not yet loaded
