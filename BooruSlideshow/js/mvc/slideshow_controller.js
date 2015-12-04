@@ -142,9 +142,8 @@ SlideshowController.prototype = {
         this._model.performSearch(searchText);
     },
 
-    sitesToSearchChanged: function(checked, site) {
-        this._model.sitesToSearch[site] = checked;
-        this._model.saveSitesToSearch();
+    sitesToSearchChanged: function (checked, site) {
+        this._model.setSiteToSearch(site, checked);
     },
 
     secondsPerImageChanged: function () {
@@ -159,8 +158,7 @@ SlideshowController.prototype = {
         if (secondsPerImageText < 1)
             return;
 
-        this._model.secondsPerImage = secondsPerImageText;
-        this._model.saveSecondsPerImage();
+        this._model.setSecondsPerImage(secondsPerImageText);
     },
 
     maxWidthChanged: function () {
@@ -178,8 +176,8 @@ SlideshowController.prototype = {
         if (maxWidthText < 1)
             return;
         
-        this._model.maxWidth = maxWidthText;
-        this._model.saveMaxWidth();
+        this._model.setMaxWidth(maxWidthText);
+        
     },
 
     maxHeightChanged: function () {
@@ -196,12 +194,13 @@ SlideshowController.prototype = {
         if (maxHeightText < 1)
             return;
         
-        this._model.maxHeight = maxHeightText;
-        this._model.saveMaxHeight();
+        this._model.setMaxHeight(maxHeightText);
     },
 
     autoFitImageChanged: function () {
-        this._model.autoFitImage = this._view.getAutoFitImage();
-        this._model.saveAutoFitImage();
+        var autoFitImage = this._view.getAutoFitImage();
+
+        this._model.setAutoFitImage(autoFitImage);
+        
     }
 };

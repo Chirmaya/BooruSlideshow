@@ -231,6 +231,54 @@ SlideshowModel.prototype = {
         return selectedSitesToSearch;
     },
 
+    setSitesToSearch: function (sitesToSearch) {
+        this.sitesToSearch = sitesToSearch;
+
+        this.saveSitesToSearch();
+
+        this.sitesToSearchUpdatedEvent.notify();
+    },
+
+    setSiteToSearch: function (site, checked) {
+        this.sitesToSearch[site] = checked;
+
+        this.saveSitesToSearch();
+
+        this.sitesToSearchUpdatedEvent.notify();
+    },
+
+    setSecondsPerImage: function (secondsPerImage) {
+        this.secondsPerImage = secondsPerImage;
+
+        this.saveSecondsPerImage();
+
+        this.secondsPerImageUpdatedEvent.notify();
+    },
+
+    setMaxWidth: function (maxWidth) {
+        this.maxWidth = maxWidth;
+
+        this.saveMaxWidth();
+
+        this.maxWidthUpdatedEvent.notify();
+    },
+
+    setMaxHeight: function (maxHeight) {
+        this.maxHeight = maxHeight;
+
+        this.saveMaxHeight();
+
+        this.maxHeightUpdatedEvent.notify();
+    },
+
+    setAutoFitImage: function (onOrOff) {
+        this.autoFitImage = onOrOff;
+
+        this.saveAutoFitImage();
+
+        this.autoFitImageUpdatedEvent.notify();
+    },
+
     loadUserSettings: function () {
         var _this = this;
 
@@ -251,40 +299,30 @@ SlideshowModel.prototype = {
                         sitesToSearch.hasOwnProperty(SITE_RULE34) &&
                         sitesToSearch.hasOwnProperty(SITE_DANBOORU))
                     {
-                        _this.sitesToSearch = sitesToSearch;
-
-                        _this.sitesToSearchUpdatedEvent.notify();
+                        _this.setSitesToSearch(sitesToSearch);
                     }
                 }
 
                 if (_this.secondsPerImage != secondsPerImage)
                 {
-                    _this.secondsPerImage = secondsPerImage;
-
-                    _this.secondsPerImageUpdatedEvent.notify();
+                    _this.setSecondsPerImage(secondsPerImage);
                 }
 
                 if (_this.maxWidth != maxWidth)
                 {
-                    _this.maxWidth = maxWidth;
-
-                    _this.maxWidthUpdatedEvent.notify();
+                    _this.setMaxWidth(maxWidth);
                 }
 
                 if (_this.maxHeight != maxHeight)
                 {
-                    _this.maxHeight = maxHeight;
-
-                    _this.maxHeightUpdatedEvent.notify();
+                    _this.setMaxHeight(maxHeight);
                 }
                 
                 if (autoFitImage != null)
                 {
                     if (_this.autoFitImage != autoFitImage)
                     {
-                        _this.autoFitImage = autoFitImage;
-
-                        _this.autoFitImageUpdatedEvent.notify();
+                        _this.setAutoFitImage(autoFitImage);
                     }
                 }
             }
