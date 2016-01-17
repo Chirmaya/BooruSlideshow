@@ -166,8 +166,8 @@ SiteManager.prototype.addPostGelRuleSafe = function(xmlPost)
 		{
 			var newPost = new Post(
 				xmlPost.getAttribute('id'),
-				xmlPost.getAttribute('file_url'),
-				xmlPost.getAttribute('preview_url'),
+				reformatUrl(xmlPost.getAttribute('file_url')),
+				reformatUrl(xmlPost.getAttribute('preview_url')),
 				this.url + '/index.php?page=post&s=view&id=' + xmlPost.getAttribute('id'),
 				xmlPost.getAttribute('width'),
 				xmlPost.getAttribute('height'),
@@ -177,6 +177,17 @@ SiteManager.prototype.addPostGelRuleSafe = function(xmlPost)
 			this.allPosts.push(newPost);
 		}
 	}
+}
+
+function reformatUrl(url)
+{
+	// Rule34 starts with two slashes right now.
+	if (url.substring(0,2) == '//')
+	{
+		url = 'http:' + url;
+	}
+	
+	return url;
 }
 
 SiteManager.prototype.addPostDanbooru = function(jsonObject)
