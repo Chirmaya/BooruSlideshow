@@ -84,9 +84,9 @@ function SlideshowView(slideshowModel, uiElements) {
     });
 
     document.addEventListener('keydown', function (e) {
-        var key = e.which || e.keyCode;
-
-        if (!(key == 37 || key == 39 || key == 13))
+		var key = e.which || e.keyCode;
+		
+        if (!(key == ENTER_KEY_ID || key == LEFT_ARROW_KEY_ID || key == RIGHT_ARROW_KEY_ID))
         {
             return;
         }
@@ -96,11 +96,11 @@ function SlideshowView(slideshowModel, uiElements) {
 			document.activeElement !== _this.uiElements.maxWidthTextBox &&
 			document.activeElement !== _this.uiElements.maxHeightTextBox) {
 
-            if (key == 37)
+            if (key == LEFT_ARROW_KEY_ID)
                 _this.previousNavButtonClickedEvent.notify();
-            if (key == 39)
+            if (key == RIGHT_ARROW_KEY_ID)
                 _this.nextNavButtonClickedEvent.notify();
-            if (key == 13)
+            if (key == ENTER_KEY_ID)
             {
                 if (document.activeElement !== _this.uiElements.searchButton)
                     _this.enterKeyPressedOutsideOfSearchTextBoxEvent.notify();
@@ -115,7 +115,7 @@ function SlideshowView(slideshowModel, uiElements) {
     this.uiElements.searchTextBox.addEventListener('keypress', function (e) {
         var key = e.which || e.keyCode;
 
-        if (key == 13) {
+        if (key == ENTER_KEY_ID) {
             _this.enterKeyPressedInSearchTextBoxEvent.notify();
         }
     });

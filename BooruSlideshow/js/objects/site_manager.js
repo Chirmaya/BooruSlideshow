@@ -21,6 +21,9 @@ SiteManager.prototype.buildRequestUrl = function(searchText, pageNumber)
 			return this.url + '/posts.json?tags=' + searchText + '&page=' + pageNumber + '&limit=' + this.pageLimit;
 		case SITE_E621:
 			return this.url + '/post/index.json?tags=' + searchText + '&page=' + pageNumber + '&limit=' + this.pageLimit;
+		case SITE_IBSEARCH:
+			console.log(this.url + '/api/v1/images.json?q=' + searchText + '&page=' + pageNumber + '&limit=' + this.pageLimit);
+			return this.url + '/api/v1/images.json?q=' + searchText + '&page=' + pageNumber + '&limit=' + this.pageLimit;
 		default:
 			console.log('Error building the URL. Supplied site ID is not in the list.');
 			return;
@@ -152,6 +155,9 @@ SiteManager.prototype.addJsonPost = function(jsonObject)
 		case SITE_E621:
 			this.addPostE621(jsonObject);
 			break;
+		case SITE_IBSEARCH:
+			this.addPostIbSearch(jsonObject);
+			break;
 	}
 }
 
@@ -230,6 +236,29 @@ SiteManager.prototype.addPostE621 = function(jsonObject)
 				jsonObject.width,
 				jsonObject.height,
 				this.convertSDateToDate(jsonObject.created_at.s)
+			);
+			this.allPosts.push(newPost);
+		}
+	}
+}
+
+SiteManager.prototype.addPostIbSearch = function(jsonObject)
+{
+	console.log("a");
+	if (jsonObject.hasOwnProperty('path'))
+	{
+		var fileExtension = jsonObject.path.substring(jsonObject.path.length - 4);
+		
+		if (this.isFileExtensionSupported(fileExtension))
+		{
+			var newPost = new Post(
+				jsonObject.id,
+				'https://im1.ibsearch.xxx/' + jsonObject.path,
+				'https://im1.ibsearch.xxx/t' + jsonObject.path,
+				this.url,
+				jsonObject.width,
+				jsonObject.height,
+				new Date(jsonObject.found)
 			);
 			this.allPosts.push(newPost);
 		}

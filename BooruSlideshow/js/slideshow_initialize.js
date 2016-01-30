@@ -1,8 +1,13 @@
 var SITE_DANBOORU = 'DANB';
 var SITE_E621 = 'E621';
 var SITE_GELBOORU = 'GELB';
+var SITE_IBSEARCH = 'IBSE';
 var SITE_RULE34 = 'RULE';
 var SITE_SAFEBOORU = 'SAFE';
+
+var ENTER_KEY_ID = 13;
+var LEFT_ARROW_KEY_ID = 37;
+var RIGHT_ARROW_KEY_ID = 39;
 
 var slideshowController = null;
 

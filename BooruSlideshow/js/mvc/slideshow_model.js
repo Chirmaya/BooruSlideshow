@@ -5,8 +5,9 @@ function SlideshowModel() {
         [SITE_DANBOORU]: false,
         [SITE_E621]: false,
         [SITE_GELBOORU]: false,
-        [SITE_RULE34]: false,
-        [SITE_SAFEBOORU]: true,
+        [SITE_IBSEARCH]: false,
+		[SITE_RULE34]: false,
+        [SITE_SAFEBOORU]: true
     };
 
     this.secondsPerImage = 6;
@@ -41,6 +42,7 @@ SlideshowModel.prototype = {
         this.sitesManager.addSite(SITE_DANBOORU, 'https://danbooru.donmai.us', 100);
         this.sitesManager.addSite(SITE_E621, 'https://e621.net', 100);
         this.sitesManager.addSite(SITE_GELBOORU, 'http://gelbooru.com', 100);
+        this.sitesManager.addSite(SITE_IBSEARCH, 'https://ibsearch.xxx', 100);
         this.sitesManager.addSite(SITE_RULE34, 'http://rule34.xxx', 100);
         this.sitesManager.addSite(SITE_SAFEBOORU, 'http://safebooru.org', 100);
     },
@@ -300,6 +302,7 @@ SlideshowModel.prototype = {
                     if (sitesToSearch.hasOwnProperty(SITE_DANBOORU) &&
                         sitesToSearch.hasOwnProperty(SITE_E621) &&
                         sitesToSearch.hasOwnProperty(SITE_GELBOORU) &&
+                        sitesToSearch.hasOwnProperty(SITE_IBSEARCH) &&
                         sitesToSearch.hasOwnProperty(SITE_RULE34) &&
                         sitesToSearch.hasOwnProperty(SITE_DANBOORU))
                     {

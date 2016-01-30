@@ -27,7 +27,9 @@ SitesManager.prototype.setupRequestHeaders = function()
 	};
 	
 	var requestFilter = {
-		urls: ["http://*.gelbooru.com/*"],
+		urls: [
+			"http://*.gelbooru.com/*"
+		],
 		types: ["image"]
 	};
 	
