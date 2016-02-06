@@ -1,5 +1,8 @@
 Changelog
 
+Version 5.3
+* [Feature] Added support for site IbSearch.xxx
+
 Version 5.2
 * [Bug fix] Fixed issue that made Rule34 images stop working.
 

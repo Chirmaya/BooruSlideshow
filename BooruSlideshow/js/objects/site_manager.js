@@ -255,7 +255,7 @@ SiteManager.prototype.addPostIbSearch = function(jsonObject)
 				jsonObject.id,
 				'https://im1.ibsearch.xxx/' + jsonObject.path,
 				'https://im1.ibsearch.xxx/t' + jsonObject.path,
-				this.url,
+				this.url + '/images/' + jsonObject.id,
 				jsonObject.width,
 				jsonObject.height,
 				new Date(jsonObject.found)
