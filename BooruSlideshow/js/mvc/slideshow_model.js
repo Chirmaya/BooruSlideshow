@@ -252,7 +252,7 @@ SlideshowModel.prototype = {
 
         this.sitesToSearchUpdatedEvent.notify();
     },
-
+	
     setSecondsPerImage: function (secondsPerImage) {
         this.secondsPerImage = secondsPerImage;
 
@@ -260,6 +260,19 @@ SlideshowModel.prototype = {
 
         this.secondsPerImageUpdatedEvent.notify();
     },
+	
+	setSecondsPerImageIfValid: function (secondsPerImage) {
+		if (secondsPerImage == '')
+            return;
+
+        if (isNaN(secondsPerImage))
+            return;
+
+        if (secondsPerImage < 1)
+            return;
+
+        this.setSecondsPerImage(secondsPerImage);
+	},
 
     setMaxWidth: function (maxWidth) {
         this.maxWidth = maxWidth;
@@ -309,10 +322,10 @@ SlideshowModel.prototype = {
                         _this.setSitesToSearch(sitesToSearch);
                     }
                 }
-
+				
                 if (_this.secondsPerImage != secondsPerImage)
                 {
-                    _this.setSecondsPerImage(secondsPerImage);
+                    _this.setSecondsPerImageIfValid(secondsPerImage);
                 }
 
                 if (_this.maxWidth != maxWidth)

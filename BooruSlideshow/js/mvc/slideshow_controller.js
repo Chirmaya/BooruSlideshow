@@ -151,16 +151,7 @@ SlideshowController.prototype = {
     secondsPerImageChanged: function () {
         var secondsPerImageText = this._view.getSecondsPerImage();
 
-        if (secondsPerImageText == '')
-            return;
-
-        if (isNaN(secondsPerImageText))
-            return;
-
-        if (secondsPerImageText < 1)
-            return;
-
-        this._model.setSecondsPerImage(secondsPerImageText);
+        this._model.setSecondsPerImageIfValid(secondsPerImageText);
     },
 
     maxWidthChanged: function () {
