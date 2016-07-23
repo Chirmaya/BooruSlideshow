@@ -45,9 +45,9 @@ SitesManager.prototype.setupRequestHeaders = function()
 	);
 }
 
-SitesManager.prototype.addSite = function(id, url, pageLimit, numberOfImagesToAlwaysHaveReadyToDisplay)
+SitesManager.prototype.addSite = function(id, url, pageLimit)
 {
-	this.siteManagers.push(new SiteManager(id, url, pageLimit, numberOfImagesToAlwaysHaveReadyToDisplay));
+	this.siteManagers.push(new SiteManager(id, url, pageLimit));
 }
 
 SitesManager.prototype.enableSites = function(sites)

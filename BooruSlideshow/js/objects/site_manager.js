@@ -19,10 +19,12 @@ SiteManager.prototype.buildRequestUrl = function(searchText, pageNumber)
 			return this.url + '/index.php?page=dapi&s=post&q=index&tags=' + searchText + '&pid=' + (pageNumber - 1) + '&limit=' + this.pageLimit;
 		case SITE_DANBOORU:
 			return this.url + '/posts.json?tags=' + searchText + '&page=' + pageNumber + '&limit=' + this.pageLimit;
+		case SITE_KONACHAN:
+		case SITE_YANDERE:
+			return this.url + '/post.json?tags=' + searchText + '&page=' + pageNumber + '&limit=' + this.pageLimit;
 		case SITE_E621:
 			return this.url + '/post/index.json?tags=' + searchText + '&page=' + pageNumber + '&limit=' + this.pageLimit;
 		case SITE_IBSEARCH:
-			console.log(this.url + '/api/v1/images.json?q=' + searchText + '&page=' + pageNumber + '&limit=' + this.pageLimit);
 			return this.url + '/api/v1/images.json?q=' + searchText + '&page=' + pageNumber + '&limit=' + this.pageLimit;
 		default:
 			console.log('Error building the URL. Supplied site ID is not in the list.');
@@ -86,6 +88,7 @@ SiteManager.prototype.makeWebsiteRequest = function(url, doneSearchingSiteCallba
 		siteManager.lastPageLoaded++;
 		
 		var responseText = siteManager.xhr.responseText;
+		
 		siteManager.addPosts(responseText);
 		
 		doneSearchingSiteCallback.call(siteManager);
@@ -153,7 +156,9 @@ SiteManager.prototype.addJsonPost = function(jsonObject)
 			this.addPostDanbooru(jsonObject);
 			break;
 		case SITE_E621:
-			this.addPostE621(jsonObject);
+		case SITE_KONACHAN:
+		case SITE_YANDERE:
+			this.addPostE621KonaYand(jsonObject);
 			break;
 		case SITE_IBSEARCH:
 			this.addPostIbSearch(jsonObject);
@@ -219,7 +224,7 @@ SiteManager.prototype.addPostDanbooru = function(jsonObject)
 	}
 }
 
-SiteManager.prototype.addPostE621 = function(jsonObject)
+SiteManager.prototype.addPostE621KonaYand = function(jsonObject)
 {
 	if (jsonObject.hasOwnProperty('file_url') &&
 		jsonObject.hasOwnProperty('preview_url'))
@@ -244,7 +249,6 @@ SiteManager.prototype.addPostE621 = function(jsonObject)
 
 SiteManager.prototype.addPostIbSearch = function(jsonObject)
 {
-	console.log("a");
 	if (jsonObject.hasOwnProperty('path'))
 	{
 		var fileExtension = jsonObject.path.substring(jsonObject.path.length - 4);

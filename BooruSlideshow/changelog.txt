@@ -1,5 +1,9 @@
 Changelog
 
+Version 5.5
+* [Feature] Added support for site yande.re
+* [Feature] Added support for site konachan.com
+
 Version 5.4
 * [Bug fix] Seconds per Image will now correctly default to 6 seconds for new users.
 
