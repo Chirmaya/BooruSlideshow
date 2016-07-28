@@ -8,7 +8,7 @@ var SiteManager = function (id, url, pageLimit)
 	this.allPosts = [];
 	this.hasExhaustedSearch = false;
 	
-	this.siteQueryAssociations = SITE_QUERY_ASSOCIATIONS[id];
+	this.siteQueryTermAssociations = SITE_QUERY_TERM_ASSOCIATIONS[id];
 }
 
 SiteManager.prototype.buildRequestUrl = function(searchText, pageNumber)
@@ -40,17 +40,13 @@ SiteManager.prototype.buildSiteSpecificQuery = function(searchText)
 {
 	var query = searchText.trim();
 	
-	for (var queryTermToReplace in this.siteQueryAssociations)
+	for (var queryTermToReplace in this.siteQueryTermAssociations)
 	{
-		var queryTermReplacement = this.siteQueryAssociations[queryTermToReplace];
-		
-		console.log("Replacing " + queryTermToReplace + " with " + queryTermReplacement);
+		var queryTermReplacement = this.siteQueryTermAssociations[queryTermToReplace];
 		
 		var queryTermRegexp = new RegExp(queryTermToReplace, 'i');
 		
 		query = query.replace(queryTermRegexp, queryTermReplacement);
-		
-		console.log("query = " + query);
 	}
 	
 	return query;
@@ -206,7 +202,8 @@ SiteManager.prototype.addPostGelRuleSafe = function(xmlPost)
 				this.url + '/index.php?page=post&s=view&id=' + xmlPost.getAttribute('id'),
 				xmlPost.getAttribute('width'),
 				xmlPost.getAttribute('height'),
-				new Date(xmlPost.getAttribute('created_at'))
+				new Date(xmlPost.getAttribute('created_at')),
+				xmlPost.getAttribute('score')
 			);
 			
 			this.allPosts.push(newPost);
@@ -241,7 +238,8 @@ SiteManager.prototype.addPostDanbooru = function(jsonObject)
 				this.url + '/posts/' + jsonObject.id,
 				jsonObject.image_width,
 				jsonObject.image_height,
-				new Date(jsonObject.created_at)
+				new Date(jsonObject.created_at),
+				jsonObject.score
 			);
 			this.allPosts.push(newPost);
 		}
@@ -264,7 +262,8 @@ SiteManager.prototype.addPostE621KonaYand = function(jsonObject)
 				this.url + '/post/show/' + jsonObject.id,
 				jsonObject.width,
 				jsonObject.height,
-				this.convertSDateToDate(jsonObject.created_at.s)
+				this.convertSDateToDate(jsonObject.created_at.s),
+				jsonObject.score
 			);
 			this.allPosts.push(newPost);
 		}
@@ -286,7 +285,8 @@ SiteManager.prototype.addPostIbSearch = function(jsonObject)
 				this.url + '/images/' + jsonObject.id,
 				jsonObject.width,
 				jsonObject.height,
-				new Date(jsonObject.found)
+				new Date(jsonObject.found),
+				0// No score
 			);
 			this.allPosts.push(newPost);
 		}

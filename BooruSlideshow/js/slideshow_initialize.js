@@ -7,40 +7,80 @@ var SITE_RULE34 = 'RULE';
 var SITE_SAFEBOORU = 'SAFE';
 var SITE_YANDERE = 'YAND';
 
-var SITE_QUERY_ASSOCIATIONS = {};
+var SITE_QUERY_TERM_ASSOCIATIONS = {};
 
-SITE_QUERY_ASSOCIATIONS[SITE_DANBOORU] = {
-	"sort:score" : "order:score"
+SITE_QUERY_TERM_ASSOCIATIONS[SITE_DANBOORU] = {
+	"sort:id" : "order:id",
+	"sort:id_asc" : "order:id_asc",
+	"sort:id_desc" : "order:id_desc",
+	"sort:score" : "order:score",
+	"sort:score_asc" : "order:score_asc",
+	"sort:score_desc" : "order:score_desc"
 };
-SITE_QUERY_ASSOCIATIONS[SITE_E621] = {
-	"sort:score" : "order:score"
+SITE_QUERY_TERM_ASSOCIATIONS[SITE_E621] = {
+	"sort:id" : "order:id",
+	"sort:id_asc" : "order:id_asc",
+	"sort:id_desc" : "order:id_desc",
+	"sort:score" : "order:score",
+	"sort:score_asc" : "order:score_asc",
+	"sort:score_desc" : "order:score_desc"
 };
-SITE_QUERY_ASSOCIATIONS[SITE_GELBOORU] = {
+SITE_QUERY_TERM_ASSOCIATIONS[SITE_GELBOORU] = {
 	"rating:s\\S*" : "rating:safe",
 	"rating:q\\S*" : "rating:questionable",
 	"rating:e\\S*" : "rating:explicit",
-	"order:score" : "sort:score"
+	// Can't sort by ID
+	
+	// ASC/DESC not implemented?
+	"order:score" : "sort:score",
+	"order:score_desc" : "sort:score",
+	"sort:score_desc" : "sort:score",
 };
-SITE_QUERY_ASSOCIATIONS[SITE_IBSEARCH] = {
-	"order:score" : "sort:score"
+SITE_QUERY_TERM_ASSOCIATIONS[SITE_IBSEARCH] = {
+	"order:id" : "sort:id",
+	"order:id_asc" : "sort:id_asc",
+	"order:id_desc" : "sort:id_desc",
+	"order:score" : "sort:score",
+	"order:score_asc" : "sort:score_asc",
+	"order:score_desc" : "sort:score_desc"
 };
-SITE_QUERY_ASSOCIATIONS[SITE_KONACHAN] = {
-	"sort:score" : "order:score"
+SITE_QUERY_TERM_ASSOCIATIONS[SITE_KONACHAN] = {
+	"sort:id" : "order:id",
+	"sort:id_asc" : "order:id_asc",
+	"sort:id_desc" : "order:id_desc",
+	"sort:score" : "order:score",
+	"sort:score_asc" : "order:score_asc",
+	"sort:score_desc" : "order:score_desc"
 };
-SITE_QUERY_ASSOCIATIONS[SITE_RULE34] = {
+SITE_QUERY_TERM_ASSOCIATIONS[SITE_RULE34] = {
 	"rating:s\\S*" : "rating:safe",
 	"rating:q\\S*" : "rating:questionable",
 	"rating:e\\S*" : "rating:explicit",
-	"order:score" : "sort:score"
+	"order:id" : "sort:id",
+	"order:id_asc" : "sort:id_asc",
+	"order:id_desc" : "sort:id_desc",
+	"order:score" : "sort:score",
+	"order:score_asc" : "sort:score_asc",
+	"order:score_desc" : "sort:score_desc"
 };
-SITE_QUERY_ASSOCIATIONS[SITE_SAFEBOORU] = {
+SITE_QUERY_TERM_ASSOCIATIONS[SITE_SAFEBOORU] = {
 	"rating:s\\S*" : "rating:safe",
 	"rating:q\\S*" : "rating:questionable",
 	"rating:e\\S*" : "rating:explicit",
-	"order:score" : "sort:score"
+	"order:id" : "sort:id",
+	"order:id_asc" : "sort:id_asc",
+	"order:id_desc" : "sort:id_desc",
+	"order:score" : "sort:score",
+	"order:score_asc" : "sort:score_asc",
+	"order:score_desc" : "sort:score_desc"
 };
-SITE_QUERY_ASSOCIATIONS[SITE_YANDERE] = {
-	"sort:score" : "order:score"
+SITE_QUERY_TERM_ASSOCIATIONS[SITE_YANDERE] = {
+	"sort:id" : "order:id",
+	"sort:id_asc" : "order:id_asc",
+	"sort:id_desc" : "order:id_desc",
+	"sort:score" : "order:score",
+	"sort:score_asc" : "order:score_asc",
+	"sort:score_desc" : "order:score_desc"
 }
 
 var ENTER_KEY_ID = 13;

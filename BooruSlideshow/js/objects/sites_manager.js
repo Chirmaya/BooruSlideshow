@@ -12,6 +12,17 @@ var SitesManager = function (numberOfImagesToAlwaysHaveReadyToDisplay, maxNumber
 	this.isTryingToLoadMoreImages = false;
 	this.callbackToRunAfterAllSitesFinishedSearching = null;
 	
+	this.sortingTypeDateDesc = 'order:id_desc';
+	this.sortingTypeDateAsc = 'order:id_asc';
+	this.sortingTypeScoreDesc = 'order:score_desc';
+	this.sortingTypeScoreAsc = 'order:score_asc';
+	
+	this.sortingQueryTerms = {};
+	this.sortingQueryTerms["(?:order|sort):(?:id|id_asc)\\b"] = this.sortingTypeDateAsc;
+	this.sortingQueryTerms["(?:order|sort):id_desc\\b"] = this.sortingTypeDateDesc;
+	this.sortingQueryTerms["(?:order|sort):(?:score|score_desc)\\b"] = this.sortingTypeScoreDesc;
+	this.sortingQueryTerms["(?:order|sort):score_asc\\b"] = this.sortingTypeScoreAsc;
+	
 	this.setupRequestHeaders();
 }
 
@@ -212,11 +223,48 @@ SitesManager.prototype.buildSortedPostList = function()
 		}
 	}
 	
+	var _this = this;
+	
 	postsToSort.sort(function(a,b) {
+		var sortingMethod = _this.getSortingMethod();
+		
+		switch (sortingMethod)
+		{
+			case _this.sortingTypeDateDesc:
+				return b.date.getTime() - a.date.getTime();
+			case _this.sortingTypeDateAsc:
+				return a.date.getTime() - b.date.getTime();
+			case _this.sortingTypeScoreDesc:
+				return b.score - a.score;
+			case _this.sortingTypeScoreAsc:
+				return a.score - b.score;
+			default:
+				console.log('Sort error. Sorting method not in the list: ' + sortingMethod);
+		}
+		
 		return b.date.getTime() - a.date.getTime();
 	});
 	
 	Array.prototype.push.apply(this.allSortedPosts, postsToSort);
+}
+
+SitesManager.prototype.getSortingMethod = function()
+{
+	for (var sortingQueryTerm in this.sortingQueryTerms)
+	{
+		var sortingQueryTermRegex = new RegExp(sortingQueryTerm, 'i');
+		
+		var matches = this.searchText.match(sortingQueryTermRegex);
+		
+		if (matches != null)
+		{
+			var sortingType = this.sortingQueryTerms[sortingQueryTerm];
+			
+			return sortingType;
+		}
+	}
+	
+	return this.sortingTypeDateDesc;
 }
 
 SitesManager.prototype.getNumberOfSortedPosts = function()

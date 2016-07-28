@@ -1,4 +1,4 @@
-var Post = function (id, fileUrl, previewFileUrl, postOnSiteUrl, imageWidth, imageHeight, date)
+var Post = function (id, fileUrl, previewFileUrl, postOnSiteUrl, imageWidth, imageHeight, date, score)
 {
 	this.id = id;
 	this.fileUrl = fileUrl;
@@ -7,6 +7,7 @@ var Post = function (id, fileUrl, previewFileUrl, postOnSiteUrl, imageWidth, ima
 	this.imageWidth = imageWidth;
 	this.imageHeight = imageHeight;
 	this.date = date;
+	this.score = score;
 	this.isPreloaded = false;
 	this.isPreloading = false;
 	this.preloadImage = null;
