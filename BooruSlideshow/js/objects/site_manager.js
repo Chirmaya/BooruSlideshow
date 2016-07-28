@@ -7,29 +7,53 @@ var SiteManager = function (id, url, pageLimit)
 	this.isEnabled = false;
 	this.allPosts = [];
 	this.hasExhaustedSearch = false;
+	
+	this.siteQueryAssociations = SITE_QUERY_ASSOCIATIONS[id];
 }
 
 SiteManager.prototype.buildRequestUrl = function(searchText, pageNumber)
 {
+	var query = this.buildSiteSpecificQuery(searchText);
+	
 	switch (this.id)
 	{
 		case SITE_GELBOORU:
 		case SITE_RULE34:
 		case SITE_SAFEBOORU:
-			return this.url + '/index.php?page=dapi&s=post&q=index&tags=' + searchText + '&pid=' + (pageNumber - 1) + '&limit=' + this.pageLimit;
+			return this.url + '/index.php?page=dapi&s=post&q=index&tags=' + query + '&pid=' + (pageNumber - 1) + '&limit=' + this.pageLimit;
 		case SITE_DANBOORU:
-			return this.url + '/posts.json?tags=' + searchText + '&page=' + pageNumber + '&limit=' + this.pageLimit;
+			return this.url + '/posts.json?tags=' + query + '&page=' + pageNumber + '&limit=' + this.pageLimit;
 		case SITE_KONACHAN:
 		case SITE_YANDERE:
-			return this.url + '/post.json?tags=' + searchText + '&page=' + pageNumber + '&limit=' + this.pageLimit;
+			return this.url + '/post.json?tags=' + query + '&page=' + pageNumber + '&limit=' + this.pageLimit;
 		case SITE_E621:
-			return this.url + '/post/index.json?tags=' + searchText + '&page=' + pageNumber + '&limit=' + this.pageLimit;
+			return this.url + '/post/index.json?tags=' + query + '&page=' + pageNumber + '&limit=' + this.pageLimit;
 		case SITE_IBSEARCH:
-			return this.url + '/api/v1/images.json?q=' + searchText + '&page=' + pageNumber + '&limit=' + this.pageLimit;
+			return this.url + '/api/v1/images.json?q=' + query + '&page=' + pageNumber + '&limit=' + this.pageLimit;
 		default:
 			console.log('Error building the URL. Supplied site ID is not in the list.');
 			return;
 	}
+}
+
+SiteManager.prototype.buildSiteSpecificQuery = function(searchText)
+{
+	var query = searchText.trim();
+	
+	for (var queryTermToReplace in this.siteQueryAssociations)
+	{
+		var queryTermReplacement = this.siteQueryAssociations[queryTermToReplace];
+		
+		console.log("Replacing " + queryTermToReplace + " with " + queryTermReplacement);
+		
+		var queryTermRegexp = new RegExp(queryTermToReplace, 'i');
+		
+		query = query.replace(queryTermRegexp, queryTermReplacement);
+		
+		console.log("query = " + query);
+	}
+	
+	return query;
 }
 
 SiteManager.prototype.resetConnection = function()

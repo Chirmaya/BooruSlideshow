@@ -7,6 +7,42 @@ var SITE_RULE34 = 'RULE';
 var SITE_SAFEBOORU = 'SAFE';
 var SITE_YANDERE = 'YAND';
 
+var SITE_QUERY_ASSOCIATIONS = {};
+
+SITE_QUERY_ASSOCIATIONS[SITE_DANBOORU] = {
+	"sort:score" : "order:score"
+};
+SITE_QUERY_ASSOCIATIONS[SITE_E621] = {
+	"sort:score" : "order:score"
+};
+SITE_QUERY_ASSOCIATIONS[SITE_GELBOORU] = {
+	"rating:s\\S*" : "rating:safe",
+	"rating:q\\S*" : "rating:questionable",
+	"rating:e\\S*" : "rating:explicit",
+	"order:score" : "sort:score"
+};
+SITE_QUERY_ASSOCIATIONS[SITE_IBSEARCH] = {
+	"order:score" : "sort:score"
+};
+SITE_QUERY_ASSOCIATIONS[SITE_KONACHAN] = {
+	"sort:score" : "order:score"
+};
+SITE_QUERY_ASSOCIATIONS[SITE_RULE34] = {
+	"rating:s\\S*" : "rating:safe",
+	"rating:q\\S*" : "rating:questionable",
+	"rating:e\\S*" : "rating:explicit",
+	"order:score" : "sort:score"
+};
+SITE_QUERY_ASSOCIATIONS[SITE_SAFEBOORU] = {
+	"rating:s\\S*" : "rating:safe",
+	"rating:q\\S*" : "rating:questionable",
+	"rating:e\\S*" : "rating:explicit",
+	"order:score" : "sort:score"
+};
+SITE_QUERY_ASSOCIATIONS[SITE_YANDERE] = {
+	"sort:score" : "order:score"
+}
+
 var ENTER_KEY_ID = 13;
 var LEFT_ARROW_KEY_ID = 37;
 var RIGHT_ARROW_KEY_ID = 39;
