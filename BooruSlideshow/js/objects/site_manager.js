@@ -1,11 +1,12 @@
-var SiteManager = function (id, url, pageLimit)
+var SiteManager = function (sitesManager, id, url, pageLimit)
 {
+	this.sitesManager = sitesManager;
 	this.id = id;
 	this.url = url;
 	this.pageLimit = pageLimit;
 	this.lastPageLoaded = 0;
 	this.isEnabled = false;
-	this.allPosts = [];
+	this.allUnsortedPosts = [];
 	this.hasExhaustedSearch = false;
 	
 	this.siteQueryTermAssociations = SITE_QUERY_TERM_ASSOCIATIONS[id];
@@ -61,7 +62,7 @@ SiteManager.prototype.resetConnection = function()
 	
 	this.lastPageLoaded = 0;
 	this.isEnabled = false;
-	this.allPosts = [];
+	this.allUnsortedPosts = [];
 	this.hasExhaustedSearch = false;
 }
 
@@ -109,16 +110,38 @@ SiteManager.prototype.makeWebsiteRequest = function(url, doneSearchingSiteCallba
 		
 		var responseText = siteManager.xhr.responseText;
 		
-		siteManager.addPosts(responseText);
+		if (siteManager.xhr.status == 200)
+		{
+			siteManager.addPosts(responseText);
+		}
+		else
+		{
+			siteManager.handleErrorFromSiteResponse(responseText);
+		}
 		
 		doneSearchingSiteCallback.call(siteManager);
 	};
 	
 	this.xhr.onerror = function() {
-		displayWarningMessage('Error making the request to the website');
+		siteManager.sitesManager.displayWarningMessage('Error making the request to the website');
 	};
 	
 	this.xhr.send();
+}
+
+SiteManager.prototype.handleErrorFromSiteResponse = function(responseText)
+{
+	console.log(responseText);
+	
+	var possibleJson = JSON.parse(responseText);
+	
+	if (possibleJson == null)
+		return;
+	
+	if (possibleJson.message == null)
+		return;
+	
+	this.sitesManager.displayWarningMessage('Error from site ' + this.id + ': ' + possibleJson.message);
 }
 
 SiteManager.prototype.addPosts = function(responseText)
@@ -206,7 +229,7 @@ SiteManager.prototype.addPostGelRuleSafe = function(xmlPost)
 				xmlPost.getAttribute('score')
 			);
 			
-			this.allPosts.push(newPost);
+			this.allUnsortedPosts.push(newPost);
 		}
 	}
 }
@@ -241,7 +264,7 @@ SiteManager.prototype.addPostDanbooru = function(jsonObject)
 				new Date(jsonObject.created_at),
 				jsonObject.score
 			);
-			this.allPosts.push(newPost);
+			this.allUnsortedPosts.push(newPost);
 		}
 	}
 }
@@ -265,7 +288,7 @@ SiteManager.prototype.addPostE621KonaYand = function(jsonObject)
 				this.convertSDateToDate(jsonObject.created_at.s),
 				jsonObject.score
 			);
-			this.allPosts.push(newPost);
+			this.allUnsortedPosts.push(newPost);
 		}
 	}
 }
@@ -288,14 +311,9 @@ SiteManager.prototype.addPostIbSearch = function(jsonObject)
 				new Date(jsonObject.found),
 				0// No score
 			);
-			this.allPosts.push(newPost);
+			this.allUnsortedPosts.push(newPost);
 		}
 	}
-}
-
-SiteManager.prototype.getTotalImageNumber = function()
-{
-	return this.allPosts.length;
 }
 
 SiteManager.prototype.hasntExhaustedSearch = function()

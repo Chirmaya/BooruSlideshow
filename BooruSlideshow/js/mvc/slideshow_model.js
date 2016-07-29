@@ -1,5 +1,7 @@
 function SlideshowModel() {
-    this.searchText = "";
+    this.view = null;
+	
+	this.searchText = "";
 
     this.sitesToSearch = {
         [SITE_DANBOORU]: false,
@@ -39,7 +41,7 @@ SlideshowModel.prototype = {
         var numberOfImagesToAlwaysHaveReadyToDisplay = 20;
         var maxNumberOfThumbnails = 10;
 
-        this.sitesManager = new SitesManager(numberOfImagesToAlwaysHaveReadyToDisplay, maxNumberOfThumbnails);
+        this.sitesManager = new SitesManager(this, numberOfImagesToAlwaysHaveReadyToDisplay, maxNumberOfThumbnails);
 		
 		var pageLimit = 100;
 		

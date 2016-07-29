@@ -1,6 +1,7 @@
 function SlideshowController(uiElements) {
     this._model = new SlideshowModel();
     this._view = new SlideshowView(this._model, uiElements);
+	this._model.view = this._view
 
     this._view.updateSitesToSearch();
     this._view.updateOptions();

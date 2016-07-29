@@ -1,13 +1,12 @@
-var SitesManager = function (numberOfImagesToAlwaysHaveReadyToDisplay, maxNumberOfThumbnails)
+var SitesManager = function (model, numberOfImagesToAlwaysHaveReadyToDisplay, maxNumberOfThumbnails)
 {
+	this.model = model;
 	this.numberOfImagesToAlwaysHaveReadyToDisplay = numberOfImagesToAlwaysHaveReadyToDisplay;
 	this.maxNumberOfThumbnails = maxNumberOfThumbnails;
 	this.siteManagers = [];
 	this.siteManagersCurrentlySearching = 0;
 	this.currentImageNumber = 0;
-	this.allPosts = [];
 	this.allSortedPosts = [];
-	this.numberOfPostsSorted = [];
 	this.searchText = '';
 	this.isTryingToLoadMoreImages = false;
 	this.callbackToRunAfterAllSitesFinishedSearching = null;
@@ -24,6 +23,14 @@ var SitesManager = function (numberOfImagesToAlwaysHaveReadyToDisplay, maxNumber
 	this.sortingQueryTerms["(?:order|sort):score_asc\\b"] = this.sortingTypeScoreAsc;
 	
 	this.setupRequestHeaders();
+}
+
+SitesManager.prototype.displayWarningMessage = function(message)
+{
+	if (this.model.view != null)
+	{
+		this.model.view.displayWarningMessage(message);
+	}
 }
 
 SitesManager.prototype.setupRequestHeaders = function()
@@ -58,7 +65,7 @@ SitesManager.prototype.setupRequestHeaders = function()
 
 SitesManager.prototype.addSite = function(id, url, pageLimit)
 {
-	this.siteManagers.push(new SiteManager(id, url, pageLimit));
+	this.siteManagers.push(new SiteManager(this, id, url, pageLimit));
 }
 
 SitesManager.prototype.enableSites = function(sites)
@@ -131,7 +138,6 @@ SitesManager.prototype.resetConnections = function()
 	this.siteManagersCurrentlySearching = 0;
 	this.currentImageNumber = 0;
 	this.allSortedPosts = [];
-	this.numberOfPostsSorted = [];
 	this.searchText = '';
 	this.isTryingToLoadMoreImages = false;
 	this.callbackToRunAfterAllSitesFinishedSearching = null;
@@ -195,7 +201,7 @@ SitesManager.prototype.searchSites = function(doneSearchingSitesCallback)
 
 SitesManager.prototype.buildSortedPostList = function()
 {
-	var postsToSort = [];
+	var postsFromAllSitesToSort = [];
 	
 	for (var i = 0; i < this.siteManagers.length; i++)
 	{
@@ -203,29 +209,14 @@ SitesManager.prototype.buildSortedPostList = function()
 		
 		if (siteManager.isEnabled)
 		{
-			if (this.numberOfPostsSorted[siteManager.id] == null)
-			{
-				Array.prototype.push.apply(postsToSort, siteManager.allPosts);
-				this.numberOfPostsSorted[siteManager.id] = siteManager.allPosts.length;
-			}
-			else
-			{
-				var numberOfPostsSortedBySiteManager = this.numberOfPostsSorted[siteManager.id];
-				
-				for (var j = numberOfPostsSortedBySiteManager; j < siteManager.allPosts.length; j++)
-				{
-					postsToSort.push(siteManager.allPosts[j]);
-				}
-				
-				var numberOfAddedSortedPosts = siteManager.allPosts.length - numberOfPostsSortedBySiteManager;
-				this.numberOfPostsSorted[siteManager.id] += numberOfAddedSortedPosts;
-			}
+			Array.prototype.push.apply(postsFromAllSitesToSort, siteManager.allUnsortedPosts);
+			siteManager.allUnsortedPosts = [];
 		}
 	}
 	
 	var _this = this;
 	
-	postsToSort.sort(function(a,b) {
+	postsFromAllSitesToSort.sort(function(a,b) {
 		var sortingMethod = _this.getSortingMethod();
 		
 		switch (sortingMethod)
@@ -245,7 +236,7 @@ SitesManager.prototype.buildSortedPostList = function()
 		return b.date.getTime() - a.date.getTime();
 	});
 	
-	Array.prototype.push.apply(this.allSortedPosts, postsToSort);
+	Array.prototype.push.apply(this.allSortedPosts, postsFromAllSitesToSort);
 }
 
 SitesManager.prototype.getSortingMethod = function()
@@ -267,7 +258,7 @@ SitesManager.prototype.getSortingMethod = function()
 	return this.sortingTypeDateDesc;
 }
 
-SitesManager.prototype.getNumberOfSortedPosts = function()
+/*SitesManager.prototype.getNumberOfSortedPosts = function()
 {
 	var count = 0;
 	
@@ -282,7 +273,7 @@ SitesManager.prototype.getNumberOfSortedPosts = function()
 	}
 	
 	return count;
-}
+}*/
 
 SitesManager.prototype.doMoreImagesNeedToBeLoaded = function()
 {
