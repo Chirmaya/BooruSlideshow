@@ -33,10 +33,26 @@ SitesManager.prototype.displayWarningMessage = function(message)
 	}
 }
 
+SitesManager.prototype.displayInfoMessage = function(message)
+{
+	if (this.model.view != null)
+	{
+		this.model.view.displayInfoMessage(message);
+	}
+}
+
+SitesManager.prototype.clearInfoMessage = function()
+{
+	if (this.model.view != null)
+	{
+		this.model.view.clearInfoMessage();
+	}
+}
+
 SitesManager.prototype.setupRequestHeaders = function()
 {
 	// Only needed for Gelbooru at the moment
-	var handler = function(details) {
+	var listener = function(details) {
 		details.requestHeaders.push({
 			'name': 'Referer',
 			'value': 'http://gelbooru.com'
@@ -57,7 +73,7 @@ SitesManager.prototype.setupRequestHeaders = function()
 	];
 	
 	chrome.webRequest.onBeforeSendHeaders.addListener(
-		handler,
+		listener,
 		requestFilter,
 		extraInfoSpec
 	);

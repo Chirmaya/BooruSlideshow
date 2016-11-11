@@ -4,7 +4,7 @@
 	"name": "Booru Slideshow",
 	"short_name": "Booru SS",
 	"description": "View a slideshow from a Booru site based on your search.",
-	"version": "6.0",
+	"version": "6.1",
 
 	"browser_action":
 	{
@@ -25,6 +25,7 @@
 		"webRequest",
 		"webRequestBlocking",
 		"https://danbooru.donmai.us/*",
+		"https://derpibooru.org/*",
 		"https://e621.net/*",
 		"http://*.gelbooru.com/*",
 		"https://ibsearch.xxx/*",

@@ -166,6 +166,7 @@ SlideshowView.prototype = {
 
     clearUI: function () {
         this.clearWarningMessage();
+        this.clearInfoMessage();
         this.clearImage();
         this.hideNavigation();
         this.clearThumbnails();
@@ -186,6 +187,16 @@ SlideshowView.prototype = {
     clearWarningMessage: function () {
         this.uiElements.warningMessage.innerHTML = '';
         this.uiElements.warningMessage.style.display = 'none';
+    },
+	
+	displayInfoMessage: function (message) {
+        this.uiElements.infoMessage.innerHTML = message;
+        this.uiElements.infoMessage.style.display = 'block';
+    },
+
+    clearInfoMessage: function () {
+        this.uiElements.infoMessage.innerHTML = '';
+        this.uiElements.infoMessage.style.display = 'none';
     },
 
     updateImagesAndNavigation: function () {

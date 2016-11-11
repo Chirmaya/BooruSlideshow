@@ -1,5 +1,9 @@
 Changelog
 
+Version 6.1
+* [Feature] Added support for site derpibooru.org
+* [Feature] Added a "Searching for images..." indicator on initial search.
+
 Version 6.0
 * [Feature] Added tag associations. This allows for cross-booru searching of related tags. This currently only supports "rating", "sort", and "order" tags, but lays the groundwork for more to come.
 * [Feature + Bug fix] Results were all originally sorted by date, even if they were sorted within the query. Added the first implementation of sorting based on your search, with it defaulting to date just like the boorus. Sorting will be refined further in the future, but please send feedback on any issues that you notice.

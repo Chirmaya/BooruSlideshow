@@ -24,6 +24,8 @@ SiteManager.prototype.buildRequestUrl = function(searchText, pageNumber)
 			return this.url + '/index.php?page=dapi&s=post&q=index&tags=' + query + '&pid=' + (pageNumber - 1) + '&limit=' + this.pageLimit;
 		case SITE_DANBOORU:
 			return this.url + '/posts.json?tags=' + query + '&page=' + pageNumber + '&limit=' + this.pageLimit;
+		case SITE_DERPIBOORU:
+			return this.url + '/search.json?q=' + query + '&page=' + pageNumber + '&limit=' + this.pageLimit;
 		case SITE_KONACHAN:
 		case SITE_YANDERE:
 			return this.url + '/post.json?tags=' + query + '&page=' + pageNumber + '&limit=' + this.pageLimit;
@@ -131,8 +133,6 @@ SiteManager.prototype.makeWebsiteRequest = function(url, doneSearchingSiteCallba
 
 SiteManager.prototype.handleErrorFromSiteResponse = function(responseText)
 {
-	console.log(responseText);
-	
 	var possibleJson = JSON.parse(responseText);
 	
 	if (possibleJson == null)
@@ -176,6 +176,12 @@ SiteManager.prototype.addXmlPosts = function(xmlResponseText)
 SiteManager.prototype.addJsonPosts = function(jsonResponseText)
 {
 	var jsonPosts = JSON.parse(jsonResponseText);
+	
+	if (this.id == SITE_DERPIBOORU)
+	{
+		jsonPosts = jsonPosts["search"];
+	}
+	
 	this.hasExhaustedSearch = (jsonPosts.length < this.pageLimit);
 	
 	for (var i = 0; i < jsonPosts.length; i++)
@@ -197,6 +203,9 @@ SiteManager.prototype.addJsonPost = function(jsonObject)
 	{
 		case SITE_DANBOORU:
 			this.addPostDanbooru(jsonObject);
+			break;
+		case SITE_DERPIBOORU:
+			this.addPostDerpibooru(jsonObject);
 			break;
 		case SITE_E621:
 		case SITE_KONACHAN:
@@ -310,6 +319,30 @@ SiteManager.prototype.addPostIbSearch = function(jsonObject)
 				jsonObject.height,
 				new Date(jsonObject.found),
 				0// No score
+			);
+			this.allUnsortedPosts.push(newPost);
+		}
+	}
+}
+
+SiteManager.prototype.addPostDerpibooru = function(jsonObject)
+{
+	if (jsonObject.hasOwnProperty('image') &&
+		jsonObject.hasOwnProperty('representations'))
+	{
+		var fileExtension = jsonObject.image.substring(jsonObject.image.length - 4);
+		
+		if (this.isFileExtensionSupported(fileExtension))
+		{
+			var newPost = new Post(
+				jsonObject.id,
+				"https://" + jsonObject.image,
+				"https://" + jsonObject.representations["thumb"],
+				this.url + '/' + jsonObject.id,
+				jsonObject.width,
+				jsonObject.height,
+				new Date(jsonObject.created_at),
+				jsonObject.score
 			);
 			this.allUnsortedPosts.push(newPost);
 		}

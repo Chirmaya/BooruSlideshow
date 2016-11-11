@@ -46,6 +46,12 @@ li {
 	display: none;
 }
 
+#info-message {
+	background: #3498db;
+	text-align: center;
+	display: none;
+}
+
 #indentation {
 	margin: 5px;
 	clear: both;
@@ -154,6 +160,11 @@ button:disabled {
 	display: inline-block;
 	vertical-align: middle;
 	overflow:auto;
+}
+
+#sites-to-search span
+{
+	color:#999
 }
 
 #sites-to-search,

@@ -5,6 +5,7 @@ function SlideshowModel() {
 
     this.sitesToSearch = {
         [SITE_DANBOORU]: false,
+        [SITE_DERPIBOORU]: false,
         [SITE_E621]: false,
         [SITE_GELBOORU]: false,
         [SITE_IBSEARCH]: false,
@@ -46,6 +47,7 @@ SlideshowModel.prototype = {
 		var pageLimit = 100;
 		
         this.sitesManager.addSite(SITE_DANBOORU, 'https://danbooru.donmai.us', pageLimit);
+        this.sitesManager.addSite(SITE_DERPIBOORU, 'https://derpibooru.org', 10);
         this.sitesManager.addSite(SITE_E621, 'https://e621.net', pageLimit);
         this.sitesManager.addSite(SITE_GELBOORU, 'http://gelbooru.com', pageLimit);
         this.sitesManager.addSite(SITE_IBSEARCH, 'https://ibsearch.xxx', pageLimit);
@@ -64,6 +66,7 @@ SlideshowModel.prototype = {
         var _this = this;
 
         this.sitesManager.performSearch(searchText, function () {
+			_this.view.clearInfoMessage();
             _this.currentImageChangedEvent.notify();
         });
     },
@@ -321,6 +324,7 @@ SlideshowModel.prototype = {
                 if (sitesToSearch != null)
                 {
                     if (sitesToSearch.hasOwnProperty(SITE_DANBOORU) &&
+						sitesToSearch.hasOwnProperty(SITE_DERPIBOORU) &&
                         sitesToSearch.hasOwnProperty(SITE_E621) &&
                         sitesToSearch.hasOwnProperty(SITE_GELBOORU) &&
                         sitesToSearch.hasOwnProperty(SITE_IBSEARCH) &&

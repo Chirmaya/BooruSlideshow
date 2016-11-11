@@ -1,4 +1,5 @@
 var SITE_DANBOORU = 'DANB';
+var SITE_DERPIBOORU = 'DERP';
 var SITE_E621 = 'E621';
 var SITE_GELBOORU = 'GELB';
 var SITE_IBSEARCH = 'IBSE';
@@ -16,6 +17,23 @@ SITE_QUERY_TERM_ASSOCIATIONS[SITE_DANBOORU] = {
 	"sort:score" : "order:score",
 	"sort:score_asc" : "order:score_asc",
 	"sort:score_desc" : "order:score_desc"
+};
+SITE_QUERY_TERM_ASSOCIATIONS[SITE_DERPIBOORU] = {
+	"sort:id" : "",
+	"sort:id_asc" : "",
+	"sort:id_desc" : "",
+	"sort:score" : "",
+	"sort:score_asc" : "",
+	"sort:score_desc" : "",
+	"order:id" : "",
+	"order:id_asc" : "",
+	"order:id_desc" : "",
+	"order:score" : "",
+	"order:score_asc" : "",
+	"order:score_desc" : "",
+	"rating:s\\S*" : "safe",
+	"rating:q\\S*" : "questionable",
+	"rating:e\\S*" : "explicit"
 };
 SITE_QUERY_TERM_ASSOCIATIONS[SITE_E621] = {
 	"sort:id" : "order:id",
@@ -92,6 +110,7 @@ var slideshowController = null;
 document.addEventListener('DOMContentLoaded', function () {
     slideshowController = new SlideshowController({
         'warningMessage': document.getElementById('warning-message'),
+        'infoMessage': document.getElementById('info-message'),
         'currentImage': document.getElementById('current-image'),
         'loadingAnimation': document.getElementById('loading-animation'),
         'navigation': document.getElementById('navigation'),

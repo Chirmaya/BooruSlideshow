@@ -125,6 +125,8 @@ SlideshowController.prototype = {
     searchButtonClicked: function () {
         this._view.clearUI();
         this._view.removeFocusFromSearchButton();
+		
+		this._view.displayInfoMessage('Searching for images...');
 
         var searchText = this._model.searchText;
 
