@@ -1,5 +1,8 @@
 Changelog
 
+Version 6.2
+* [Feature] Using "sort:-upload" will only affect ibsearch results
+
 Version 6.1
 * [Feature] Added support for site derpibooru.org
 * [Feature] Added a "Searching for images..." indicator on initial search.

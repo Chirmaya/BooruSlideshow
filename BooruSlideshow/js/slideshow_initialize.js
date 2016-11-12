@@ -16,7 +16,8 @@ SITE_QUERY_TERM_ASSOCIATIONS[SITE_DANBOORU] = {
 	"sort:id_desc" : "order:id_desc",
 	"sort:score" : "order:score",
 	"sort:score_asc" : "order:score_asc",
-	"sort:score_desc" : "order:score_desc"
+	"sort:score_desc" : "order:score_desc",
+	"sort:-upload" : ""
 };
 SITE_QUERY_TERM_ASSOCIATIONS[SITE_DERPIBOORU] = {
 	"sort:id" : "",
@@ -33,7 +34,8 @@ SITE_QUERY_TERM_ASSOCIATIONS[SITE_DERPIBOORU] = {
 	"order:score_desc" : "",
 	"rating:s\\S*" : "safe",
 	"rating:q\\S*" : "questionable",
-	"rating:e\\S*" : "explicit"
+	"rating:e\\S*" : "explicit",
+	"sort:-upload" : ""
 };
 SITE_QUERY_TERM_ASSOCIATIONS[SITE_E621] = {
 	"sort:id" : "order:id",
@@ -41,7 +43,8 @@ SITE_QUERY_TERM_ASSOCIATIONS[SITE_E621] = {
 	"sort:id_desc" : "order:id_desc",
 	"sort:score" : "order:score",
 	"sort:score_asc" : "order:score_asc",
-	"sort:score_desc" : "order:score_desc"
+	"sort:score_desc" : "order:score_desc",
+	"sort:-upload" : ""
 };
 SITE_QUERY_TERM_ASSOCIATIONS[SITE_GELBOORU] = {
 	"rating:s\\S*" : "rating:safe",
@@ -53,6 +56,7 @@ SITE_QUERY_TERM_ASSOCIATIONS[SITE_GELBOORU] = {
 	"order:score" : "sort:score",
 	"order:score_desc" : "sort:score",
 	"sort:score_desc" : "sort:score",
+	"sort:-upload" : ""
 };
 SITE_QUERY_TERM_ASSOCIATIONS[SITE_IBSEARCH] = {
 	"order:id" : "sort:id",
@@ -68,7 +72,8 @@ SITE_QUERY_TERM_ASSOCIATIONS[SITE_KONACHAN] = {
 	"sort:id_desc" : "order:id_desc",
 	"sort:score" : "order:score",
 	"sort:score_asc" : "order:score_asc",
-	"sort:score_desc" : "order:score_desc"
+	"sort:score_desc" : "order:score_desc",
+	"sort:-upload" : ""
 };
 SITE_QUERY_TERM_ASSOCIATIONS[SITE_RULE34] = {
 	"rating:s\\S*" : "rating:safe",
@@ -79,7 +84,8 @@ SITE_QUERY_TERM_ASSOCIATIONS[SITE_RULE34] = {
 	"order:id_desc" : "sort:id_desc",
 	"order:score" : "sort:score",
 	"order:score_asc" : "sort:score_asc",
-	"order:score_desc" : "sort:score_desc"
+	"order:score_desc" : "sort:score_desc",
+	"sort:-upload" : ""
 };
 SITE_QUERY_TERM_ASSOCIATIONS[SITE_SAFEBOORU] = {
 	"rating:s\\S*" : "rating:safe",
@@ -90,7 +96,8 @@ SITE_QUERY_TERM_ASSOCIATIONS[SITE_SAFEBOORU] = {
 	"order:id_desc" : "sort:id_desc",
 	"order:score" : "sort:score",
 	"order:score_asc" : "sort:score_asc",
-	"order:score_desc" : "sort:score_desc"
+	"order:score_desc" : "sort:score_desc",
+	"sort:-upload" : ""
 };
 SITE_QUERY_TERM_ASSOCIATIONS[SITE_YANDERE] = {
 	"sort:id" : "order:id",
@@ -98,7 +105,8 @@ SITE_QUERY_TERM_ASSOCIATIONS[SITE_YANDERE] = {
 	"sort:id_desc" : "order:id_desc",
 	"sort:score" : "order:score",
 	"sort:score_asc" : "order:score_asc",
-	"sort:score_desc" : "order:score_desc"
+	"sort:score_desc" : "order:score_desc",
+	"sort:-upload" : ""
 }
 
 var ENTER_KEY_ID = 13;

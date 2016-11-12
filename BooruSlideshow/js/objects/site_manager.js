@@ -175,7 +175,18 @@ SiteManager.prototype.addXmlPosts = function(xmlResponseText)
 
 SiteManager.prototype.addJsonPosts = function(jsonResponseText)
 {
-	var jsonPosts = JSON.parse(jsonResponseText);
+	var jsonPosts;
+	
+	try
+	{
+		jsonPosts = JSON.parse(jsonResponseText);
+	}
+	catch(e)
+	{
+		console.log("JSON failed to parse.");
+		console.log(e);
+		return;
+	}
 	
 	if (this.id == SITE_DERPIBOORU)
 	{
