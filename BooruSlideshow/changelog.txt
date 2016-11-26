@@ -1,5 +1,8 @@
 Changelog
 
+Version 6.3
+* [Feature] Enabled usage in incognito mode
+
 Version 6.2
 * [Feature] Using "sort:-upload" will only affect ibsearch results
 
