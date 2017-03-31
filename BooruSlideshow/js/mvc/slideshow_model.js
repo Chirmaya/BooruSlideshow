@@ -49,7 +49,7 @@ SlideshowModel.prototype = {
         this.sitesManager.addSite(SITE_DANBOORU, 'https://danbooru.donmai.us', pageLimit);
         this.sitesManager.addSite(SITE_DERPIBOORU, 'https://derpibooru.org', 10);
         this.sitesManager.addSite(SITE_E621, 'https://e621.net', pageLimit);
-        this.sitesManager.addSite(SITE_GELBOORU, 'http://gelbooru.com', pageLimit);
+        this.sitesManager.addSite(SITE_GELBOORU, 'https://gelbooru.com', pageLimit);
         this.sitesManager.addSite(SITE_IBSEARCH, 'https://ibsearch.xxx', pageLimit);
         this.sitesManager.addSite(SITE_KONACHAN, 'https://konachan.com', pageLimit);
         this.sitesManager.addSite(SITE_RULE34, 'http://rule34.xxx', pageLimit);

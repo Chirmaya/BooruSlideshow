@@ -1,10 +1,13 @@
 Changelog
 
+Version 6.4
+* [Bug fix] Gelbooru is now working again since they've switched to only work with HTTPS.
+
 Version 6.3
-* [Feature] Enabled usage in incognito mode
+* [Feature] Enabled usage in incognito mode.
 
 Version 6.2
-* [Feature] Using "sort:-upload" will only affect ibsearch results
+* [Feature] Using "sort:-upload" will only affect ibsearch results.
 
 Version 6.1
 * [Feature] Added support for site derpibooru.org

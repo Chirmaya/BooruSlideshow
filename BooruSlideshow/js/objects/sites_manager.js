@@ -55,14 +55,14 @@ SitesManager.prototype.setupRequestHeaders = function()
 	var listener = function(details) {
 		details.requestHeaders.push({
 			'name': 'Referer',
-			'value': 'http://gelbooru.com'
+			'value': 'https://gelbooru.com'
 		});
 		return {requestHeaders: details.requestHeaders};
 	};
 	
 	var requestFilter = {
 		urls: [
-			"http://*.gelbooru.com/*"
+			"https://*.gelbooru.com/*"
 		],
 		types: ["image"]
 	};
