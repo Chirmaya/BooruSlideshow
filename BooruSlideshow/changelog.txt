@@ -1,5 +1,8 @@
 Changelog
 
+Version 7.1
+* [Bug fix] Removed debugging info that was accidentally left in.
+
 Version 7.0
 * [Feature] Added support for WEBM videos. The option is off by default, but can be enabled in the options. The sound is also defaulted off, and I'll have to make it a sticky setting later.
 * [Change] Changed 'seconds per image' to 'seconds per slide'
