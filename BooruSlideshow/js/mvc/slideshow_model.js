@@ -15,10 +15,11 @@ function SlideshowModel() {
         [SITE_YANDERE]: false
     };
 
-    this.secondsPerImage = 6;
+    this.secondsPerSlide = 6;
     this.maxWidth = null;
     this.maxHeight = null;
-    this.autoFitImage = false;
+    this.autoFitSlide = false;
+    this.includeWebm = false;
 
     this.isPlaying = false;
     this.timer = null;
@@ -26,23 +27,24 @@ function SlideshowModel() {
 
     this.sitesManager = null;
 
-    this.currentImageChangedEvent = new Event(this);
+    this.currentSlideChangedEvent = new Event(this);
     this.playingChangedEvent = new Event(this);
     this.sitesToSearchUpdatedEvent = new Event(this);
-    this.secondsPerImageUpdatedEvent = new Event(this);
+    this.secondsPerSlideUpdatedEvent = new Event(this);
     this.maxWidthUpdatedEvent = new Event(this);
     this.maxHeightUpdatedEvent = new Event(this);
-    this.autoFitImageUpdatedEvent = new Event(this);
+    this.autoFitSlideUpdatedEvent = new Event(this);
+    this.includeWebmUpdatedEvent = new Event(this);
 
     this.initialize();
 }
 
 SlideshowModel.prototype = {
     initialize: function () {
-        var numberOfImagesToAlwaysHaveReadyToDisplay = 20;
+        var numberOfSlidesToAlwaysHaveReadyToDisplay = 20;
         var maxNumberOfThumbnails = 10;
 
-        this.sitesManager = new SitesManager(this, numberOfImagesToAlwaysHaveReadyToDisplay, maxNumberOfThumbnails);
+        this.sitesManager = new SitesManager(this, numberOfSlidesToAlwaysHaveReadyToDisplay, maxNumberOfThumbnails);
 		
 		var pageLimit = 100;
 		
@@ -67,58 +69,58 @@ SlideshowModel.prototype = {
 
         this.sitesManager.performSearch(searchText, function () {
 			_this.view.clearInfoMessage();
-            _this.currentImageChangedEvent.notify();
+            _this.currentSlideChangedEvent.notify();
         });
     },
 
-    setImageNumberToFirst: function () {
-        this.sitesManager.moveToFirstImage();
-        this.currentImageChangedEvent.notify();
+    setSlideNumberToFirst: function () {
+        this.sitesManager.moveToFirstSlide();
+        this.currentSlideChangedEvent.notify();
 
         this.restartSlideshowIfOn();
     },
 
-    decreaseCurrentImageNumber: function () {
-        this.sitesManager.decreaseCurrentImageNumber();
-        this.currentImageChangedEvent.notify();
+    decreaseCurrentSlideNumber: function () {
+        this.sitesManager.decreaseCurrentSlideNumber();
+        this.currentSlideChangedEvent.notify();
 
         this.restartSlideshowIfOn();
     },
 
-    increaseCurrentImageNumber: function () {
+    increaseCurrentSlideNumber: function () {
         var _this = this;
 
-        this.sitesManager.increaseCurrentImageNumber(function () {
-            _this.currentImageChangedEvent.notify();
+        this.sitesManager.increaseCurrentSlideNumber(function () {
+            _this.currentSlideChangedEvent.notify();
         });
 
         this.restartSlideshowIfOn();
     },
 
-    setImageNumberToLast: function () {
+    setSlideNumberToLast: function () {
         var _this = this;
 
-        this.sitesManager.moveToLastImage(function () {
-            _this.currentImageChangedEvent.notify();
+        this.sitesManager.moveToLastSlide(function () {
+            _this.currentSlideChangedEvent.notify();
         });
 
         this.restartSlideshowIfOn();
     },
 
-    moveToImage: function (id) {
-        if (this.sitesManager.moveToImage(id))
+    moveToSlide: function (id) {
+        if (this.sitesManager.moveToSlide(id))
         {
-            this.currentImageChangedEvent.notify();
+            this.currentSlideChangedEvent.notify();
             //restartSlideshowIfOn();
         }
     },
 
-    preloadNextUnpreloadedImageAfterThisOneIfInRange: function (post) {
-        this.sitesManager.preloadNextUnpreloadedImageAfterThisOneIfInRange(post);
+    preloadNextUnpreloadedSlideAfterThisOneIfInRange: function (slide) {
+        this.sitesManager.preloadNextUnpreloadedSlideAfterThisOneIfInRange(slide);
     },
 
     tryToPlayOrPause: function () {
-        if (this.hasImagesToDisplay())
+        if (this.hasSlidesToDisplay())
         {
             if (this.isPlaying)
                 this.pauseSlideshow();
@@ -136,7 +138,7 @@ SlideshowModel.prototype = {
     },
 
     tryToStartCountdown: function () {
-        if (this.sitesManager.isCurrentImageLoaded())
+        if (this.sitesManager.isCurrentSlideLoaded())
         {
             this.startCountdown();
         }
@@ -144,37 +146,37 @@ SlideshowModel.prototype = {
         {
             var _this = this;
 
-            this.sitesManager.runCodeWhenCurrentImageFinishesLoading(function(){
+            this.sitesManager.runCodeWhenCurrentSlideFinishesLoading(function(){
                 _this.startCountdown();
             });
         }
     },
 
     startCountdown: function () {
-        var millisecondsPerImage = this.secondsPerImage * 1000;
+        var millisecondsPerSlide = this.secondsPerSlide * 1000;
 	    
         var _this = this;
 
         this.timer = setTimeout(function() {
-            if (_this.hasNextImage())
+            if (_this.hasNextSlide())
             {
                 // Continue slideshow
-                _this.increaseCurrentImageNumber();
+                _this.increaseCurrentSlideNumber();
             }
-            else if (_this.isTryingToLoadMoreImages())
+            else if (_this.isTryingToLoadMoreSlides())
             {
-                // Wait for loading images to finish
-                _this.sitesManager.runCodeWhenFinishGettingMoreImages(function(){
+                // Wait for loading images/videos to finish
+                _this.sitesManager.runCodeWhenFinishGettingMoreSlides(function(){
                     _this.tryToStartCountdown();
                 });
             }
             else
             {
-                // Loop when out of images
-                _this.setImageNumberToFirst();
+                // Loop when out of images/videos
+                _this.setSlideNumberToFirst();
             }
 		
-        }, millisecondsPerImage);
+        }, millisecondsPerSlide);
     },
 
     restartSlideshowIfOn: function () {
@@ -182,7 +184,7 @@ SlideshowModel.prototype = {
         if (this.isPlaying)
         {
             clearTimeout(this.timer);
-            this.sitesManager.clearCallbacksForPreloadingImages();
+            this.sitesManager.clearCallbacksForPreloadingSlides();
 		
             this.tryToStartCountdown();
         }
@@ -190,44 +192,44 @@ SlideshowModel.prototype = {
 
     pauseSlideshow: function () {
         clearTimeout(this.timer);
-        this.sitesManager.clearCallbacksForPreloadingImages();
-        this.sitesManager.clearCallbacksForLoadingImages();
+        this.sitesManager.clearCallbacksForPreloadingSlides();
+        this.sitesManager.clearCallbacksForLoadingSlides();
 
         this.isPlaying = false;
 
         this.playingChangedEvent.notify();
     },
 
-    getImageCount: function () {
-        return this.sitesManager.getTotalImageNumber();
+    getSlideCount: function () {
+        return this.sitesManager.getTotalSlideNumber();
     },
 
-    hasImagesToDisplay: function () {
-        return (this.getImageCount() > 0);
+    hasSlidesToDisplay: function () {
+        return (this.getSlideCount() > 0);
     },
 
-    hasNextImage: function () {
-        return (this.getImageCount() > this.getCurrentImageNumber());
+    hasNextSlide: function () {
+        return (this.getSlideCount() > this.getCurrentSlideNumber());
     },
 
-    isTryingToLoadMoreImages: function () {
-        return this.sitesManager.isTryingToLoadMoreImages;
+    isTryingToLoadMoreSlides: function () {
+        return this.sitesManager.isTryingToLoadMoreSlides;
     },
 
-    getCurrentPost: function() {
-        return this.sitesManager.getCurrentPost();
+    getCurrentSlide: function() {
+        return this.sitesManager.getCurrentSlide();
     },
 
-    getCurrentImageNumber: function () {
-        return this.sitesManager.currentImageNumber;
+    getCurrentSlideNumber: function () {
+        return this.sitesManager.currentSlideNumber;
     },
 
-    areThereMoreLoadableImages: function () {
-        return this.sitesManager.areThereMoreLoadableImages();
+    areThereMoreLoadableSlides: function () {
+        return this.sitesManager.areThereMoreLoadableSlides();
     },
 
-    getNextPostsForThumbnails: function () {
-        return this.sitesManager.getNextPostsForThumbnails();
+    getNextSlidesForThumbnails: function () {
+        return this.sitesManager.getNextSlidesForThumbnails();
     },
 
     getSelectedSitesToSearch: function () {
@@ -245,7 +247,7 @@ SlideshowModel.prototype = {
     },
 
     areMaxWithAndHeightEnabled: function () {
-        return !this.autoFitImage;
+        return !this.autoFitSlide;
     },
 
     setSitesToSearch: function (sitesToSearch) {
@@ -264,25 +266,25 @@ SlideshowModel.prototype = {
         this.sitesToSearchUpdatedEvent.notify();
     },
 	
-    setSecondsPerImage: function (secondsPerImage) {
-        this.secondsPerImage = secondsPerImage;
+    setSecondsPerSlide: function (secondsPerSlide) {
+        this.secondsPerSlide = secondsPerSlide;
 
-        this.saveSecondsPerImage();
+        this.saveSecondsPerSlide();
 
-        this.secondsPerImageUpdatedEvent.notify();
+        this.secondsPerSlideUpdatedEvent.notify();
     },
 	
-	setSecondsPerImageIfValid: function (secondsPerImage) {
-		if (secondsPerImage == '')
+	setSecondsPerSlideIfValid: function (secondsPerSlide) {
+		if (secondsPerSlide == '')
             return;
 
-        if (isNaN(secondsPerImage))
+        if (isNaN(secondsPerSlide))
             return;
 
-        if (secondsPerImage < 1)
+        if (secondsPerSlide < 1)
             return;
 
-        this.setSecondsPerImage(secondsPerImage);
+        this.setSecondsPerSlide(secondsPerSlide);
 	},
 
     setMaxWidth: function (maxWidth) {
@@ -301,25 +303,34 @@ SlideshowModel.prototype = {
         this.maxHeightUpdatedEvent.notify();
     },
 
-    setAutoFitImage: function (onOrOff) {
-        this.autoFitImage = onOrOff;
+    setAutoFitSlide: function (onOrOff) {
+        this.autoFitSlide = onOrOff;
 
-        this.saveAutoFitImage();
+        this.saveAutoFitSlide();
 
-        this.autoFitImageUpdatedEvent.notify();
+        this.autoFitSlideUpdatedEvent.notify();
+    },
+	
+	setIncludeWebm: function (onOrOff) {
+        this.includeWebm = onOrOff;
+
+        this.saveIncludeWebm();
+
+        this.includeWebmUpdatedEvent.notify();
     },
 
     loadUserSettings: function () {
         var _this = this;
 
-        chrome.storage.sync.get(['sitesToSearch', 'secondsPerImage', 'maxWidth', 'maxHeight', 'autoFitImage'], function (obj) {
+        chrome.storage.sync.get(['sitesToSearch', 'secondsPerSlide', 'maxWidth', 'maxHeight', 'autoFitSlide', 'includeWebm'], function (obj) {
             if (obj != null)
             {
                 var sitesToSearch = obj['sitesToSearch'];
-                var secondsPerImage = obj['secondsPerImage'];
+                var secondsPerSlide = obj['secondsPerSlide'];
                 var maxWidth = obj['maxWidth'];
                 var maxHeight = obj['maxHeight'];
-                var autoFitImage = obj['autoFitImage'];
+                var autoFitSlide = obj['autoFitSlide'];
+                var includeWebm = obj['includeWebm'];
 			    
                 if (sitesToSearch != null)
                 {
@@ -337,9 +348,9 @@ SlideshowModel.prototype = {
                     }
                 }
 				
-                if (_this.secondsPerImage != secondsPerImage)
+                if (_this.secondsPerSlide != secondsPerSlide)
                 {
-                    _this.setSecondsPerImageIfValid(secondsPerImage);
+                    _this.setSecondsPerSlideIfValid(secondsPerSlide);
                 }
 
                 if (_this.maxWidth != maxWidth)
@@ -352,11 +363,19 @@ SlideshowModel.prototype = {
                     _this.setMaxHeight(maxHeight);
                 }
                 
-                if (autoFitImage != null)
+                if (autoFitSlide != null)
                 {
-                    if (_this.autoFitImage != autoFitImage)
+                    if (_this.autoFitSlide != autoFitSlide)
                     {
-                        _this.setAutoFitImage(autoFitImage);
+                        _this.setAutoFitSlide(autoFitSlide);
+                    }
+                }
+				
+				if (includeWebm != null)
+                {
+                    if (_this.includeWebm != includeWebm)
+                    {
+                        _this.setIncludeWebm(includeWebm);
                     }
                 }
             }
@@ -367,8 +386,8 @@ SlideshowModel.prototype = {
         chrome.storage.sync.set({'sitesToSearch': this.sitesToSearch});
     },
 
-    saveSecondsPerImage: function () {
-        chrome.storage.sync.set({'secondsPerImage': this.secondsPerImage});
+    saveSecondsPerSlide: function () {
+        chrome.storage.sync.set({'secondsPerSlide': this.secondsPerSlide});
     },
 
     saveMaxWidth: function () {
@@ -379,7 +398,11 @@ SlideshowModel.prototype = {
         chrome.storage.sync.set({'maxHeight': this.maxHeight});
     },
 
-    saveAutoFitImage: function () {
-        chrome.storage.sync.set({'autoFitImage': this.autoFitImage});
+    saveAutoFitSlide: function () {
+        chrome.storage.sync.set({'autoFitSlide': this.autoFitSlide});
+    },
+	
+	saveIncludeWebm: function () {
+        chrome.storage.sync.set({'includeWebm': this.includeWebm});
     }
 };

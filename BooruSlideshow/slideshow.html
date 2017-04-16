@@ -8,13 +8,16 @@
 	<body>
 		<p id="warning-message"></p>
 		<p id="info-message"></p>
-		<div id="image-wrapper">
+		<div id="slide-wrapper">
 			<img id="current-image" />
-			<img id="loading-animation" src="img/loading.gif" alt="Loading Image" />
+			<video id="current-video" autoplay='true' loop='true' muted='true' controls>
+				<source type="video/webm"></source>
+			</video>
+			<img id="loading-animation" src="img/loading.gif" alt="Loading Slide" />
 		</div>
 		<div id="indentation">
 			<div id="navigation">
-				<span id="current-image-number"></span> of <span id="total-image-number"></span><br />
+				<span id="current-slide-number"></span> of <span id="total-slide-number"></span><br>
 				<button class="nav-button" id="first-button">&lt;&lt;</button>
 				<button class="nav-button" id="previous-button">&lt;</button>
 				<button class="nav-button" id="play-button">&#9658;</button>
@@ -27,7 +30,7 @@
 				</div>
 			</div>
 			<div id="search">
-				<input id="search-text" /><br />
+				<input id="search-text" value="type:web" /><br>
 				<button id="search-button">Search</button>
 			</div>
 			<div id="module-container">
@@ -35,9 +38,9 @@
 					<h4>Sites to Search</h4>
 					<ul>
 						<li><label><input type="checkbox" name="sites-to-search" value="DANB" />danbooru.donmai.us</label></li>
-						<li><label><input type="checkbox" name="sites-to-search" value="DERP" />derpibooru.org <span>(login for less filtering)</span></label></li>
+						<li><label><input type="checkbox" name="sites-to-search" value="DERP" />derpibooru.org<br><span>(login for less filtering)</span></label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="E621" />e621.net</label></li>
-						<li><label><input type="checkbox" name="sites-to-search" value="GELB" />gelbooru.com <span>(need to be logged in)</span></label></li>
+						<li><label><input type="checkbox" name="sites-to-search" value="GELB" />gelbooru.com<br><span>(need to be logged in)</span></label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="IBSE" />ibsearch.xxx</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="KONA" />konachan.com</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="RULE" />rule34.xxx</label></li>
@@ -49,22 +52,25 @@
 					<h4>Options</h4>
 					<ul>
 						<li>
-							Seconds per Image
-							<br />
-							<input id="seconds-per-image" type="number" min="1" />
+							Seconds per Slide
+							<br>
+							<input id="seconds-per-slide" type="number" min="1" />
 						</li>
 						<li>
 							Max. Width
-							<br />
-							<input id="max-width" type="number" min="1" /><br />
+							<br>
+							<input id="max-width" type="number" min="1" /><br>
 						</li>
 						<li>
 							Max. Height
-							<br />
+							<br>
 							<input id="max-height" type="number" min="1" />
 						</li>
 						<li>
-							<label><input id="auto-fit-image" type="checkbox" />Auto-Fit Image</label>
+							<label><input id="auto-fit-slide" type="checkbox" />Auto-Fit Slide</label>
+						</li>
+						<li>
+							<label><input id="include-webm" type="checkbox" />Include WEBM</label>
 						</li>
 					</ul>
 				</div>
@@ -83,7 +89,7 @@
 		
 		<script src="js/objects/sites_manager.js"></script>
 		<script src="js/objects/site_manager.js"></script>
-		<script src="js/objects/post.js"></script>
+		<script src="js/objects/slide.js"></script>
 		<script src="js/objects/event.js"></script>
 		<script src="js/mvc/slideshow_model.js"></script>
 		<script src="js/mvc/slideshow_view.js"></script>

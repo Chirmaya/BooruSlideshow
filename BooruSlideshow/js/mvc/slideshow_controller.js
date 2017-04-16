@@ -10,7 +10,11 @@ function SlideshowController(uiElements) {
 
     // Attach view listeners
     this._view.currentImageClickedEvent.attach(function() {
-        _this.currentImageClicked();
+        _this.currentSlideClicked();
+    });
+	
+	this._view.currentVideoClickedEvent.attach(function() {
+        _this.currentSlideClicked();
     });
 
     this._view.firstNavButtonClickedEvent.attach(function () {
@@ -57,8 +61,8 @@ function SlideshowController(uiElements) {
         _this.sitesToSearchChanged(args.checked, args.site);
     });
 
-    this._view.secondsPerImageChangedEvent.attach(function () {
-        _this.secondsPerImageChanged();
+    this._view.secondsPerSlideChangedEvent.attach(function () {
+		_this.secondsPerSlideChanged();
     });
 
     this._view.maxWidthChangedEvent.attach(function () {
@@ -69,36 +73,40 @@ function SlideshowController(uiElements) {
         _this.maxHeightChanged();
     });
 
-    this._view.autoFitImageChangedEvent.attach(function () {
-        _this.autoFitImageChanged();
+    this._view.autoFitSlideChangedEvent.attach(function () {
+        _this.autoFitSlideChanged();
+    });
+	
+	this._view.includeWebmChangedEvent.attach(function () {
+        _this.includeWebmChanged();
     });
 
     this._model.loadUserSettings();
 }
 
 SlideshowController.prototype = {
-    currentImageClicked: function () {
-        var currentPost = this._model.getCurrentPost();
+	currentSlideClicked: function () {
+        var currentSlide = this._model.getCurrentSlide();
 
-        this._view.openUrlInNewWindow(currentPost.postOnSiteUrl);
+        this._view.openUrlInNewWindow(currentSlide.viewableWebsitePostUrl);
 
         this._model.pauseSlideshow();
     },
 
     firstNavButtonClicked: function () {
-        this._model.setImageNumberToFirst();
+        this._model.setSlideNumberToFirst();
     },
 
     previousNavButtonClicked: function () {
-        this._model.decreaseCurrentImageNumber();
+        this._model.decreaseCurrentSlideNumber();
     },
 
     nextNavButtonClicked: function () {
-        this._model.increaseCurrentImageNumber();
+        this._model.increaseCurrentSlideNumber();
     },
 
     lastNavButtonClicked: function () {
-        this._model.setImageNumberToLast();
+        this._model.setSlideNumberToLast();
     },
 
     playButtonClicked: function () {
@@ -125,8 +133,6 @@ SlideshowController.prototype = {
     searchButtonClicked: function () {
         this._view.clearUI();
         this._view.removeFocusFromSearchButton();
-		
-		this._view.displayInfoMessage('Searching for images...');
 
         var searchText = this._model.searchText;
 
@@ -143,7 +149,14 @@ SlideshowController.prototype = {
             this._view.displayWarningMessage('No sites were selected to be searched.');
             return;
         }
-
+		
+		var message = 'Searching for images...';
+		
+		if (this._model.includeWebm)
+			message = 'Searching for images and videos...';
+		
+		this._view.displayInfoMessage(message);
+		
         this._model.performSearch(searchText);
     },
 
@@ -151,10 +164,10 @@ SlideshowController.prototype = {
         this._model.setSiteToSearch(site, checked);
     },
 
-    secondsPerImageChanged: function () {
-        var secondsPerImageText = this._view.getSecondsPerImage();
+    secondsPerSlideChanged: function () {
+        var secondsPerSlideText = this._view.getSecondsPerSlide();
 
-        this._model.setSecondsPerImageIfValid(secondsPerImageText);
+        this._model.setSecondsPerSlideIfValid(secondsPerSlideText);
     },
 
     maxWidthChanged: function () {
@@ -162,41 +175,44 @@ SlideshowController.prototype = {
 
         if (maxWidthText == '')
         {
-            this._model.maxWidth = null;
-            return;
+			maxWidthText = null;
+            //this._model.maxWidth = null;
+            //return;
+				
         }
-
-        if (isNaN(maxWidthText))
-            return;
-
-        if (maxWidthText < 1)
+		else if (isNaN(maxWidthText))
+			return;
+		else if (maxWidthText < 1)
             return;
         
         this._model.setMaxWidth(maxWidthText);
-        
     },
 
     maxHeightChanged: function () {
         var maxHeightText = this._view.getMaxHeight();
         
         if (maxHeightText == '') {
-            this._model.maxHeight = null;
-            return;
+            maxHeight = null;
         }
-        
-        if (isNaN(maxHeightText))
+        else if (isNaN(maxHeightText))
             return;
-        
-        if (maxHeightText < 1)
+        else if (maxHeightText < 1)
             return;
         
         this._model.setMaxHeight(maxHeightText);
     },
 
-    autoFitImageChanged: function () {
-        var autoFitImage = this._view.getAutoFitImage();
+    autoFitSlideChanged: function () {
+        var autoFitSlide = this._view.getAutoFitSlide();
 
-        this._model.setAutoFitImage(autoFitImage);
+        this._model.setAutoFitSlide(autoFitSlide);
+        
+    },
+	
+	includeWebmChanged: function () {
+        var includeWebm = this._view.getIncludeWebm();
+
+        this._model.setIncludeWebm(includeWebm);
         
     }
 };

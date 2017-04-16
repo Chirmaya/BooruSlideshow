@@ -3,6 +3,7 @@ function SlideshowView(slideshowModel, uiElements) {
     this.uiElements = uiElements;
 
     this.currentImageClickedEvent = new Event(this);
+    this.currentVideoClickedEvent = new Event(this);
     this.searchButtonClickedEvent = new Event(this);
     this.firstNavButtonClickedEvent = new Event(this);
     this.previousNavButtonClickedEvent = new Event(this);
@@ -14,16 +15,17 @@ function SlideshowView(slideshowModel, uiElements) {
     this.searchTextChangedEvent = new Event(this);
     this.enterKeyPressedInSearchTextBoxEvent = new Event(this);
     this.sitesToSearchChangedEvent = new Event(this);
-    this.secondsPerImageChangedEvent = new Event(this);
+    this.secondsPerSlideChangedEvent = new Event(this);
     this.maxWidthChangedEvent = new Event(this);
     this.maxHeightChangedEvent = new Event(this);
-    this.autoFitImageChangedEvent = new Event(this);
+    this.autoFitSlideChangedEvent = new Event(this);
+    this.includeWebmChangedEvent = new Event(this);
 
     var _this = this;
 
     // Attach model listeners
-    this._model.currentImageChangedEvent.attach(function () {
-        _this.updateImagesAndNavigation();
+    this._model.currentSlideChangedEvent.attach(function () {
+        _this.updateSlidesAndNavigation();
     });
 
     this._model.playingChangedEvent.attach(function () {
@@ -34,8 +36,8 @@ function SlideshowView(slideshowModel, uiElements) {
         _this.updateSitesToSearch();
     });
 
-    this._model.secondsPerImageUpdatedEvent.attach(function () {
-        _this.updateSecondsPerImage();
+    this._model.secondsPerSlideUpdatedEvent.attach(function () {
+        _this.updateSecondsPerSlide();
     });
 
     this._model.maxWidthUpdatedEvent.attach(function () {
@@ -46,8 +48,12 @@ function SlideshowView(slideshowModel, uiElements) {
         _this.updateMaxHeight();
     });
 
-    this._model.autoFitImageUpdatedEvent.attach(function () {
-        _this.updateAutoFitImage();
+    this._model.autoFitSlideUpdatedEvent.attach(function () {
+        _this.updateAutoFitSlide();
+    });
+	
+	this._model.includeWebmUpdatedEvent.attach(function () {
+        _this.updateIncludeWebm();
     });
 
     // Attach UI element listeners
@@ -57,6 +63,10 @@ function SlideshowView(slideshowModel, uiElements) {
 
     this.uiElements.currentImage.addEventListener('click', function() {
         _this.currentImageClickedEvent.notify();
+    });
+	
+	this.uiElements.currentVideo.addEventListener('click', function() {
+        _this.currentVideoClickedEvent.notify();
     });
     
     this.uiElements.firstNavButton.addEventListener('click', function() {
@@ -92,7 +102,7 @@ function SlideshowView(slideshowModel, uiElements) {
         }
 
         if (document.activeElement !== _this.uiElements.searchTextBox &&
-			document.activeElement !== _this.uiElements.secondsPerImageTextBox &&
+			document.activeElement !== _this.uiElements.secondsPerSlideTextBox &&
 			document.activeElement !== _this.uiElements.maxWidthTextBox &&
 			document.activeElement !== _this.uiElements.maxHeightTextBox) {
 
@@ -138,8 +148,8 @@ function SlideshowView(slideshowModel, uiElements) {
         });
     }
 
-    this.uiElements.secondsPerImageTextBox.addEventListener('change', function () {
-        _this.secondsPerImageChangedEvent.notify();
+    this.uiElements.secondsPerSlideTextBox.addEventListener('change', function () {
+        _this.secondsPerSlideChangedEvent.notify();
     });
 
     this.uiElements.maxWidthTextBox.addEventListener('change', function () {
@@ -150,8 +160,12 @@ function SlideshowView(slideshowModel, uiElements) {
         _this.maxHeightChangedEvent.notify();
     });
 
-    this.uiElements.autoFitImageCheckBox.addEventListener('change', function () {
-        _this.autoFitImageChangedEvent.notify();
+    this.uiElements.autoFitSlideCheckBox.addEventListener('change', function () {
+        _this.autoFitSlideChangedEvent.notify();
+    });
+	
+	this.uiElements.includeWebmCheckBox.addEventListener('change', function () {
+        _this.includeWebmChangedEvent.notify();
     });
 
     this.initialize();
@@ -168,14 +182,16 @@ SlideshowView.prototype = {
         this.clearWarningMessage();
         this.clearInfoMessage();
         this.clearImage();
+        this.clearVideo();
         this.hideNavigation();
         this.clearThumbnails();
     },
 
     windowResized: function() {
-        if (this._model.autoFitImage)
+        if (this._model.autoFitSlide)
         {
-            this.tryToUpdateImageSize();
+            this.tryToUpdateSlideSize();
+			this.tryToUpdateVideoSize();
         }
     },
 
@@ -199,13 +215,13 @@ SlideshowView.prototype = {
         this.uiElements.infoMessage.style.display = 'none';
     },
 
-    updateImagesAndNavigation: function () {
-        this.updateImages();
+    updateSlidesAndNavigation: function () {
+        this.updateSlides();
         this.updateNavigation();
     },
 
-    updateImages: function () {
-        this.displayCurrentImage();
+    updateSlides: function () {
+        this.displayCurrentSlide();
         this.showThumbnails();
     },
 
@@ -215,83 +231,165 @@ SlideshowView.prototype = {
         this.uiElements.currentImage.onload = function () {
             _this.hideLoadingAnimation();
         }
+		
+		this.uiElements.currentVideo.addEventListener('loadeddata', function() {
+			_this.hideLoadingAnimation();
+		}, false);
     },
 
-    displayCurrentImage: function () {
-        if (this._model.hasImagesToDisplay()) {
-            this.displayImage();
+    displayCurrentSlide: function () {
+        if (this._model.hasSlidesToDisplay())
+		{
+            this.displaySlide();
         }
-        else {
-            this.displayWarningMessage('No images were found.');
+        else
+		{
+			var message = 'No images were found.';
+			
+			if (this._model.includeWebm)
+				message = 'No images or videos were found.';
+			
+            this.displayWarningMessage(message);
         }
     },
 
-    displayImage: function () {
+    displaySlide: function () {
         this.showLoadingAnimation();
 
-        var currentPost = this._model.getCurrentPost();
+        var currentSlide = this._model.getCurrentSlide();
+		
+		if (currentSlide.isImage())
+		{
+			this.displayImage(currentSlide);
+		}
+		else if (currentSlide.isVideo())
+		{
+			this.displayVideo(currentSlide);
+		}
+		else
+		{
+			console.log("Trying to display slide that isn't an image or video.")
+		}
+    },
+	
+	displayImage: function (currentSlide) {
         var currentImage = this.uiElements.currentImage;
 
-        currentImage.src = currentPost.fileUrl;
-        currentImage.setAttribute('alt', currentPost.id);
+        currentImage.src = currentSlide.fileUrl;
+        currentImage.setAttribute('alt', currentSlide.id);
         currentImage.style.display = 'inline';
+		
+		this.clearVideo();
+        this.updateSlideSize();
+    },
+	
+	displayVideo: function (currentSlide) {
+        var currentVideo = this.uiElements.currentVideo;
 
-        this.updateImageSize();
+        currentVideo.src = currentSlide.fileUrl;
+        currentVideo.style.display = 'inline';
+
+		this.clearImage();
+        this.updateSlideSize();
     },
 
-    tryToUpdateImageSize: function () {
-        if (this._model.hasImagesToDisplay())
+    tryToUpdateSlideSize: function () {
+        if (this._model.hasSlidesToDisplay())
         {
-            this.updateImageSize();
-        }
+			var currentSlide = this.updateSlideSize();
+		}
     },
-
-    updateImageSize: function () {
-        var currentPost = this._model.getCurrentPost();
+	
+    updateSlideSize: function () {
+        var currentSlide = this._model.getCurrentSlide();
         var currentImage = this.uiElements.currentImage;
+        var currentVideo = this.uiElements.currentVideo;
         
-        var autoFitImage = this._model.autoFitImage;
+        var autoFitSlide = this._model.autoFitSlide;
 
         currentImage.style.width = null;
         currentImage.style.height = null;
         currentImage.style.maxWidth = null;
         currentImage.style.maxHeight = null;
+		
+		currentVideo.style.width = null;
+        currentVideo.style.height = null;
+        currentVideo.style.maxWidth = null;
+        currentVideo.style.maxHeight = null;
         
-        if (autoFitImage)
+        if (autoFitSlide)
         {
             var viewWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
             var viewHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 
-            var imageWidth = currentPost.imageWidth;
-            var imageHeight = currentPost.imageHeight;
+            var newWidth = currentSlide.width;
+            var newHeight = currentSlide.height;
 
             var viewRatio = viewWidth / viewHeight;
-            var imageRatio = imageWidth / imageHeight;
+            var newRatio = newWidth / newHeight;
             
-            if (imageRatio > viewRatio)
+            if (newRatio > viewRatio)
             {
-                imageWidth = viewWidth;
-                imageHeight = viewWidth / imageRatio;
+                newWidth = viewWidth;
+                newHeight = viewWidth / newRatio;
             }
             else
             {
-                imageWidth = viewHeight * imageRatio;
-                imageHeight = viewHeight;
+                newWidth = viewHeight * newRatio;
+                newHeight = viewHeight;
             }
             
-            currentImage.style.width = imageWidth + 'px';
-            currentImage.style.height = imageHeight + 'px';
+			if (currentSlide.isImage())
+			{
+				currentImage.style.width = newWidth + 'px';
+				currentImage.style.height = newHeight + 'px';
+			}
+			else if (currentSlide.isVideo())
+			{
+				currentVideo.style.width = newWidth + 'px';
+				currentVideo.style.height = newHeight + 'px';
+			}
+			else
+			{
+				console.log("Couldn't update slide size because slide isn't image or video.");
+			}
         }
         else
         {
-            if (this._model.maxWidth != null) {
+            if (this._model.maxWidth != null)
+			{
                 var maxWidth = parseInt(this._model.maxWidth);
-                currentImage.style.maxWidth = maxWidth + 'px';
-            }
-
-            if (this._model.maxHeight != null) {
+                
+				if (currentSlide.isImage())
+				{
+					currentImage.style.maxWidth = maxWidth + 'px';
+				}
+				else if (currentSlide.isVideo())
+				{
+					currentVideo.style.maxWidth = maxWidth + 'px';
+				}
+				else
+				{
+					console.log("Couldn't update slide max width because slide isn't image or video.");
+				}
+			}
+			
+            if (this._model.maxHeight != null)
+			{
                 var maxHeight = parseInt(this._model.maxHeight);
-                currentImage.style.maxHeight = maxHeight + 'px';
+                
+				if (currentSlide.isImage())
+				{
+					currentImage.style.maxHeight = maxHeight + 'px';
+				}
+				else if (currentSlide.isVideo())
+				{
+					currentVideo.style.maxHeight = maxHeight + 'px';
+				}
+				else
+				{
+					console.log("Couldn't update slide max height because slide isn't image or video.");
+				}
             }
         }
     },
@@ -302,6 +400,13 @@ SlideshowView.prototype = {
         currentImage.src = '';
         currentImage.removeAttribute('alt');
         currentImage.style.display = 'none';
+    },
+	
+	clearVideo: function () {
+        var currentVideo = this.uiElements.currentVideo;
+
+        currentVideo.src = '';
+        currentVideo.style.display = 'none';
     },
 
     showLoadingAnimation: function () {
@@ -317,7 +422,7 @@ SlideshowView.prototype = {
     },
 
     updateNavigation: function () {
-        if (this._model.hasImagesToDisplay())
+        if (this._model.hasSlidesToDisplay())
         {
             this.updateNavigationButtonsAndDisplay();
             this.showNavigation();
@@ -338,24 +443,24 @@ SlideshowView.prototype = {
     },
 
     updateCurrentNumberDisplay: function () {
-        this.uiElements.currentImageNumber.innerHTML = this._model.getCurrentImageNumber();
+        this.uiElements.currentSlideNumber.innerHTML = this._model.getCurrentSlideNumber();
     },
 
     updateTotalNumberDisplay: function () {
-        var totalNumberText = this._model.getImageCount();
+        var totalNumberText = this._model.getSlideCount();
 
-        if (this._model.areThereMoreLoadableImages()) {
+        if (this._model.areThereMoreLoadableSlides()) {
             totalNumberText += '+';
         }
 
-        this.uiElements.totalImageNumber.innerHTML = totalNumberText;
+        this.uiElements.totalSlideNumber.innerHTML = totalNumberText;
     },
 
     updateFirstPreviousButtons: function () {
-        var currentlyOnFirstImage = (this._model.getCurrentImageNumber() == 1);
+        var currentlyOnFirstSlide = (this._model.getCurrentSlideNumber() == 1);
 
-        this.uiElements.firstNavButton.disabled = currentlyOnFirstImage;
-        this.uiElements.previousNavButton.disabled = currentlyOnFirstImage;
+        this.uiElements.firstNavButton.disabled = currentlyOnFirstSlide;
+        this.uiElements.previousNavButton.disabled = currentlyOnFirstSlide;
     },
 
     updatePlayPauseButtons: function () {
@@ -370,10 +475,10 @@ SlideshowView.prototype = {
     },
 
     updateNextLastButtons: function () {
-        var currentlyOnLastImage = (this._model.getCurrentImageNumber() == this._model.getImageCount());
+        var currentlyOnLastSlide = (this._model.getCurrentSlideNumber() == this._model.getSlideCount());
 
-        this.uiElements.nextNavButton.disabled = currentlyOnLastImage;
-        this.uiElements.lastNavButton.disabled = currentlyOnLastImage;
+        this.uiElements.nextNavButton.disabled = currentlyOnLastSlide;
+        this.uiElements.lastNavButton.disabled = currentlyOnLastSlide;
     },
 
     hideNavigation: function () {
@@ -383,21 +488,21 @@ SlideshowView.prototype = {
     showThumbnails: function () {
         this.clearThumbnails();
 
-        if (this._model.getImageCount() > 1) {
-            var nextPosts = this._model.getNextPostsForThumbnails();
+        if (this._model.getSlideCount() > 1) {
+            var nextSlides = this._model.getNextSlidesForThumbnails();
             var _this = this;
 
-            for (var i = 0; i < nextPosts.length; i++) {
-                var post = nextPosts[i];
+            for (var i = 0; i < nextSlides.length; i++) {
+                var slide = nextSlides[i];
 
-                var showGreyedOut = !post.isPreloaded
-                this.displayThumbnail(post.previewFileUrl, post.id, showGreyedOut);
+                var showGreyedOut = !slide.isPreloaded
+                this.displayThumbnail(slide.previewFileUrl, slide.id, showGreyedOut);
 
-                post.clearCallback();
-                post.addCallback(function () {
-                    var post = this;
-                    _this.removeThumbnailGreyness(post.id);
-                    _this._model.preloadNextUnpreloadedImageAfterThisOneIfInRange(post);
+                slide.clearCallback();
+                slide.addCallback(function () {
+                    var callbackSlide = this;
+                    _this.removeThumbnailGreyness(callbackSlide.id);
+                    _this._model.preloadNextUnpreloadedSlideAfterThisOneIfInRange(callbackSlide);
                 });
             }
         }
@@ -413,7 +518,7 @@ SlideshowView.prototype = {
         var _this = this;
         newThumbnail.onclick = function () {
 
-            _this._model.moveToImage(id);
+            _this._model.moveToSlide(id);
         };
 
         var newThumbnailImage = document.createElement("img");
@@ -476,17 +581,17 @@ SlideshowView.prototype = {
     },
 
     updateOptions: function () {
-        this.updateSecondsPerImage();
+        this.updateSecondsPerSlide();
         this.updateMaxWidth();
         this.updateMaxHeight();
     },
 
-    getSecondsPerImage: function () {
-        return this.uiElements.secondsPerImageTextBox.value;
+    getSecondsPerSlide: function () {
+        return this.uiElements.secondsPerSlideTextBox.value;
     },
 
-    updateSecondsPerImage: function () {
-        this.uiElements.secondsPerImageTextBox.value = this._model.secondsPerImage;
+    updateSecondsPerSlide: function () {
+        this.uiElements.secondsPerSlideTextBox.value = this._model.secondsPerSlide;
     },
 
     enableOrDisableMaxWidthAndHeight: function () {
@@ -509,7 +614,7 @@ SlideshowView.prototype = {
         }
         
         this.uiElements.maxWidthTextBox.value = maxWidth;
-        this.tryToUpdateImageSize();
+        this.tryToUpdateSlideSize();
     },
 
     getMaxHeight: function () {
@@ -524,19 +629,27 @@ SlideshowView.prototype = {
         }
 
         this.uiElements.maxHeightTextBox.value = maxHeight;
-        this.tryToUpdateImageSize();
+        this.tryToUpdateSlideSize();
     },
 
-    getAutoFitImage: function () {
-        return this.uiElements.autoFitImageCheckBox.checked;
+    getAutoFitSlide: function () {
+        return this.uiElements.autoFitSlideCheckBox.checked;
+    },
+	
+	getIncludeWebm: function () {
+        return this.uiElements.includeWebmCheckBox.checked;
     },
 
-    updateAutoFitImage: function () {
-        this.uiElements.autoFitImageCheckBox.checked = this._model.autoFitImage;
+    updateAutoFitSlide: function () {
+        this.uiElements.autoFitSlideCheckBox.checked = this._model.autoFitSlide;
 
         this.enableOrDisableMaxWidthAndHeight()
 
-        this.tryToUpdateImageSize();
+        this.tryToUpdateSlideSize();
+    },
+	
+	updateIncludeWebm: function () {
+        this.uiElements.includeWebmCheckBox.checked = this._model.includeWebm;
     },
 
     openUrlInNewWindow: function (url) {

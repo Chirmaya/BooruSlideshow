@@ -59,6 +59,7 @@ li {
 
 #navigation,
 #current-image,
+#current-video,
 #testing-area-text,
 #testing-area-links {
 	display: none;
@@ -85,7 +86,7 @@ button:disabled {
 	color: darkgrey;
 }
 
-#image-wrapper {
+#slide-wrapper {
 	position:relative;
 	display: absolute;
 	text-align:center;
@@ -149,7 +150,7 @@ button:disabled {
 #sites-to-search,
 #options,
 #tips {
-	height: 280px;
+	/*height: 310px;*/
 	font-size: 100%;
 	text-align:center;
 	background: #181a1f;
@@ -158,7 +159,7 @@ button:disabled {
 	border-radius: 5px;
 	color:#fff;
 	display: inline-block;
-	vertical-align: middle;
+	vertical-align: top;
 	overflow:auto;
 }
 
@@ -197,7 +198,8 @@ button:disabled {
  	text-align:center;
 }
 	
-#current-image {
+#current-image,
+#current-video {
 	text-align:center;
 	margin:auto;
 }

@@ -6,7 +6,7 @@ var SiteManager = function (sitesManager, id, url, pageLimit)
 	this.pageLimit = pageLimit;
 	this.lastPageLoaded = 0;
 	this.isEnabled = false;
-	this.allUnsortedPosts = [];
+	this.allUnsortedSlides = [];
 	this.hasExhaustedSearch = false;
 	
 	this.siteQueryTermAssociations = SITE_QUERY_TERM_ASSOCIATIONS[id];
@@ -64,7 +64,7 @@ SiteManager.prototype.resetConnection = function()
 	
 	this.lastPageLoaded = 0;
 	this.isEnabled = false;
-	this.allUnsortedPosts = [];
+	this.allUnsortedSlides = [];
 	this.hasExhaustedSearch = false;
 }
 
@@ -114,7 +114,7 @@ SiteManager.prototype.makeWebsiteRequest = function(url, doneSearchingSiteCallba
 		
 		if (siteManager.xhr.status == 200)
 		{
-			siteManager.addPosts(responseText);
+			siteManager.addSlides(responseText);
 		}
 		else
 		{
@@ -144,19 +144,19 @@ SiteManager.prototype.handleErrorFromSiteResponse = function(responseText)
 	this.sitesManager.displayWarningMessage('Error from site ' + this.id + ': ' + possibleJson.message);
 }
 
-SiteManager.prototype.addPosts = function(responseText)
+SiteManager.prototype.addSlides = function(responseText)
 {
 	if (this.id == SITE_GELBOORU || this.id == SITE_RULE34 || this.id == SITE_SAFEBOORU)
 	{
-		this.addXmlPosts(responseText);
+		this.addXmlSlides(responseText);
 	}
 	else
 	{
-		this.addJsonPosts(responseText);
+		this.addJsonSlides(responseText);
 	}
 }
 	
-SiteManager.prototype.addXmlPosts = function(xmlResponseText)
+SiteManager.prototype.addXmlSlides = function(xmlResponseText)
 {
 	parser = new DOMParser();
 	xml = parser.parseFromString(xmlResponseText, "text/xml");
@@ -169,11 +169,11 @@ SiteManager.prototype.addXmlPosts = function(xmlResponseText)
 	{
 		var xmlPost = xmlPosts[i];
 		
-		this.addXmlPost(xmlPost);
+		this.addXmlSlide(xmlPost);
 	}
 }
 
-SiteManager.prototype.addJsonPosts = function(jsonResponseText)
+SiteManager.prototype.addJsonSlides = function(jsonResponseText)
 {
 	var jsonPosts;
 	
@@ -199,46 +199,44 @@ SiteManager.prototype.addJsonPosts = function(jsonResponseText)
 	{
 	    var jsonPost = jsonPosts[i];
 		
-		this.addJsonPost(jsonPost);
+		this.addJsonSlide(jsonPost);
 	}
 }
 
-SiteManager.prototype.addXmlPost = function(jsonObject)
+SiteManager.prototype.addXmlSlide = function(xmlPost)
 {
-	this.addPostGelRuleSafe(jsonObject);
+	this.addSlideGelRuleSafe(xmlPost);
 }
 
-SiteManager.prototype.addJsonPost = function(jsonObject)
+SiteManager.prototype.addJsonSlide = function(jsonPost)
 {
 	switch (this.id)
 	{
 		case SITE_DANBOORU:
-			this.addPostDanbooru(jsonObject);
+			this.addSlideDanbooru(jsonPost);
 			break;
 		case SITE_DERPIBOORU:
-			this.addPostDerpibooru(jsonObject);
+			this.addSlideDerpibooru(jsonPost);
 			break;
 		case SITE_E621:
 		case SITE_KONACHAN:
 		case SITE_YANDERE:
-			this.addPostE621KonaYand(jsonObject);
+			this.addSlideE621KonaYand(jsonPost);
 			break;
 		case SITE_IBSEARCH:
-			this.addPostIbSearch(jsonObject);
+			this.addSlideIbSearch(jsonPost);
 			break;
 	}
 }
 
-SiteManager.prototype.addPostGelRuleSafe = function(xmlPost)
+SiteManager.prototype.addSlideGelRuleSafe = function(xmlPost)
 {
 	if (xmlPost.hasAttribute('file_url') &&
 		xmlPost.hasAttribute('preview_url'))
 	{
-		var fileExtension = xmlPost.getAttribute('file_url').substring(xmlPost.getAttribute('file_url').length - 4);
-		
-		if (this.isFileExtensionSupported(fileExtension))
+		if (this.isPathForSupportedMediaType(xmlPost.getAttribute('file_url')))
 		{
-			var newPost = new Post(
+			var newSlide = new Slide(
 				xmlPost.getAttribute('id'),
 				reformatUrl(xmlPost.getAttribute('file_url')),
 				reformatUrl(xmlPost.getAttribute('preview_url')),
@@ -246,10 +244,11 @@ SiteManager.prototype.addPostGelRuleSafe = function(xmlPost)
 				xmlPost.getAttribute('width'),
 				xmlPost.getAttribute('height'),
 				new Date(xmlPost.getAttribute('created_at')),
-				xmlPost.getAttribute('score')
+				xmlPost.getAttribute('score'),
+				this.getMediaTypeFromPath(xmlPost.getAttribute('file_url'))
 			);
 			
-			this.allUnsortedPosts.push(newPost);
+			this.allUnsortedSlides.push(newSlide);
 		}
 	}
 }
@@ -265,97 +264,100 @@ function reformatUrl(url)
 	return url;
 }
 
-SiteManager.prototype.addPostDanbooru = function(jsonObject)
+SiteManager.prototype.addSlideDanbooru = function(jsonPost)
 {
-	if (jsonObject.hasOwnProperty('file_url') &&
-		jsonObject.hasOwnProperty('preview_file_url'))
+	if (jsonPost.hasOwnProperty('file_url') &&
+		jsonPost.hasOwnProperty('preview_file_url'))
 	{
-		var fileExtension = jsonObject.file_url.substring(jsonObject.file_url.length - 4);
-		
-		if (this.isFileExtensionSupported(fileExtension))
+		if (this.isPathForSupportedMediaType(jsonPost.file_url))
 		{
-			var newPost = new Post(
-				jsonObject.id,
-				this.url + jsonObject.file_url,
-				this.url + jsonObject.preview_file_url,
-				this.url + '/posts/' + jsonObject.id,
-				jsonObject.image_width,
-				jsonObject.image_height,
-				new Date(jsonObject.created_at),
-				jsonObject.score
+			var newSlide = new Slide(
+				jsonPost.id,
+				this.url + jsonPost.file_url,
+				this.url + jsonPost.preview_file_url,
+				this.url + '/posts/' + jsonPost.id,
+				jsonPost.image_width,
+				jsonPost.image_height,
+				new Date(jsonPost.created_at),
+				jsonPost.score,
+				this.getMediaTypeFromPath(jsonPost.file_url)
 			);
-			this.allUnsortedPosts.push(newPost);
+			this.allUnsortedSlides.push(newSlide);
 		}
 	}
 }
 
-SiteManager.prototype.addPostE621KonaYand = function(jsonObject)
+SiteManager.prototype.addSlideE621KonaYand = function(jsonPost)
 {
-	if (jsonObject.hasOwnProperty('file_url') &&
-		jsonObject.hasOwnProperty('preview_url'))
+	if (jsonPost.hasOwnProperty('file_url') &&
+		jsonPost.hasOwnProperty('preview_url'))
 	{
-		var fileExtension = jsonObject.file_url.substring(jsonObject.file_url.length - 4);
-		
-		if (this.isFileExtensionSupported(fileExtension))
+		if (this.isPathForSupportedMediaType(jsonPost.file_url))
 		{
-			var newPost = new Post(
-				jsonObject.id,
-				jsonObject.file_url,
-				jsonObject.preview_url,
-				this.url + '/post/show/' + jsonObject.id,
-				jsonObject.width,
-				jsonObject.height,
-				this.convertSDateToDate(jsonObject.created_at.s),
-				jsonObject.score
+			var url = this.url + '/post/show/' + jsonPost.id;
+			
+			var prefix = '';
+			
+			if (this.id == SITE_KONACHAN)
+				prefix = 'https://';
+			
+			var newSlide = new Slide(
+				jsonPost.id,
+				prefix + jsonPost.file_url,
+				prefix + jsonPost.preview_url,
+				this.url + '/post/show/' + jsonPost.id,
+				jsonPost.width,
+				jsonPost.height,
+				this.convertSDateToDate(jsonPost.created_at.s),
+				jsonPost.score,
+				this.getMediaTypeFromPath(jsonPost.file_url)
 			);
-			this.allUnsortedPosts.push(newPost);
+			this.allUnsortedSlides.push(newSlide);
 		}
 	}
 }
 
-SiteManager.prototype.addPostIbSearch = function(jsonObject)
+SiteManager.prototype.addSlideIbSearch = function(jsonPost)
 {
-	if (jsonObject.hasOwnProperty('path'))
+	if (jsonPost.hasOwnProperty('path'))
 	{
-		var fileExtension = jsonObject.path.substring(jsonObject.path.length - 4);
-		
-		if (this.isFileExtensionSupported(fileExtension))
+		if (this.isPathForSupportedMediaType(jsonPost.path))
 		{
-			var newPost = new Post(
-				jsonObject.id,
-				'https://im1.ibsearch.xxx/' + jsonObject.path,
-				'https://im1.ibsearch.xxx/t' + jsonObject.path,
-				this.url + '/images/' + jsonObject.id,
-				jsonObject.width,
-				jsonObject.height,
-				new Date(jsonObject.found),
-				0// No score
+			var newSlide = new Slide(
+				jsonPost.id,
+				'https://im1.ibsearch.xxx/' + jsonPost.path,
+				'https://im1.ibsearch.xxx/t' + jsonPost.path,
+				this.url + '/images/' + jsonPost.id,
+				jsonPost.width,
+				jsonPost.height,
+				new Date(jsonPost.found),
+				0,// No score
+				this.getMediaTypeFromPath(jsonPost.path)
 			);
-			this.allUnsortedPosts.push(newPost);
+			this.allUnsortedSlides.push(newSlide);
 		}
 	}
 }
 
-SiteManager.prototype.addPostDerpibooru = function(jsonObject)
+SiteManager.prototype.addSlideDerpibooru = function(jsonPost)
 {
-	if (jsonObject.hasOwnProperty('image') &&
-		jsonObject.hasOwnProperty('representations'))
+	if (jsonPost.hasOwnProperty('image') &&
+		jsonPost.hasOwnProperty('representations'))
 	{
-		var fileExtension = jsonObject.image.substring(jsonObject.image.length - 4);
-		
-		if (this.isFileExtensionSupported(fileExtension))
+		if (this.isPathForSupportedMediaType(jsonPost.image))
 		{
-			var newPost = new Post(
-				jsonObject.id,
-				"https://" + jsonObject.image,
-				"https://" + jsonObject.representations["thumb"],
-				this.url + '/' + jsonObject.id,
-				jsonObject.width,
-				jsonObject.height,
-				new Date(jsonObject.created_at),
-				jsonObject.score
+			var newSlide = new Slide(
+				jsonPost.id,
+				"https://" + jsonPost.image,
+				"https://" + jsonPost.representations["thumb"],
+				this.url + '/' + jsonPost.id,
+				jsonPost.width,
+				jsonPost.height,
+				new Date(jsonPost.created_at),
+				jsonPost.score,
+				this.getMediaTypeFromPath(jsonPost.image)
 			);
-			this.allUnsortedPosts.push(newPost);
+			this.allUnsortedSlides.push(newSlide);
 		}
 	}
 }
@@ -371,9 +373,30 @@ SiteManager.prototype.convertSDateToDate = function(sDate)
 	return date = new Date(sDate * 1000);
 }
 
-SiteManager.prototype.isFileExtensionSupported = function (fileExtension)
+SiteManager.prototype.isPathForSupportedMediaType = function (filePath)
 {
-    return fileExtension != '.zip' && // No zip files
-        fileExtension != '.swf' && // No flash files
-        fileExtension != 'webm'; // No video files
+	var mediaType = this.getMediaTypeFromPath(filePath)
+	
+	return this.isMediaTypeSupported(mediaType);
+}
+
+SiteManager.prototype.getMediaTypeFromPath = function (filePath)
+{
+	var fileExtension = filePath.substring(filePath.length - 4);
+	
+	switch (fileExtension.toLowerCase())
+	{
+		case 'webm':
+			return MEDIA_TYPE_VIDEO;
+		case '.swf':
+		case '.zip':
+			return MEDIA_TYPE_UNSUPPORTED;
+		default:
+			return MEDIA_TYPE_IMAGE;
+	}
+}
+
+SiteManager.prototype.isMediaTypeSupported = function (mediaType)
+{
+    return mediaType == MEDIA_TYPE_IMAGE || (mediaType == MEDIA_TYPE_VIDEO && this.sitesManager.model.includeWebm);
 }

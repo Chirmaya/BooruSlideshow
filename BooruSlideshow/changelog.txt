@@ -1,5 +1,12 @@
 Changelog
 
+Version 7.0
+* [Feature] Added support for WEBM videos. The option is off by default, but can be enabled in the options. The sound is also defaulted off, and I'll have to make it a sticky setting later.
+* [Change] Changed 'seconds per image' to 'seconds per slide'
+* [Change] Changed 'auto-fit image' to 'auto-fit slide'
+* [Bug fix] Cleared max width/height values are now saved.
+* [Bug fix] Made the 'searching' status message not show during warnings.
+
 Version 6.4
 * [Bug fix] Gelbooru is now working again since they've switched to only work with HTTPS.
 

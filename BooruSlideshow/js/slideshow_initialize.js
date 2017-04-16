@@ -8,6 +8,10 @@ var SITE_RULE34 = 'RULE';
 var SITE_SAFEBOORU = 'SAFE';
 var SITE_YANDERE = 'YAND';
 
+var MEDIA_TYPE_IMAGE = 'IMAGE';
+var MEDIA_TYPE_VIDEO = 'VIDEO';
+var MEDIA_TYPE_UNSUPPORTED = 'UNSUPPORTED';
+
 var SITE_QUERY_TERM_ASSOCIATIONS = {};
 
 SITE_QUERY_TERM_ASSOCIATIONS[SITE_DANBOORU] = {
@@ -120,10 +124,11 @@ document.addEventListener('DOMContentLoaded', function () {
         'warningMessage': document.getElementById('warning-message'),
         'infoMessage': document.getElementById('info-message'),
         'currentImage': document.getElementById('current-image'),
+        'currentVideo': document.getElementById('current-video'),
         'loadingAnimation': document.getElementById('loading-animation'),
         'navigation': document.getElementById('navigation'),
-        'currentImageNumber': document.getElementById('current-image-number'),
-        'totalImageNumber': document.getElementById('total-image-number'),
+        'currentSlideNumber': document.getElementById('current-slide-number'),
+        'totalSlideNumber': document.getElementById('total-slide-number'),
         'thumbnailList': document.getElementById('thumbnail-list'),
         'searchTextBox': document.getElementById('search-text'),
         'searchButton': document.getElementById('search-button'),
@@ -134,9 +139,10 @@ document.addEventListener('DOMContentLoaded', function () {
         'playButton': document.getElementById('play-button'),
         'pauseButton': document.getElementById('pause-button'),
         'sitesToSearch': document.getElementsByName('sites-to-search'),
-        'secondsPerImageTextBox': document.getElementById('seconds-per-image'),
+        'secondsPerSlideTextBox': document.getElementById('seconds-per-slide'),
         'maxWidthTextBox': document.getElementById('max-width'),
         'maxHeightTextBox': document.getElementById('max-height'),
-        'autoFitImageCheckBox': document.getElementById('auto-fit-image')
+        'autoFitSlideCheckBox': document.getElementById('auto-fit-slide'),
+        'includeWebmCheckBox': document.getElementById('include-webm')
     });
 });
