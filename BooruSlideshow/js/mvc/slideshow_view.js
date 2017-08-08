@@ -191,7 +191,6 @@ SlideshowView.prototype = {
         if (this._model.autoFitSlide)
         {
             this.tryToUpdateSlideSize();
-			this.tryToUpdateVideoSize();
         }
     },
 

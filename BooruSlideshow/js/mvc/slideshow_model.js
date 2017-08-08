@@ -54,7 +54,7 @@ SlideshowModel.prototype = {
         this.sitesManager.addSite(SITE_GELBOORU, 'https://gelbooru.com', pageLimit);
         this.sitesManager.addSite(SITE_IBSEARCH, 'https://ibsearch.xxx', pageLimit);
         this.sitesManager.addSite(SITE_KONACHAN, 'https://konachan.com', pageLimit);
-        this.sitesManager.addSite(SITE_RULE34, 'http://rule34.xxx', pageLimit);
+        this.sitesManager.addSite(SITE_RULE34, 'https://rule34.xxx', pageLimit);
         this.sitesManager.addSite(SITE_SAFEBOORU, 'http://safebooru.org', pageLimit);
         this.sitesManager.addSite(SITE_YANDERE, 'https://yande.re', pageLimit);
     },
