@@ -1,5 +1,11 @@
 Changelog
 
+Version 7.4
+* [Feature] "A" key -> previous image, "D" key -> next image, "W" key -> back 10 images, "S" key -> forward 10 images.
+* [Feature] Pressing Space will start/stop the slideshow like the Enter key.
+* [Change] Pressing Enter to search will remove the focus from the textbox so that you can start navigating instantly.
+* [Change] The "tips" section is now a "hotkeys" section, and it has more info.
+
 Version 7.3
 * [Fix] Minor fix to remove poor coding errors
 

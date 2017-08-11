@@ -9,6 +9,8 @@ function SlideshowView(slideshowModel, uiElements) {
     this.previousNavButtonClickedEvent = new Event(this);
     this.nextNavButtonClickedEvent = new Event(this);
     this.lastNavButtonClickedEvent = new Event(this);
+	this.goBackTenImagesPressedEvent = new Event(this);
+	this.goForwardTenImagesPressedEvent = new Event(this);
     this.playButtonClickedEvent = new Event(this);
     this.pauseButtonClickedEvent = new Event(this);
     this.enterKeyPressedOutsideOfSearchTextBoxEvent = new Event(this);
@@ -96,7 +98,15 @@ function SlideshowView(slideshowModel, uiElements) {
     document.addEventListener('keydown', function (e) {
 		var key = e.which || e.keyCode;
 		
-        if (!(key == ENTER_KEY_ID || key == LEFT_ARROW_KEY_ID || key == RIGHT_ARROW_KEY_ID))
+        if (!(
+			key == ENTER_KEY_ID ||
+			key == SPACE_KEY_ID ||
+			key == LEFT_ARROW_KEY_ID ||
+			key == RIGHT_ARROW_KEY_ID ||
+			key == A_KEY_ID ||
+			key == W_KEY_ID ||
+			key == S_KEY_ID ||
+			key == D_KEY_ID))
         {
             return;
         }
@@ -106,15 +116,23 @@ function SlideshowView(slideshowModel, uiElements) {
 			document.activeElement !== _this.uiElements.maxWidthTextBox &&
 			document.activeElement !== _this.uiElements.maxHeightTextBox) {
 
-            if (key == LEFT_ARROW_KEY_ID)
+            if (key == LEFT_ARROW_KEY_ID || key == A_KEY_ID)
                 _this.previousNavButtonClickedEvent.notify();
-            if (key == RIGHT_ARROW_KEY_ID)
+            if (key == RIGHT_ARROW_KEY_ID || key == D_KEY_ID)
                 _this.nextNavButtonClickedEvent.notify();
-            if (key == ENTER_KEY_ID)
+			if (key == W_KEY_ID)
+                _this.goBackTenImagesPressedEvent.notify();
+			if (key == S_KEY_ID)
+                _this.goForwardTenImagesPressedEvent.notify();
+            if (key == ENTER_KEY_ID || key == SPACE_KEY_ID)
             {
                 if (document.activeElement !== _this.uiElements.searchButton)
                     _this.enterKeyPressedOutsideOfSearchTextBoxEvent.notify();
             }
+			if (key == SPACE_KEY_ID)
+			{
+				e.preventDefault();
+			}
         }
     });
 
@@ -560,6 +578,10 @@ SlideshowView.prototype = {
 
     setFocusToSearchBox: function() {
         this.uiElements.searchTextBox.focus();
+    },
+	
+	removeFocusFromSearchTextBox: function () {
+        this.uiElements.searchTextBox.blur();
     },
 
     removeFocusFromSearchButton: function () {

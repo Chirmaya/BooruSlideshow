@@ -338,11 +338,37 @@ SitesManager.prototype.increaseCurrentSlideNumber = function(callbackForAfterPos
 	}
 }
 
+SitesManager.prototype.increaseCurrentSlideNumberByTen = function(callbackForAfterPossiblyLoadingMoreSlides)
+{
+	if (this.currentSlideNumber < this.getTotalSlideNumber())
+	{
+		var newSlideNumber = Math.min(this.currentSlideNumber + 10, this.getTotalSlideNumber())
+		this.setCurrentSlideNumber(newSlideNumber);
+		
+		var sitesManager = this;
+		
+		this.performSearchUntilWeHaveEnoughSlides(function() {
+			callbackForAfterPossiblyLoadingMoreSlides.call(sitesManager);
+			
+			this.preloadNextSlideIfNeeded();
+		});
+	}
+}
+
 SitesManager.prototype.decreaseCurrentSlideNumber = function()
 {
 	if (this.currentSlideNumber > 1)
 	{
 		this.setCurrentSlideNumber(this.currentSlideNumber - 1);
+	}
+}
+
+SitesManager.prototype.decreaseCurrentSlideNumberByTen = function()
+{
+	if (this.currentSlideNumber > 1)
+	{
+		var newSlideNumber = Math.max(this.currentSlideNumber - 10, 1);
+		this.setCurrentSlideNumber(newSlideNumber);
 	}
 }
 

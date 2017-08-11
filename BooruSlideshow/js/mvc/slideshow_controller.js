@@ -32,6 +32,14 @@ function SlideshowController(uiElements) {
     this._view.lastNavButtonClickedEvent.attach(function () {
         _this.lastNavButtonClicked();
     });
+	
+	this._view.goBackTenImagesPressedEvent.attach(function () {
+        _this.goBackTenImagesPressed();
+    });
+	
+	this._view.goForwardTenImagesPressedEvent.attach(function () {
+        _this.goForwardTenImagesPressed();
+    });
 
     this._view.playButtonClickedEvent.attach(function () {
         _this.playButtonClicked();
@@ -108,6 +116,14 @@ SlideshowController.prototype = {
     lastNavButtonClicked: function () {
         this._model.setSlideNumberToLast();
     },
+	
+	goBackTenImagesPressed: function () {
+        this._model.decreaseCurrentSlideNumberByTen();
+    },
+	
+	goForwardTenImagesPressed: function () {
+        this._model.increaseCurrentSlideNumberByTen();
+    },
 
     playButtonClicked: function () {
         this._model.startSlideshow();
@@ -127,6 +143,7 @@ SlideshowController.prototype = {
 
     enterKeyPressedInSearchTextBox: function () {
         this._model.searchText = this._view.getSearchText();
+		this._view.removeFocusFromSearchTextBox();
         this.searchButtonClicked();
     },
 

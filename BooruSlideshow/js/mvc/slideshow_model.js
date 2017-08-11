@@ -96,6 +96,23 @@ SlideshowModel.prototype = {
 
         this.restartSlideshowIfOn();
     },
+	
+	decreaseCurrentSlideNumberByTen: function () {
+        this.sitesManager.decreaseCurrentSlideNumberByTen();
+        this.currentSlideChangedEvent.notify();
+
+        this.restartSlideshowIfOn();
+    },
+	
+	increaseCurrentSlideNumberByTen: function () {
+        var _this = this;
+
+        this.sitesManager.increaseCurrentSlideNumberByTen(function () {
+            _this.currentSlideChangedEvent.notify();
+        });
+
+        this.restartSlideshowIfOn();
+    },
 
     setSlideNumberToLast: function () {
         var _this = this;

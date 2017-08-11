@@ -114,8 +114,13 @@ SITE_QUERY_TERM_ASSOCIATIONS[SITE_YANDERE] = {
 }
 
 var ENTER_KEY_ID = 13;
+var SPACE_KEY_ID = 32;
 var LEFT_ARROW_KEY_ID = 37;
 var RIGHT_ARROW_KEY_ID = 39;
+var A_KEY_ID = 65;
+var D_KEY_ID = 68;
+var S_KEY_ID = 83;
+var W_KEY_ID = 87;
 
 var slideshowController = null;
 
