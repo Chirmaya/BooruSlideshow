@@ -1,8 +1,11 @@
 function SlideshowModel() {
     this.view = null;
 	
+	this.videoVolume = 0;
+	this.videoMuted = false;
+	
 	this.searchText = "";
-
+	
     this.sitesToSearch = {
         [SITE_DANBOORU]: false,
         [SITE_DERPIBOORU]: false,
@@ -19,7 +22,9 @@ function SlideshowModel() {
     this.maxWidth = null;
     this.maxHeight = null;
     this.autoFitSlide = false;
-    this.includeWebm = false;
+    this.includeImages = true;
+    this.includeGifs = true;
+    this.includeWebms = false;
 
     this.isPlaying = false;
     this.timer = null;
@@ -29,12 +34,15 @@ function SlideshowModel() {
 
     this.currentSlideChangedEvent = new Event(this);
     this.playingChangedEvent = new Event(this);
+    this.videoVolumeUpdatedEvent = new Event(this);
     this.sitesToSearchUpdatedEvent = new Event(this);
     this.secondsPerSlideUpdatedEvent = new Event(this);
     this.maxWidthUpdatedEvent = new Event(this);
     this.maxHeightUpdatedEvent = new Event(this);
     this.autoFitSlideUpdatedEvent = new Event(this);
-    this.includeWebmUpdatedEvent = new Event(this);
+    this.includeImagesUpdatedEvent = new Event(this);
+    this.includeGifsUpdatedEvent = new Event(this);
+    this.includeWebmsUpdatedEvent = new Event(this);
 
     this.initialize();
 }
@@ -266,6 +274,22 @@ SlideshowModel.prototype = {
     areMaxWithAndHeightEnabled: function () {
         return !this.autoFitSlide;
     },
+	
+	setVideoVolume: function (volume) {
+        this.videoVolume = volume;
+
+        this.saveVideoVolume();
+
+        this.videoVolumeUpdatedEvent.notify();
+    },
+	
+	setVideoMuted: function (muted) {
+        this.videoMuted = muted;
+
+        this.saveVideoMuted();
+
+        this.videoVolumeUpdatedEvent.notify();
+    },
 
     setSitesToSearch: function (sitesToSearch) {
         this.sitesToSearch = sitesToSearch;
@@ -328,75 +352,163 @@ SlideshowModel.prototype = {
         this.autoFitSlideUpdatedEvent.notify();
     },
 	
-	setIncludeWebm: function (onOrOff) {
-        this.includeWebm = onOrOff;
+	setIncludeImages: function (onOrOff) {
+        this.includeImages = onOrOff;
 
-        this.saveIncludeWebm();
+        this.saveIncludeImages();
 
-        this.includeWebmUpdatedEvent.notify();
+        this.includeImagesUpdatedEvent.notify();
+    },
+	
+	setIncludeGifs: function (onOrOff) {
+        this.includeGifs = onOrOff;
+
+        this.saveIncludeGifs();
+
+        this.includeGifsUpdatedEvent.notify();
+    },
+	
+	setIncludeWebms: function (onOrOff) {
+        this.includeWebms = onOrOff;
+
+        this.saveIncludeWebms();
+
+        this.includeWebmsUpdatedEvent.notify();
     },
 
     loadUserSettings: function () {
         var _this = this;
 
-        chrome.storage.sync.get(['sitesToSearch', 'secondsPerSlide', 'maxWidth', 'maxHeight', 'autoFitSlide', 'includeWebm'], function (obj) {
-            if (obj != null)
-            {
-                var sitesToSearch = obj['sitesToSearch'];
-                var secondsPerSlide = obj['secondsPerSlide'];
-                var maxWidth = obj['maxWidth'];
-                var maxHeight = obj['maxHeight'];
-                var autoFitSlide = obj['autoFitSlide'];
-                var includeWebm = obj['includeWebm'];
-			    
-                if (sitesToSearch != null)
-                {
-                    if (sitesToSearch.hasOwnProperty(SITE_DANBOORU) &&
-						sitesToSearch.hasOwnProperty(SITE_DERPIBOORU) &&
-                        sitesToSearch.hasOwnProperty(SITE_E621) &&
-                        sitesToSearch.hasOwnProperty(SITE_GELBOORU) &&
-                        sitesToSearch.hasOwnProperty(SITE_IBSEARCH) &&
-                        sitesToSearch.hasOwnProperty(SITE_KONACHAN) &&
-                        sitesToSearch.hasOwnProperty(SITE_RULE34) &&
-                        sitesToSearch.hasOwnProperty(SITE_SAFEBOORU) &&
-						sitesToSearch.hasOwnProperty(SITE_YANDERE))
-                    {
-                        _this.setSitesToSearch(sitesToSearch);
-                    }
-                }
-				
-                if (_this.secondsPerSlide != secondsPerSlide)
-                {
-                    _this.setSecondsPerSlideIfValid(secondsPerSlide);
-                }
+        chrome.storage.sync.get([
+			'videoVolume',
+			'videoMuted',
+			'sitesToSearch',
+			'secondsPerSlide',
+			'maxWidth',
+			'maxHeight',
+			'autoFitSlide',
+			'includeImages',
+			'includeGifs',
+			'includeWebms'],
+			function (obj) {
+				if (obj != null)
+				{
+					var videoVolume = obj['videoVolume'];
+					var videoMuted = obj['videoMuted'];
+					var sitesToSearch = obj['sitesToSearch'];
+					var secondsPerSlide = obj['secondsPerSlide'];
+					var maxWidth = obj['maxWidth'];
+					var maxHeight = obj['maxHeight'];
+					var autoFitSlide = obj['autoFitSlide'];
+					var includeImages = obj['includeImages'];
+					var includeGifs = obj['includeGifs'];
+					var includeWebms = obj['includeWebms'];
+					
+					if (videoVolume == null)
+					{
+						_this.setVideoVolume(_this.videoVolume);
+					}
+					else
+					{
+						if (_this.videoVolume != videoVolume)
+						{
+							_this.setVideoVolume(videoVolume);
+						}
+					}
+					
+					if (videoMuted == null)
+					{
+						_this.setVideoMuted(_this.videoMuted);
+					}
+					else
+					{
+						if (_this.videoMuted != videoMuted)
+						{
+							_this.setVideoMuted(videoMuted);
+						}
+					}
+					
+					if (sitesToSearch != null)
+					{
+						if (sitesToSearch.hasOwnProperty(SITE_DANBOORU) &&
+							sitesToSearch.hasOwnProperty(SITE_DERPIBOORU) &&
+							sitesToSearch.hasOwnProperty(SITE_E621) &&
+							sitesToSearch.hasOwnProperty(SITE_GELBOORU) &&
+							sitesToSearch.hasOwnProperty(SITE_IBSEARCH) &&
+							sitesToSearch.hasOwnProperty(SITE_KONACHAN) &&
+							sitesToSearch.hasOwnProperty(SITE_RULE34) &&
+							sitesToSearch.hasOwnProperty(SITE_SAFEBOORU) &&
+							sitesToSearch.hasOwnProperty(SITE_YANDERE))
+						{
+							_this.setSitesToSearch(sitesToSearch);
+						}
+					}
+					
+					if (_this.secondsPerSlide != secondsPerSlide)
+					{
+						_this.setSecondsPerSlideIfValid(secondsPerSlide);
+					}
 
-                if (_this.maxWidth != maxWidth)
-                {
-                    _this.setMaxWidth(maxWidth);
-                }
+					if (_this.maxWidth != maxWidth)
+					{
+						_this.setMaxWidth(maxWidth);
+					}
 
-                if (_this.maxHeight != maxHeight)
-                {
-                    _this.setMaxHeight(maxHeight);
-                }
-                
-                if (autoFitSlide != null)
-                {
-                    if (_this.autoFitSlide != autoFitSlide)
-                    {
-                        _this.setAutoFitSlide(autoFitSlide);
-                    }
-                }
-				
-				if (includeWebm != null)
-                {
-                    if (_this.includeWebm != includeWebm)
-                    {
-                        _this.setIncludeWebm(includeWebm);
-                    }
-                }
-            }
-        });
+					if (_this.maxHeight != maxHeight)
+					{
+						_this.setMaxHeight(maxHeight);
+					}
+					
+					if (autoFitSlide != null)
+					{
+						if (_this.autoFitSlide != autoFitSlide)
+						{
+							_this.setAutoFitSlide(autoFitSlide);
+						}
+					}
+					
+					if (includeImages == null)
+					{
+						_this.setIncludeImages(_this.includeImages);
+					}
+					else
+					{
+						if (_this.includeImages != includeImages)
+						{
+							_this.setIncludeImages(includeImages);
+						}
+					}
+					
+					if (includeGifs == null)
+					{
+						_this.setIncludeGifs(_this.includeGifs);
+					}
+					else
+					{
+						if (_this.includeGifs != includeGifs)
+						{
+							_this.setIncludeGifs(includeGifs);
+						}
+					}
+					
+					if (includeWebms != null)
+					{
+						if (_this.includeWebms != includeWebms)
+						{
+							_this.setIncludeWebms(includeWebms);
+						}
+					}
+				}
+			}
+		);
+    },
+	
+	saveVideoVolume: function () {
+        chrome.storage.sync.set({'videoVolume': this.videoVolume});
+    },
+	
+	saveVideoMuted: function () {
+        chrome.storage.sync.set({'videoMuted': this.videoMuted});
     },
 
     saveSitesToSearch: function () {
@@ -419,7 +531,15 @@ SlideshowModel.prototype = {
         chrome.storage.sync.set({'autoFitSlide': this.autoFitSlide});
     },
 	
-	saveIncludeWebm: function () {
-        chrome.storage.sync.set({'includeWebm': this.includeWebm});
+	saveIncludeImages: function () {
+        chrome.storage.sync.set({'includeImages': this.includeImages});
+    },
+	
+	saveIncludeGifs: function () {
+        chrome.storage.sync.set({'includeGifs': this.includeGifs});
+    },
+	
+	saveIncludeWebms: function () {
+        chrome.storage.sync.set({'includeWebms': this.includeWebms});
     }
 };

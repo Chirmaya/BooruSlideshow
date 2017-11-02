@@ -22,7 +22,7 @@ Slide.prototype.preload = function()
 	{
 		this.isPreloading = true;
 		
-		if (this.isImage())
+		if (this.isImageOrGif())
 			this.preloadImage();
 		else if (this.isVideo())
 			this.preloadVideo();
@@ -91,9 +91,9 @@ Slide.prototype.clearCallback = function()
 	this.callbackToRunAfterPreloadingFinishes = null;
 }
 
-Slide.prototype.isImage = function()
+Slide.prototype.isImageOrGif = function()
 {
-	return this.mediaType == MEDIA_TYPE_IMAGE;
+	return this.mediaType == MEDIA_TYPE_IMAGE || this.mediaType == MEDIA_TYPE_GIF;
 }
 
 Slide.prototype.isVideo = function()

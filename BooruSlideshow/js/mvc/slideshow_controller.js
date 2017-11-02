@@ -16,6 +16,10 @@ function SlideshowController(uiElements) {
 	this._view.currentVideoClickedEvent.attach(function() {
         _this.currentSlideClicked();
     });
+	
+	this._view.currentVideoVolumeChangedEvent.attach(function() {
+        _this.videoVolumeChanged();
+    });
 
     this._view.firstNavButtonClickedEvent.attach(function () {
         _this.firstNavButtonClicked();
@@ -85,8 +89,16 @@ function SlideshowController(uiElements) {
         _this.autoFitSlideChanged();
     });
 	
-	this._view.includeWebmChangedEvent.attach(function () {
-        _this.includeWebmChanged();
+	this._view.includeImagesChangedEvent.attach(function () {
+        _this.includeImagesChanged();
+    });
+	
+	this._view.includeGifsChangedEvent.attach(function () {
+        _this.includeGifsChanged();
+    });
+	
+	this._view.includeWebmsChangedEvent.attach(function () {
+        _this.includeWebmsChanged();
     });
 
     this._model.loadUserSettings();
@@ -99,6 +111,14 @@ SlideshowController.prototype = {
         this._view.openUrlInNewWindow(currentSlide.viewableWebsitePostUrl);
 
         this._model.pauseSlideshow();
+    },
+	
+	videoVolumeChanged: function () {
+        var videoVolume = this._view.getVideoVolume();
+        var videoMuted = this._view.getVideoMuted();
+		
+        this._model.setVideoVolume(videoVolume);
+        this._model.setVideoMuted(videoMuted);
     },
 
     firstNavButtonClicked: function () {
@@ -167,10 +187,22 @@ SlideshowController.prototype = {
             return;
         }
 		
-		var message = 'Searching for images...';
+		var includingImagesOrGifs = (this._model.includeImages || this._model.includeGifs);
 		
-		if (this._model.includeWebm)
+		if (!includingImagesOrGifs && !this._model.includeWebms)
+		{
+			this._view.displayWarningMessage('You must select at least one of: Images, GIFs, and WEBMs.');
+            return;
+		}
+		
+		var message = '';
+		
+		if (includingImagesOrGifs && this._model.includeWebms)
 			message = 'Searching for images and videos...';
+		else if (includingImagesOrGifs && !this._model.includeWebms)
+			message = 'Searching for images...';
+		else if (!includingImagesOrGifs && this._model.includeWebms)
+			message = 'Searching for videos...';
 		
 		this._view.displayInfoMessage(message);
 		
@@ -223,13 +255,23 @@ SlideshowController.prototype = {
         var autoFitSlide = this._view.getAutoFitSlide();
 
         this._model.setAutoFitSlide(autoFitSlide);
-        
     },
 	
-	includeWebmChanged: function () {
-        var includeWebm = this._view.getIncludeWebm();
+	includeImagesChanged: function () {
+        var includeImages = this._view.getIncludeImages();
 
-        this._model.setIncludeWebm(includeWebm);
-        
+        this._model.setIncludeImages(includeImages);
+    },
+	
+	includeGifsChanged: function () {
+        var includeGifs = this._view.getIncludeGifs();
+
+        this._model.setIncludeGifs(includeGifs);
+    },
+	
+	includeWebmsChanged: function () {
+        var includeWebms = this._view.getIncludeWebms();
+
+        this._model.setIncludeWebms(includeWebms);
     }
 };

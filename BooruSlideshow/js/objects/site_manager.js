@@ -388,6 +388,8 @@ SiteManager.prototype.getMediaTypeFromPath = function (filePath)
 	{
 		case 'webm':
 			return MEDIA_TYPE_VIDEO;
+		case '.gif':
+			return MEDIA_TYPE_GIF;
 		case '.swf':
 		case '.zip':
 			return MEDIA_TYPE_UNSUPPORTED;
@@ -398,5 +400,7 @@ SiteManager.prototype.getMediaTypeFromPath = function (filePath)
 
 SiteManager.prototype.isMediaTypeSupported = function (mediaType)
 {
-    return mediaType == MEDIA_TYPE_IMAGE || (mediaType == MEDIA_TYPE_VIDEO && this.sitesManager.model.includeWebm);
+    return (mediaType == MEDIA_TYPE_IMAGE && this.sitesManager.model.includeImages) ||
+		(mediaType == MEDIA_TYPE_GIF && this.sitesManager.model.includeGifs) ||
+		(mediaType == MEDIA_TYPE_VIDEO && this.sitesManager.model.includeWebms);
 }

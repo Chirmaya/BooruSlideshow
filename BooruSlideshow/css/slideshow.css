@@ -148,7 +148,7 @@ button:disabled {
 }
 
 #sites-to-search,
-#options,
+.options,
 #tips {
 	/*height: 310px;*/
 	font-size: 100%;
@@ -169,12 +169,12 @@ button:disabled {
 }
 
 #sites-to-search,
-#options
+.options
 {
 	margin-right:2%;
 }
 	
-#options input[type=number] {
+.options input[type=number] {
 	height: 10%;
 	text-align:center;
 	background: #292d36;
@@ -186,7 +186,7 @@ button:disabled {
 	display: inline-block;
 }
 
-#options input:disabled {
+.options input:disabled {
 	color: #777;
 }
 	
@@ -236,4 +236,13 @@ button:disabled {
 	opacity : 0.5;
     filter: grayscale(100%);
     -webkit-filter: grayscale(100%);
+}
+
+a {
+	color: #aaa;
+}
+
+.note {
+	color: #888;
+	font-size: 0.8em;
 }

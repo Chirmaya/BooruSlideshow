@@ -1,9 +1,10 @@
 function SlideshowView(slideshowModel, uiElements) {
     this._model = slideshowModel;
     this.uiElements = uiElements;
-
+	
     this.currentImageClickedEvent = new Event(this);
     this.currentVideoClickedEvent = new Event(this);
+	this.currentVideoVolumeChangedEvent = new Event(this);
     this.searchButtonClickedEvent = new Event(this);
     this.firstNavButtonClickedEvent = new Event(this);
     this.previousNavButtonClickedEvent = new Event(this);
@@ -21,12 +22,22 @@ function SlideshowView(slideshowModel, uiElements) {
     this.maxWidthChangedEvent = new Event(this);
     this.maxHeightChangedEvent = new Event(this);
     this.autoFitSlideChangedEvent = new Event(this);
-    this.includeWebmChangedEvent = new Event(this);
+    this.includeImagesChangedEvent = new Event(this);
+    this.includeGifsChangedEvent = new Event(this);
+    this.includeWebmsChangedEvent = new Event(this);
+	
+	this.isSettingVolume = false;
+	this.isSettingMute = false;
 
     var _this = this;
 
     // Attach model listeners
-    this._model.currentSlideChangedEvent.attach(function () {
+    this._model.videoVolumeUpdatedEvent.attach(function () {
+        _this.updateVideoVolume();
+        _this.updateVideoMuted();
+    });
+	
+	this._model.currentSlideChangedEvent.attach(function () {
         _this.updateSlidesAndNavigation();
     });
 
@@ -54,8 +65,16 @@ function SlideshowView(slideshowModel, uiElements) {
         _this.updateAutoFitSlide();
     });
 	
-	this._model.includeWebmUpdatedEvent.attach(function () {
-        _this.updateIncludeWebm();
+	this._model.includeImagesUpdatedEvent.attach(function () {
+        _this.updateIncludeImages();
+    });
+	
+	this._model.includeGifsUpdatedEvent.attach(function () {
+        _this.updateIncludeGifs();
+    });
+	
+	this._model.includeWebmsUpdatedEvent.attach(function () {
+        _this.updateIncludeWebms();
     });
 
     // Attach UI element listeners
@@ -69,6 +88,27 @@ function SlideshowView(slideshowModel, uiElements) {
 	
 	this.uiElements.currentVideo.addEventListener('click', function() {
         _this.currentVideoClickedEvent.notify();
+    });
+	
+	this.uiElements.currentVideo.addEventListener('volumechange', function() {
+		/*if (_this.isSettingVolume)
+		{
+			_this.isSettingVolume = false;
+			return;
+		}
+		
+		if (_this.isSettingMute)
+		{
+			_this.isSettingMute = false;
+			return;
+		}*/
+		
+		if (_this.isSettingVolume)
+		{
+			return;
+		}
+		
+        _this.currentVideoVolumeChangedEvent.notify();
     });
     
     this.uiElements.firstNavButton.addEventListener('click', function() {
@@ -182,8 +222,16 @@ function SlideshowView(slideshowModel, uiElements) {
         _this.autoFitSlideChangedEvent.notify();
     });
 	
-	this.uiElements.includeWebmCheckBox.addEventListener('change', function () {
-        _this.includeWebmChangedEvent.notify();
+	this.uiElements.includeImagesCheckBox.addEventListener('change', function () {
+        _this.includeImagesChangedEvent.notify();
+    });
+	
+	this.uiElements.includeGifsCheckBox.addEventListener('change', function () {
+        _this.includeGifsChangedEvent.notify();
+    });
+	
+	this.uiElements.includeWebmsCheckBox.addEventListener('change', function () {
+        _this.includeWebmsChangedEvent.notify();
     });
 
     this.initialize();
@@ -261,10 +309,16 @@ SlideshowView.prototype = {
         }
         else
 		{
-			var message = 'No images were found.';
+			var message = '';
+		
+			var includingImagesOrGifs = (this._model.includeImages || this._model.includeGifs);
 			
-			if (this._model.includeWebm)
+			if (includingImagesOrGifs && this._model.includeWebms)
 				message = 'No images or videos were found.';
+			else if (includingImagesOrGifs && !this._model.includeWebms)
+				message = 'No images were found.';
+			else if (!includingImagesOrGifs && this._model.includeWebms)
+				message = 'No videos were found.';
 			
             this.displayWarningMessage(message);
         }
@@ -275,7 +329,7 @@ SlideshowView.prototype = {
 
         var currentSlide = this._model.getCurrentSlide();
 		
-		if (currentSlide.isImage())
+		if (currentSlide.isImageOrGif())
 		{
 			this.displayImage(currentSlide);
 		}
@@ -308,6 +362,16 @@ SlideshowView.prototype = {
 
 		this.clearImage();
         this.updateSlideSize();
+		this.updateVideoVolume();
+		this.updateVideoMuted();
+    },
+	
+	getVideoVolume: function () {
+		return this.uiElements.currentVideo.volume;
+    },
+	
+	getVideoMuted: function () {
+        return this.uiElements.currentVideo.muted;
     },
 
     tryToUpdateSlideSize: function () {
@@ -356,7 +420,7 @@ SlideshowView.prototype = {
                 newHeight = viewHeight;
             }
             
-			if (currentSlide.isImage())
+			if (currentSlide.isImageOrGif())
 			{
 				currentImage.style.width = newWidth + 'px';
 				currentImage.style.height = newHeight + 'px';
@@ -377,7 +441,7 @@ SlideshowView.prototype = {
 			{
                 var maxWidth = parseInt(this._model.maxWidth);
                 
-				if (currentSlide.isImage())
+				if (currentSlide.isImageOrGif())
 				{
 					currentImage.style.maxWidth = maxWidth + 'px';
 				}
@@ -395,7 +459,7 @@ SlideshowView.prototype = {
 			{
                 var maxHeight = parseInt(this._model.maxHeight);
                 
-				if (currentSlide.isImage())
+				if (currentSlide.isImageOrGif())
 				{
 					currentImage.style.maxHeight = maxHeight + 'px';
 				}
@@ -424,6 +488,18 @@ SlideshowView.prototype = {
 
         currentVideo.src = '';
         currentVideo.style.display = 'none';
+    },
+	
+	updateVideoVolume: function () {
+		this.isSettingVolume = true;
+        this.uiElements.currentVideo.volume = this._model.videoVolume;
+		this.isSettingVolume = false;
+    },
+	
+	updateVideoMuted: function () {
+		this.isSettingMute = true;
+        this.uiElements.currentVideo.muted = this._model.videoMuted;
+		this.isSettingMute = false;
     },
 
     showLoadingAnimation: function () {
@@ -657,8 +733,16 @@ SlideshowView.prototype = {
         return this.uiElements.autoFitSlideCheckBox.checked;
     },
 	
-	getIncludeWebm: function () {
-        return this.uiElements.includeWebmCheckBox.checked;
+	getIncludeImages: function () {
+        return this.uiElements.includeImagesCheckBox.checked;
+    },
+	
+	getIncludeGifs: function () {
+        return this.uiElements.includeGifsCheckBox.checked;
+    },
+	
+	getIncludeWebms: function () {
+        return this.uiElements.includeWebmsCheckBox.checked;
     },
 
     updateAutoFitSlide: function () {
@@ -669,8 +753,16 @@ SlideshowView.prototype = {
         this.tryToUpdateSlideSize();
     },
 	
-	updateIncludeWebm: function () {
-        this.uiElements.includeWebmCheckBox.checked = this._model.includeWebm;
+	updateIncludeImages: function () {
+        this.uiElements.includeImagesCheckBox.checked = this._model.includeImages;
+    },
+	
+	updateIncludeGifs: function () {
+        this.uiElements.includeGifsCheckBox.checked = this._model.includeGifs;
+    },
+	
+	updateIncludeWebms: function () {
+        this.uiElements.includeWebmsCheckBox.checked = this._model.includeWebms;
     },
 
     openUrlInNewWindow: function (url) {

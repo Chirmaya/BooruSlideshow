@@ -9,6 +9,7 @@ var SITE_SAFEBOORU = 'SAFE';
 var SITE_YANDERE = 'YAND';
 
 var MEDIA_TYPE_IMAGE = 'IMAGE';
+var MEDIA_TYPE_GIF = 'GIF';
 var MEDIA_TYPE_VIDEO = 'VIDEO';
 var MEDIA_TYPE_UNSUPPORTED = 'UNSUPPORTED';
 
@@ -148,6 +149,8 @@ document.addEventListener('DOMContentLoaded', function () {
         'maxWidthTextBox': document.getElementById('max-width'),
         'maxHeightTextBox': document.getElementById('max-height'),
         'autoFitSlideCheckBox': document.getElementById('auto-fit-slide'),
-        'includeWebmCheckBox': document.getElementById('include-webm')
+        'includeImagesCheckBox': document.getElementById('include-images'),
+        'includeGifsCheckBox': document.getElementById('include-gifs'),
+        'includeWebmsCheckBox': document.getElementById('include-webms')
     });
 });
