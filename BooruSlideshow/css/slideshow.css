@@ -246,3 +246,27 @@ a {
 	color: #888;
 	font-size: 0.8em;
 }
+
+textarea {
+	width: 100%;
+	background: #181a1f;
+	color: #999;
+}
+
+textarea:focus {
+	background: #292c3e;
+	color: #fff;
+}
+
+textarea::-webkit-input-placeholder{
+	color: #555;
+}
+
+textarea[pattern]:invalid{
+  color:red;
+}
+
+.invalid-blacklist {
+	color: red;
+	text-decoration: underline;
+}

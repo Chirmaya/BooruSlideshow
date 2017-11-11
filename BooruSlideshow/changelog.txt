@@ -1,5 +1,8 @@
 Changelog
 
+Version 7.6
+* [Feature] Added a basic blacklist
+
 Version 7.5
 * [Feature] WEBM volume level is saved
 * [Feature] Added options to include/exclude images and GIFs in addition to the WEBMs.

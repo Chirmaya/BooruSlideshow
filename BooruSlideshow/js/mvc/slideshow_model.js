@@ -25,6 +25,7 @@ function SlideshowModel() {
     this.includeImages = true;
     this.includeGifs = true;
     this.includeWebms = false;
+	this.blacklist = '';
 
     this.isPlaying = false;
     this.timer = null;
@@ -43,6 +44,7 @@ function SlideshowModel() {
     this.includeImagesUpdatedEvent = new Event(this);
     this.includeGifsUpdatedEvent = new Event(this);
     this.includeWebmsUpdatedEvent = new Event(this);
+    this.blacklistUpdatedEvent = new Event(this);
 
     this.initialize();
 }
@@ -80,6 +82,27 @@ SlideshowModel.prototype = {
             _this.currentSlideChangedEvent.notify();
         });
     },
+	
+	areSomeTagsAreBlacklisted: function (tags) {
+		var postTags = tags.trim().split(" ");
+		var blacklistTags = this.blacklist.trim().replace(/(\r\n|\n|\r)/gm," ").split(" ");
+		
+		if (postTags.length == 0 || blacklistTags.length == 0)
+			return false;
+		
+		for (let blacklistTag of blacklistTags)
+		{
+			for (let postTag of postTags)
+			{
+				if (blacklistTag == postTag)
+				{
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	},
 
     setSlideNumberToFirst: function () {
         this.sitesManager.moveToFirstSlide();
@@ -375,6 +398,14 @@ SlideshowModel.prototype = {
 
         this.includeWebmsUpdatedEvent.notify();
     },
+	
+	setBlacklist: function (blacklist) {
+        this.blacklist = blacklist;
+
+        this.saveBlacklist();
+
+        this.blacklistUpdatedEvent.notify();
+    },
 
     loadUserSettings: function () {
         var _this = this;
@@ -389,7 +420,8 @@ SlideshowModel.prototype = {
 			'autoFitSlide',
 			'includeImages',
 			'includeGifs',
-			'includeWebms'],
+			'includeWebms',
+			'blacklist'],
 			function (obj) {
 				if (obj != null)
 				{
@@ -403,6 +435,7 @@ SlideshowModel.prototype = {
 					var includeImages = obj['includeImages'];
 					var includeGifs = obj['includeGifs'];
 					var includeWebms = obj['includeWebms'];
+					var blacklist = obj['blacklist'];
 					
 					if (videoVolume == null)
 					{
@@ -498,6 +531,11 @@ SlideshowModel.prototype = {
 							_this.setIncludeWebms(includeWebms);
 						}
 					}
+					
+					if (_this.blacklist != blacklist)
+					{
+						_this.setBlacklist(blacklist);
+					}
 				}
 			}
 		);
@@ -541,5 +579,9 @@ SlideshowModel.prototype = {
 	
 	saveIncludeWebms: function () {
         chrome.storage.sync.set({'includeWebms': this.includeWebms});
+    },
+	
+	saveBlacklist: function () {
+        chrome.storage.sync.set({'blacklist': this.blacklist});
     }
 };

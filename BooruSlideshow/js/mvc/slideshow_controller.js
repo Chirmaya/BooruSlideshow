@@ -100,6 +100,10 @@ function SlideshowController(uiElements) {
 	this._view.includeWebmsChangedEvent.attach(function () {
         _this.includeWebmsChanged();
     });
+	
+	this._view.blacklistChangedEvent.attach(function () {
+        _this.blacklistChanged();
+    });
 
     this._model.loadUserSettings();
 }
@@ -273,5 +277,11 @@ SlideshowController.prototype = {
         var includeWebms = this._view.getIncludeWebms();
 
         this._model.setIncludeWebms(includeWebms);
+    },
+	
+	blacklistChanged: function () {
+        var blacklist = this._view.getBlacklist();
+
+        this._model.setBlacklist(blacklist);
     }
 };

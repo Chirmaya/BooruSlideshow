@@ -25,6 +25,7 @@ function SlideshowView(slideshowModel, uiElements) {
     this.includeImagesChangedEvent = new Event(this);
     this.includeGifsChangedEvent = new Event(this);
     this.includeWebmsChangedEvent = new Event(this);
+	this.blacklistChangedEvent = new Event(this);
 	
 	this.isSettingVolume = false;
 	this.isSettingMute = false;
@@ -75,6 +76,10 @@ function SlideshowView(slideshowModel, uiElements) {
 	
 	this._model.includeWebmsUpdatedEvent.attach(function () {
         _this.updateIncludeWebms();
+    });
+	
+	this._model.blacklistUpdatedEvent.attach(function () {
+        _this.updateBlacklist();
     });
 
     // Attach UI element listeners
@@ -154,7 +159,8 @@ function SlideshowView(slideshowModel, uiElements) {
         if (document.activeElement !== _this.uiElements.searchTextBox &&
 			document.activeElement !== _this.uiElements.secondsPerSlideTextBox &&
 			document.activeElement !== _this.uiElements.maxWidthTextBox &&
-			document.activeElement !== _this.uiElements.maxHeightTextBox) {
+			document.activeElement !== _this.uiElements.maxHeightTextBox &&
+			document.activeElement !== _this.uiElements.blacklist) {
 
             if (key == LEFT_ARROW_KEY_ID || key == A_KEY_ID)
                 _this.previousNavButtonClickedEvent.notify();
@@ -233,6 +239,10 @@ function SlideshowView(slideshowModel, uiElements) {
 	this.uiElements.includeWebmsCheckBox.addEventListener('change', function () {
         _this.includeWebmsChangedEvent.notify();
     });
+	
+	this.uiElements.blacklist.addEventListener('change', function () {
+        _this.blacklistChangedEvent.notify();
+    });
 
     this.initialize();
 }
@@ -259,7 +269,11 @@ SlideshowView.prototype = {
             this.tryToUpdateSlideSize();
         }
     },
-
+	
+	isDisplayingWarningMessage: function () {
+		return this.uiElements.warningMessage.style.display == 'block';
+	},
+	
     displayWarningMessage: function (message) {
         this.uiElements.warningMessage.innerHTML = message;
         this.uiElements.warningMessage.style.display = 'block';
@@ -307,6 +321,10 @@ SlideshowView.prototype = {
 		{
             this.displaySlide();
         }
+		else if (this.isDisplayingWarningMessage())
+		{
+			// Current warning message more important
+		}
         else
 		{
 			var message = '';
@@ -763,6 +781,22 @@ SlideshowView.prototype = {
 	
 	updateIncludeWebms: function () {
         this.uiElements.includeWebmsCheckBox.checked = this._model.includeWebms;
+    },
+	
+	getBlacklist: function () {
+        return this.uiElements.blacklist.value;
+    },
+
+    updateBlacklist: function () {
+        this.uiElements.blacklist.value = this._model.blacklist;
+		//this.validateBlacklist();
+    },
+	
+	validateBlacklist: function () {
+        //var blacklist = this.uiElements.blacklist.value;
+		
+		//var pattern = new RegExp(/[^\s]+/i);
+		//console.log(pattern.test(blacklist));
     },
 
     openUrlInNewWindow: function (url) {

@@ -151,6 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'autoFitSlideCheckBox': document.getElementById('auto-fit-slide'),
         'includeImagesCheckBox': document.getElementById('include-images'),
         'includeGifsCheckBox': document.getElementById('include-gifs'),
-        'includeWebmsCheckBox': document.getElementById('include-webms')
+        'includeWebmsCheckBox': document.getElementById('include-webms'),
+        'blacklist': document.getElementById('blacklist')
     });
 });

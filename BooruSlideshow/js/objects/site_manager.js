@@ -8,6 +8,7 @@ var SiteManager = function (sitesManager, id, url, pageLimit)
 	this.isEnabled = false;
 	this.allUnsortedSlides = [];
 	this.hasExhaustedSearch = false;
+	this.ranIntoErrorWhileSearching = false;
 	
 	this.siteQueryTermAssociations = SITE_QUERY_TERM_ASSOCIATIONS[id];
 }
@@ -75,6 +76,7 @@ SiteManager.prototype.enable = function()
 
 SiteManager.prototype.performSearch = function(searchText, doneSearchingSiteCallback)
 {
+	this.ranIntoErrorWhileSearching = false;
 	var pageNumber = this.lastPageLoaded + 1;
 	var url = this.buildRequestUrl(searchText, pageNumber);
 	
@@ -125,7 +127,7 @@ SiteManager.prototype.makeWebsiteRequest = function(url, doneSearchingSiteCallba
 	};
 	
 	this.xhr.onerror = function() {
-		siteManager.sitesManager.displayWarningMessage('Error making the request to the website');
+		siteManager.sitesManager.displayWarningMessage('Error making the request to ' + siteManager.url);
 	};
 	
 	this.xhr.send();
@@ -133,15 +135,27 @@ SiteManager.prototype.makeWebsiteRequest = function(url, doneSearchingSiteCallba
 
 SiteManager.prototype.handleErrorFromSiteResponse = function(responseText)
 {
-	var possibleJson = JSON.parse(responseText);
+	this.ranIntoErrorWhileSearching = true;
 	
-	if (possibleJson == null)
-		return;
+	var warningMessage = 'Error when calling site ' + this.url;
 	
-	if (possibleJson.message == null)
-		return;
+	var possibleJson = '';
 	
-	this.sitesManager.displayWarningMessage('Error from site ' + this.id + ': ' + possibleJson.message);
+	try
+	{
+		possibleJson = JSON.parse(responseText);
+	}
+	catch (e)
+	{
+		possibleJson = null;
+	}
+	
+	if (possibleJson != null && possibleJson.message != null)
+	{
+		warningMessage += ': ' + possibleJson.message;
+	}
+	
+	this.sitesManager.displayWarningMessage(warningMessage);
 }
 
 SiteManager.prototype.addSlides = function(responseText)
@@ -236,6 +250,9 @@ SiteManager.prototype.addSlideGelRuleSafe = function(xmlPost)
 	{
 		if (this.isPathForSupportedMediaType(xmlPost.getAttribute('file_url')))
 		{
+			if (this.areSomeTagsAreBlacklisted(xmlPost.getAttribute('tags')))
+				return;
+			
 			var newSlide = new Slide(
 				xmlPost.getAttribute('id'),
 				reformatUrl(xmlPost.getAttribute('file_url')),
@@ -271,6 +288,9 @@ SiteManager.prototype.addSlideDanbooru = function(jsonPost)
 	{
 		if (this.isPathForSupportedMediaType(jsonPost.file_url))
 		{
+			if (this.areSomeTagsAreBlacklisted(jsonPost.tag_string))
+				return;
+			
 			var newSlide = new Slide(
 				jsonPost.id,
 				this.url + jsonPost.file_url,
@@ -289,32 +309,42 @@ SiteManager.prototype.addSlideDanbooru = function(jsonPost)
 
 SiteManager.prototype.addSlideE621KonaYand = function(jsonPost)
 {
-	if (jsonPost.hasOwnProperty('file_url') &&
-		jsonPost.hasOwnProperty('preview_url'))
-	{
-		if (this.isPathForSupportedMediaType(jsonPost.file_url))
-		{
-			var url = this.url + '/post/show/' + jsonPost.id;
-			
-			var prefix = '';
-			
-			if (this.id == SITE_KONACHAN)
-				prefix = 'https://';
-			
-			var newSlide = new Slide(
-				jsonPost.id,
-				prefix + jsonPost.file_url,
-				prefix + jsonPost.preview_url,
-				this.url + '/post/show/' + jsonPost.id,
-				jsonPost.width,
-				jsonPost.height,
-				this.convertSDateToDate(jsonPost.created_at.s),
-				jsonPost.score,
-				this.getMediaTypeFromPath(jsonPost.file_url)
-			);
-			this.allUnsortedSlides.push(newSlide);
-		}
-	}
+	if (!jsonPost.hasOwnProperty('id') ||
+		!jsonPost.hasOwnProperty('file_url') ||
+		!jsonPost.hasOwnProperty('preview_url') ||
+		!jsonPost.hasOwnProperty('width') ||
+		!jsonPost.hasOwnProperty('height') ||
+		!jsonPost.hasOwnProperty('created_at') ||
+		!jsonPost.hasOwnProperty('score') ||
+		!jsonPost.hasOwnProperty('tags'))
+		return;
+	
+	if (!this.isPathForSupportedMediaType(jsonPost.file_url))
+		return;
+		
+	if (this.areSomeTagsAreBlacklisted(jsonPost.tags))
+		return;
+	
+	var url = this.url + '/post/show/' + jsonPost.id;
+	
+	var prefix = '';
+	
+	if (this.id == SITE_KONACHAN)
+		prefix = 'https://';
+	
+	var newSlide = new Slide(
+		jsonPost.id,
+		prefix + jsonPost.file_url,
+		prefix + jsonPost.preview_url,
+		this.url + '/post/show/' + jsonPost.id,
+		jsonPost.width,
+		jsonPost.height,
+		this.convertSDateToDate(jsonPost.created_at.s),
+		jsonPost.score,
+		this.getMediaTypeFromPath(jsonPost.file_url)
+	);
+	this.allUnsortedSlides.push(newSlide);
+	
 }
 
 SiteManager.prototype.addSlideIbSearch = function(jsonPost)
@@ -323,6 +353,9 @@ SiteManager.prototype.addSlideIbSearch = function(jsonPost)
 	{
 		if (this.isPathForSupportedMediaType(jsonPost.path))
 		{
+			if (this.areSomeTagsAreBlacklisted(jsonPost.tags))
+				return;
+			
 			var newSlide = new Slide(
 				jsonPost.id,
 				'https://im1.ibsearch.xxx/' + jsonPost.path,
@@ -346,6 +379,15 @@ SiteManager.prototype.addSlideDerpibooru = function(jsonPost)
 	{
 		if (this.isPathForSupportedMediaType(jsonPost.image))
 		{
+			var tags = jsonPost.tags;
+			
+			tags = tags.replace(/,\s/gm,",");
+			tags = tags.replace(/\s/gm,"_");
+			tags = tags.replace(/,/gm," ");
+			
+			if (this.areSomeTagsAreBlacklisted(tags))
+				return;
+			
 			var newSlide = new Slide(
 				jsonPost.id,
 				"https://" + jsonPost.image,
@@ -364,7 +406,7 @@ SiteManager.prototype.addSlideDerpibooru = function(jsonPost)
 
 SiteManager.prototype.hasntExhaustedSearch = function()
 {
-	return this.isEnabled && !this.hasExhaustedSearch;
+	return this.isEnabled && !this.hasExhaustedSearch && !this.ranIntoErrorWhileSearching;
 }
 
 
@@ -403,4 +445,9 @@ SiteManager.prototype.isMediaTypeSupported = function (mediaType)
     return (mediaType == MEDIA_TYPE_IMAGE && this.sitesManager.model.includeImages) ||
 		(mediaType == MEDIA_TYPE_GIF && this.sitesManager.model.includeGifs) ||
 		(mediaType == MEDIA_TYPE_VIDEO && this.sitesManager.model.includeWebms);
+}
+
+SiteManager.prototype.areSomeTagsAreBlacklisted = function (tags)
+{
+	return this.sitesManager.model.areSomeTagsAreBlacklisted(tags);
 }
