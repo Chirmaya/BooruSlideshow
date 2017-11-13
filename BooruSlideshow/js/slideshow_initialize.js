@@ -122,6 +122,7 @@ var A_KEY_ID = 65;
 var D_KEY_ID = 68;
 var S_KEY_ID = 83;
 var W_KEY_ID = 87;
+var F_KEY_ID = 70;
 
 var slideshowController = null;
 

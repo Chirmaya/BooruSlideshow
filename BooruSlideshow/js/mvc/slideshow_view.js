@@ -151,7 +151,8 @@ function SlideshowView(slideshowModel, uiElements) {
 			key == A_KEY_ID ||
 			key == W_KEY_ID ||
 			key == S_KEY_ID ||
-			key == D_KEY_ID))
+			key == D_KEY_ID ||
+			key == F_KEY_ID))
         {
             return;
         }
@@ -161,7 +162,7 @@ function SlideshowView(slideshowModel, uiElements) {
 			document.activeElement !== _this.uiElements.maxWidthTextBox &&
 			document.activeElement !== _this.uiElements.maxHeightTextBox &&
 			document.activeElement !== _this.uiElements.blacklist) {
-
+			
             if (key == LEFT_ARROW_KEY_ID || key == A_KEY_ID)
                 _this.previousNavButtonClickedEvent.notify();
             if (key == RIGHT_ARROW_KEY_ID || key == D_KEY_ID)
@@ -178,6 +179,10 @@ function SlideshowView(slideshowModel, uiElements) {
 			if (key == SPACE_KEY_ID)
 			{
 				e.preventDefault();
+			}
+			if (key == F_KEY_ID)
+			{
+				_this._model.setAutoFitSlide(!_this._model.autoFitSlide);
 			}
         }
     });
