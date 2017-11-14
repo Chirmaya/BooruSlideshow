@@ -1,5 +1,8 @@
 Changelog
 
+Version 7.8
+* [Fix] Fixed bug introduced in 7.6 where searches would fail if the blacklist wasn't set
+
 Version 7.7
 * [Feature] Added shortcut of "F" to Auto-Fit
 

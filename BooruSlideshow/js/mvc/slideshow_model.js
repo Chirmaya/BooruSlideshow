@@ -532,7 +532,7 @@ SlideshowModel.prototype = {
 						}
 					}
 					
-					if (_this.blacklist != blacklist)
+					if (blacklist != null && _this.blacklist != blacklist)
 					{
 						_this.setBlacklist(blacklist);
 					}
