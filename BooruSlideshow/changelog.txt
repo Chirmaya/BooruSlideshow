@@ -1,5 +1,8 @@
 Changelog
 
+Version 7.9
+* [Fix] Fixed a few issues with UTF characters
+
 Version 7.8
 * [Fix] Fixed bug introduced in 7.6 where searches would fail if the blacklist wasn't set
 
