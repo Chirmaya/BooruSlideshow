@@ -1,5 +1,8 @@
 Changelog
 
+Version 7.10
+* [Fix/Feature] Supports derpibooru's use of API keys to support increased search results
+
 Version 7.9
 * [Fix] Fixed a few issues with UTF characters
 

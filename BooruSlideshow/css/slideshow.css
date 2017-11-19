@@ -165,7 +165,8 @@ button:disabled {
 
 #sites-to-search span
 {
-	color:#999
+	color:#999;
+	font-size: 0.8em;
 }
 
 #sites-to-search,
@@ -249,11 +250,16 @@ a {
 
 textarea {
 	width: 100%;
+}
+
+textarea,
+#derpibooru-api-key {
 	background: #181a1f;
 	color: #999;
 }
 
-textarea:focus {
+textarea:focus,
+#derpibooru-api-key:focus {
 	background: #292c3e;
 	color: #fff;
 }
@@ -269,4 +275,8 @@ textarea[pattern]:invalid{
 .invalid-blacklist {
 	color: red;
 	text-decoration: underline;
+}
+
+#derpibooru-api-key {
+	font-size: 0.8em;
 }

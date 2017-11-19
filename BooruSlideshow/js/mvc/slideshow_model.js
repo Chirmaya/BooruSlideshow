@@ -26,6 +26,7 @@ function SlideshowModel() {
     this.includeGifs = true;
     this.includeWebms = false;
 	this.blacklist = '';
+	this.derpibooruApiKey = '';
 
     this.isPlaying = false;
     this.timer = null;
@@ -45,6 +46,7 @@ function SlideshowModel() {
     this.includeGifsUpdatedEvent = new Event(this);
     this.includeWebmsUpdatedEvent = new Event(this);
     this.blacklistUpdatedEvent = new Event(this);
+    this.derpibooruApiKeyUpdatedEvent = new Event(this);
 
     this.initialize();
 }
@@ -406,6 +408,14 @@ SlideshowModel.prototype = {
 
         this.blacklistUpdatedEvent.notify();
     },
+	
+	setDerpibooruApiKey: function (derpibooruApiKey) {
+        this.derpibooruApiKey = derpibooruApiKey;
+
+        this.saveDerpibooruApiKey();
+
+        this.derpibooruApiKeyUpdatedEvent.notify();
+    },
 
     loadUserSettings: function () {
         var _this = this;
@@ -421,7 +431,8 @@ SlideshowModel.prototype = {
 			'includeImages',
 			'includeGifs',
 			'includeWebms',
-			'blacklist'],
+			'blacklist',
+			'derpibooruApiKey'],
 			function (obj) {
 				if (obj != null)
 				{
@@ -436,6 +447,7 @@ SlideshowModel.prototype = {
 					var includeGifs = obj['includeGifs'];
 					var includeWebms = obj['includeWebms'];
 					var blacklist = obj['blacklist'];
+					var derpibooruApiKey = obj['derpibooruApiKey'];
 					
 					if (videoVolume == null)
 					{
@@ -536,6 +548,11 @@ SlideshowModel.prototype = {
 					{
 						_this.setBlacklist(blacklist);
 					}
+					
+					if (derpibooruApiKey != null && _this.derpibooruApiKey != derpibooruApiKey)
+					{
+						_this.setDerpibooruApiKey(derpibooruApiKey);
+					}
 				}
 			}
 		);
@@ -583,5 +600,9 @@ SlideshowModel.prototype = {
 	
 	saveBlacklist: function () {
         chrome.storage.sync.set({'blacklist': this.blacklist});
+    },
+	
+	saveDerpibooruApiKey: function () {
+        chrome.storage.sync.set({'derpibooruApiKey': this.derpibooruApiKey});
     }
 };

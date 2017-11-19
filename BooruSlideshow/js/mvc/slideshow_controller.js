@@ -104,6 +104,10 @@ function SlideshowController(uiElements) {
 	this._view.blacklistChangedEvent.attach(function () {
         _this.blacklistChanged();
     });
+	
+	this._view.derpibooruApiKeyChangedEvent.attach(function () {
+        _this.derpibooruApiKeyChanged();
+    });
 
     this._model.loadUserSettings();
 }
@@ -283,5 +287,11 @@ SlideshowController.prototype = {
         var blacklist = this._view.getBlacklist();
 
         this._model.setBlacklist(blacklist);
+    },
+	
+	derpibooruApiKeyChanged: function () {
+        var derpibooruApiKey = this._view.getDerpibooruApiKey();
+
+        this._model.setDerpibooruApiKey(derpibooruApiKey);
     }
 };

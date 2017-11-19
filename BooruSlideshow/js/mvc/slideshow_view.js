@@ -26,6 +26,7 @@ function SlideshowView(slideshowModel, uiElements) {
     this.includeGifsChangedEvent = new Event(this);
     this.includeWebmsChangedEvent = new Event(this);
 	this.blacklistChangedEvent = new Event(this);
+	this.derpibooruApiKeyChangedEvent = new Event(this);
 	
 	this.isSettingVolume = false;
 	this.isSettingMute = false;
@@ -80,6 +81,10 @@ function SlideshowView(slideshowModel, uiElements) {
 	
 	this._model.blacklistUpdatedEvent.attach(function () {
         _this.updateBlacklist();
+    });
+	
+	this._model.derpibooruApiKeyUpdatedEvent.attach(function () {
+        _this.updateDerpibooruApiKey();
     });
 
     // Attach UI element listeners
@@ -161,7 +166,8 @@ function SlideshowView(slideshowModel, uiElements) {
 			document.activeElement !== _this.uiElements.secondsPerSlideTextBox &&
 			document.activeElement !== _this.uiElements.maxWidthTextBox &&
 			document.activeElement !== _this.uiElements.maxHeightTextBox &&
-			document.activeElement !== _this.uiElements.blacklist) {
+			document.activeElement !== _this.uiElements.blacklist &&
+			document.activeElement !== _this.uiElements.derpibooruApiKey) {
 			
             if (key == LEFT_ARROW_KEY_ID || key == A_KEY_ID)
                 _this.previousNavButtonClickedEvent.notify();
@@ -247,6 +253,10 @@ function SlideshowView(slideshowModel, uiElements) {
 	
 	this.uiElements.blacklist.addEventListener('change', function () {
         _this.blacklistChangedEvent.notify();
+    });
+	
+	this.uiElements.derpibooruApiKey.addEventListener('change', function () {
+        _this.derpibooruApiKeyChangedEvent.notify();
     });
 
     this.initialize();
@@ -697,6 +707,11 @@ SlideshowView.prototype = {
             var checked = this._model.sitesToSearch[site];
 
             siteToSearch.checked = checked;
+			
+			if (site == SITE_DERPIBOORU)
+			{
+				this.uiElements.derpibooruApiKeyContainer.style.display = checked ? 'inline' : 'none';
+			}
         }
     },
 
@@ -793,7 +808,7 @@ SlideshowView.prototype = {
     },
 
     updateBlacklist: function () {
-        this.uiElements.blacklist.value = this._model.blacklist;
+        this.uiElements.blacklist.value = this._model.blacklist.trim();
 		//this.validateBlacklist();
     },
 	
@@ -802,6 +817,14 @@ SlideshowView.prototype = {
 		
 		//var pattern = new RegExp(/[^\s]+/i);
 		//console.log(pattern.test(blacklist));
+    },
+	
+	getDerpibooruApiKey: function () {
+        return this.uiElements.derpibooruApiKey.value.trim();
+    },
+
+    updateDerpibooruApiKey: function () {
+        this.uiElements.derpibooruApiKey.value = this._model.derpibooruApiKey;
     },
 
     openUrlInNewWindow: function (url) {

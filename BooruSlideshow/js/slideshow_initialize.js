@@ -153,6 +153,8 @@ document.addEventListener('DOMContentLoaded', function () {
         'includeImagesCheckBox': document.getElementById('include-images'),
         'includeGifsCheckBox': document.getElementById('include-gifs'),
         'includeWebmsCheckBox': document.getElementById('include-webms'),
-        'blacklist': document.getElementById('blacklist')
+        'blacklist': document.getElementById('blacklist'),
+        'derpibooruApiKey': document.getElementById('derpibooru-api-key'),
+        'derpibooruApiKeyContainer': document.getElementById('derpibooru-api-key-container')
     });
 });
