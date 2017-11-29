@@ -829,5 +829,20 @@ SlideshowView.prototype = {
 
     openUrlInNewWindow: function (url) {
         window.open(url, '_blank');
-    }
+    },
+	
+	showSiteOffline: function (site) {
+		var sitesToSearchElements = this.uiElements.sitesToSearch;
+		
+		for (var i = 0; i < sitesToSearchElements.length; i++)
+		{
+			var siteToSearch = sitesToSearchElements[i];
+			
+			if (siteToSearch.value == site)
+			{
+				siteToSearch.parentElement.classList.add("siteOffline");
+				return;
+			}			
+		}
+	}
 };

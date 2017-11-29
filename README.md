@@ -1,4 +1,5 @@
 # BooruSlideshow
+An Chrome and Firefox extension for a slideshow of boorus.
 
 Chrome Extension:
 https://chrome.google.com/webstore/detail/booru-slideshow/cpogdcobjjceendipjnemadkfbedeeja

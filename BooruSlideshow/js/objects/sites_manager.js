@@ -161,6 +161,16 @@ SitesManager.prototype = {
 		this.isTryingToLoadMoreSlides = false;
 		this.callbackToRunAfterAllSitesFinishedSearching = null;
 	},
+	
+	pingSites: function(callback)
+	{
+		for (var i = 0; i < this.siteManagers.length; i++)
+		{
+			var siteManager = this.siteManagers[i];
+			
+			siteManager.pingStatus(callback);
+		}
+	},
 
 	performSearch: function(searchText, doneSearchingAllSitesCallback)
 	{

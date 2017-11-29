@@ -70,6 +70,14 @@ SlideshowModel.prototype = {
         this.sitesManager.addSite(SITE_SAFEBOORU, 'http://safebooru.org', pageLimit);
         this.sitesManager.addSite(SITE_YANDERE, 'https://yande.re', pageLimit);
     },
+	
+	pingSites: function () {
+		var _this = this;
+		this.sitesManager.pingSites(function(siteManager){
+			if (!siteManager.isOnline)
+				_this.view.showSiteOffline(siteManager.id);
+		});
+	},
 
     performSearch: function (searchText) {
         this.sitesManager.resetConnections();

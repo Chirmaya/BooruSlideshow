@@ -9,11 +9,37 @@ function SiteManager (sitesManager, id, url, pageLimit)
 	this.allUnsortedSlides = [];
 	this.hasExhaustedSearch = false;
 	this.ranIntoErrorWhileSearching = false;
+	this.isOnline = false;
 	
 	this.siteQueryTermAssociations = SITE_QUERY_TERM_ASSOCIATIONS[id];
 }
 
 SiteManager.prototype = {
+	buildPingRequestUrl: function()
+	{
+		switch (this.id)
+		{
+			case SITE_GELBOORU:
+			case SITE_RULE34:
+			case SITE_SAFEBOORU:
+				return this.url + '/index.php?page=dapi&s=post&q=index&limit=1';
+			case SITE_DANBOORU:
+				return this.url + '/posts.json?limit=1';
+			case SITE_DERPIBOORU:
+				return this.url + '/images.json';
+			case SITE_KONACHAN:
+			case SITE_YANDERE:
+				return this.url + '/post.json?limit=1';
+			case SITE_E621:
+				return this.url + '/post/index.json?limit=1';
+			case SITE_IBSEARCH:
+				return this.url + '/api/v1/images.json?limit=1';
+			default:
+				console.log('Error building the ping URL. Supplied site ID is not in the list.');
+				return;
+		}
+	},
+	
 	buildRequestUrl: function(searchText, pageNumber)
 	{
 		var query = this.buildSiteSpecificQuery(searchText);
@@ -35,7 +61,7 @@ SiteManager.prototype = {
 			case SITE_E621:
 				return this.url + '/post/index.json?tags=' + query + '&page=' + pageNumber + '&limit=' + this.pageLimit;
 			case SITE_IBSEARCH:
-				return this.url + '/api/v1/images.json?q=' + query + '&page=' + pageNumber + '&limit=' + this.pageLimit;
+				return this.url + '/api/v1/images.json?q=' + query + '&page=' + pageNumber + '&limit=' + this.pageLimit + '&sources=1';
 			default:
 				console.log('Error building the URL. Supplied site ID is not in the list.');
 				return;
@@ -80,25 +106,93 @@ SiteManager.prototype = {
 	{
 		this.isEnabled = true;
 	},
-
+	
+	pingStatus: function(callback)
+	{
+		var url = this.buildPingRequestUrl();
+		
+		if (url != null)
+		{
+			var _this = this;
+			this.makeWebsiteRequest(url, callback, function(responseText) {
+				if (_this.doesResponseTextIndicateOnline(responseText))
+					_this.isOnline = true;
+			});
+		}
+	},
+	
+	doesResponseTextIndicateOnline: function(responseText)
+	{
+		switch (this.id)
+		{
+			case SITE_GELBOORU:
+			case SITE_RULE34:
+			case SITE_SAFEBOORU:
+				var parser = new DOMParser();
+				var xml = parser.parseFromString(responseText, "text/xml");
+				
+				var xmlPosts = xml.getElementsByTagName("post");
+				
+				return (xmlPosts.length > 0);
+			case SITE_DANBOORU:
+			case SITE_DERPIBOORU:
+			case SITE_KONACHAN:
+			case SITE_YANDERE:
+			case SITE_E621:
+			case SITE_IBSEARCH:
+				var jsonPosts;
+		
+				try
+				{
+					jsonPosts = JSON.parse(responseText);
+				}
+				catch(e)
+				{
+					console.log("JSON failed to parse.");
+					console.log(e);
+					return;
+				}
+				
+				if (this.id == SITE_DERPIBOORU)
+				{
+					jsonPosts = jsonPosts["images"];
+				}
+				
+				if (jsonPosts == null)
+					return false;
+				
+				return (jsonPosts.length > 0);
+			default:
+				console.log('Error figuring out if the response text meant the site is online. Supplied site ID is not in the list.');
+				return;
+		}
+	},
+	
 	performSearch: function(searchText, doneSearchingSiteCallback)
 	{
 		this.ranIntoErrorWhileSearching = false;
 		var pageNumber = this.lastPageLoaded + 1;
 		var url = this.buildRequestUrl(searchText, pageNumber);
 		
+		var siteManager = this;
+		
 		if (url != null)
 		{
-			this.makeWebsiteRequest(url, doneSearchingSiteCallback);
+			this.makeWebsiteRequest(url, doneSearchingSiteCallback, function(responseText){
+				siteManager.addSlides(responseText);
+			});
 		}
 	},
 
-	makeWebsiteRequest: function(url, doneSearchingSiteCallback)
+	makeWebsiteRequest: function(url, doneSearchingSiteCallback, onSuccessCallback)
 	{
 		var method = 'GET';
 		
 		if (this.xhr != null) 
+		{
 			this.xhr.abort();
+		}
+			
 		
 		this.xhr = new XMLHttpRequest();
 		
@@ -123,14 +217,17 @@ SiteManager.prototype = {
 			
 			if (siteManager.xhr.status == 200)
 			{
-				siteManager.addSlides(responseText);
+				if (onSuccessCallback != null)
+				{
+					onSuccessCallback(responseText);
+				}
 			}
 			else
 			{
-				siteManager.handleErrorFromSiteResponse(responseText);
+				siteManager.handleErrorFromSiteResponse(responseText, siteManager.xhr.status);
 			}
 			
-			doneSearchingSiteCallback.call(siteManager);
+			doneSearchingSiteCallback(siteManager);
 		};
 		
 		this.xhr.onerror = function() {
@@ -140,7 +237,7 @@ SiteManager.prototype = {
 		this.xhr.send();
 	},
 
-	handleErrorFromSiteResponse: function(responseText)
+	handleErrorFromSiteResponse: function(responseText, statusCode)
 	{
 		this.ranIntoErrorWhileSearching = true;
 		
@@ -162,6 +259,9 @@ SiteManager.prototype = {
 			warningMessage += ': ' + possibleJson.message;
 		}
 		
+		if (statusCode == 429)
+			warningMessage += ' Requests were made too quickly. (Likely from the initial site status check.) Please try again.';
+		
 		this.sitesManager.displayWarningMessage(warningMessage);
 	},
 
@@ -179,8 +279,8 @@ SiteManager.prototype = {
 		
 	addXmlSlides: function(xmlResponseText)
 	{
-		parser = new DOMParser();
-		xml = parser.parseFromString(xmlResponseText, "text/xml");
+		var parser = new DOMParser();
+		var xml = parser.parseFromString(xmlResponseText, "text/xml");
 		
 		var xmlPosts = xml.getElementsByTagName("post");
 		
@@ -336,17 +436,24 @@ SiteManager.prototype = {
 		
 		var prefix = '';
 		
-		if (this.id == SITE_KONACHAN)
+		if (url.substring(0, 4) != 'http')
 			prefix = 'https://';
+		
+		var date;
+		
+		if (jsonPost.created_at.s != null)
+			date = this.convertSDateToDate(jsonPost.created_at.s)
+		else
+			date = this.convertSDateToDate(jsonPost.created_at)
 		
 		var newSlide = new Slide(
 			jsonPost.id,
 			prefix + jsonPost.file_url,
 			prefix + jsonPost.preview_url,
-			this.url + '/post/show/' + jsonPost.id,
+			url,
 			jsonPost.width,
 			jsonPost.height,
-			this.convertSDateToDate(jsonPost.created_at.s),
+			date,
 			jsonPost.score,
 			this.getMediaTypeFromPath(jsonPost.file_url)
 		);
@@ -362,6 +469,13 @@ SiteManager.prototype = {
 				if (this.areSomeTagsAreBlacklisted(jsonPost.tags))
 					return;
 				
+				var date;
+				
+				if (jsonPost.site_uploaded != null)
+					date = new Date(this.convertSDateToDate(jsonPost.site_uploaded));
+				else
+					date = new Date(this.convertSDateToDate(jsonPost.found));
+				
 				var newSlide = new Slide(
 					jsonPost.id,
 					'https://im1.ibsearch.xxx/' + jsonPost.path,
@@ -369,7 +483,7 @@ SiteManager.prototype = {
 					this.url + '/images/' + jsonPost.id,
 					jsonPost.width,
 					jsonPost.height,
-					new Date(jsonPost.found),
+					date,
 					0,// No score
 					this.getMediaTypeFromPath(jsonPost.path)
 				);

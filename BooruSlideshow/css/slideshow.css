@@ -280,3 +280,8 @@ textarea[pattern]:invalid{
 #derpibooru-api-key {
 	font-size: 0.8em;
 }
+
+.siteOffline
+{
+	color: #d22;
+}

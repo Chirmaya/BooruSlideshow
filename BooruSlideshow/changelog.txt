@@ -1,5 +1,10 @@
 Changelog
 
+Version 7.11
+* [Feature] Indicator if an API is down (not fully tested)
+* [Fix] Fixed search that broke due to an API change on Konachan
+* [Fix] Sort order of images from ibsearch
+
 Version 7.10
 * [Fix/Feature] Supports derpibooru's use of API keys to support increased search results
 

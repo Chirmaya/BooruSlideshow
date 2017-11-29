@@ -110,6 +110,8 @@ function SlideshowController(uiElements) {
     });
 
     this._model.loadUserSettings();
+	
+	this._model.pingSites();
 }
 
 SlideshowController.prototype = {
