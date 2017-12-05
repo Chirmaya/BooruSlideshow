@@ -1,5 +1,8 @@
 Changelog
 
+Version 7.12
+* [Fix] Separated status web call from the search web call so they won't interrupt each other.
+
 Version 7.11
 * [Feature] Indicator if an API is down (not fully tested)
 * [Fix] Fixed search that broke due to an API change on Konachan

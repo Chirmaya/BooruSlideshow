@@ -117,7 +117,7 @@ SiteManager.prototype = {
 			this.makeWebsiteRequest(url, callback, function(responseText) {
 				if (_this.doesResponseTextIndicateOnline(responseText))
 					_this.isOnline = true;
-			});
+			}, true);
 		}
 	},
 	
@@ -184,38 +184,44 @@ SiteManager.prototype = {
 		}
 	},
 
-	makeWebsiteRequest: function(url, doneSearchingSiteCallback, onSuccessCallback)
+	makeWebsiteRequest: function(url, doneSearchingSiteCallback, onSuccessCallback, useSecondaryXhr = false)
 	{
 		var method = 'GET';
 		
-		if (this.xhr != null) 
-		{
-			this.xhr.abort();
-		}
-			
+        let xhr = useSecondaryXhr ? this.secondaryXhr : this.xhr;
+        
+        if (xhr != null)
+        {
+            xhr.abort();
+        }
 		
-		this.xhr = new XMLHttpRequest();
+        if (useSecondaryXhr)
+            this.secondaryXhr = new XMLHttpRequest();
+        else
+            this.xhr = new XMLHttpRequest();
+        
+        xhr = useSecondaryXhr ? this.secondaryXhr : this.xhr;
 		
-		if ("withCredentials" in this.xhr) {
+		if ("withCredentials" in xhr) {
 			// XHR for Chrome/Firefox/Opera/Safari.
-			this.xhr.open(method, url, true);
+			xhr.open(method, url, true);
 		} else if (typeof XDomainRequest != "undefined") {
 			// XDomainRequest for IE.
-			this.xhr = new XDomainRequest();
-			this.xhr.open(method, url);
+			xhr = new XDomainRequest();
+			xhr.open(method, url);
 		} else {
 			// CORS not supported.
-			this.xhr = null;
+			xhr = null;
 		}
 		
 		var siteManager = this;
 		
-		this.xhr.onload = function() {
+		xhr.onload = function() {
 			siteManager.lastPageLoaded++;
+            
+			var responseText = xhr.responseText;
 			
-			var responseText = siteManager.xhr.responseText;
-			
-			if (siteManager.xhr.status == 200)
+			if (xhr.status == 200)
 			{
 				if (onSuccessCallback != null)
 				{
@@ -224,17 +230,17 @@ SiteManager.prototype = {
 			}
 			else
 			{
-				siteManager.handleErrorFromSiteResponse(responseText, siteManager.xhr.status);
+				siteManager.handleErrorFromSiteResponse(responseText, xhr.status);
 			}
 			
 			doneSearchingSiteCallback(siteManager);
 		};
 		
-		this.xhr.onerror = function() {
+		xhr.onerror = function() {
 			siteManager.sitesManager.displayWarningMessage('Error making the request to ' + siteManager.url);
 		};
 		
-		this.xhr.send();
+		xhr.send();
 	},
 
 	handleErrorFromSiteResponse: function(responseText, statusCode)
@@ -260,7 +266,9 @@ SiteManager.prototype = {
 		}
 		
 		if (statusCode == 429)
+        {
 			warningMessage += ' Requests were made too quickly. (Likely from the initial site status check.) Please try again.';
+        }
 		
 		this.sitesManager.displayWarningMessage(warningMessage);
 	},
