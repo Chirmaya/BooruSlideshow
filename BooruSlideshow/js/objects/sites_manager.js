@@ -231,6 +231,7 @@ SitesManager.prototype = {
 	buildSortedSlideList: function()
 	{
 		var slidesFromAllSitesToSort = [];
+		var md5Hashes = [];
 		
 		for (var i = 0; i < this.siteManagers.length; i++)
 		{
@@ -244,6 +245,18 @@ SitesManager.prototype = {
 		}
 		
 		var _this = this;
+
+		slidesFromAllSitesToSort = slidesFromAllSitesToSort.filter(function(slide) {
+			if(slide.md5 === null)
+				return true; //Err on the side of inclusion.
+
+			if(md5Hashes.includes(slide.md5)) {
+				return false;
+			} else {
+				md5Hashes.push(slide.md5);
+				return true;
+			}
+		});
 		
 		slidesFromAllSitesToSort.sort(function(a,b) {
 			var sortingMethod = _this.getSortingMethod();

@@ -377,7 +377,8 @@ SiteManager.prototype = {
 					xmlPost.getAttribute('height'),
 					new Date(xmlPost.getAttribute('created_at')),
 					xmlPost.getAttribute('score'),
-					this.getMediaTypeFromPath(xmlPost.getAttribute('file_url'))
+					this.getMediaTypeFromPath(xmlPost.getAttribute('file_url')),
+					xmlPost.getAttribute('md5')
 				);
 				
 				this.allUnsortedSlides.push(newSlide);
@@ -415,7 +416,8 @@ SiteManager.prototype = {
 					jsonPost.image_height,
 					new Date(jsonPost.created_at),
 					jsonPost.score,
-					this.getMediaTypeFromPath(jsonPost.file_url)
+					this.getMediaTypeFromPath(jsonPost.file_url),
+					jsonPost.md5
 				);
 				this.allUnsortedSlides.push(newSlide);
 			}
@@ -463,7 +465,8 @@ SiteManager.prototype = {
 			jsonPost.height,
 			date,
 			jsonPost.score,
-			this.getMediaTypeFromPath(jsonPost.file_url)
+			this.getMediaTypeFromPath(jsonPost.file_url),
+			jsonPost.md5
 		);
 		this.allUnsortedSlides.push(newSlide);
 	},
@@ -493,7 +496,8 @@ SiteManager.prototype = {
 					jsonPost.height,
 					date,
 					0,// No score
-					this.getMediaTypeFromPath(jsonPost.path)
+					this.getMediaTypeFromPath(jsonPost.path),
+					jsonPost.md5
 				);
 				this.allUnsortedSlides.push(newSlide);
 			}
@@ -525,7 +529,8 @@ SiteManager.prototype = {
 					jsonPost.height,
 					new Date(jsonPost.created_at),
 					jsonPost.score,
-					this.getMediaTypeFromPath(jsonPost.image)
+					this.getMediaTypeFromPath(jsonPost.image),
+					jsonPost.md5
 				);
 				this.allUnsortedSlides.push(newSlide);
 			}
