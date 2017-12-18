@@ -552,8 +552,7 @@ SiteManager.prototype = {
 	getMediaTypeFromPath: function (filePath)
 	{
 		var fileExtension = filePath.substring(filePath.length - 4);
-
-		console.log(fileExtension.toLowerCase());
+		
 		switch (fileExtension.toLowerCase())
 		{
 			case 'webm':
