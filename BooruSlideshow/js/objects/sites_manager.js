@@ -243,8 +243,6 @@ class SitesManager{
 				siteManager.allUnsortedSlides = [];
 			}
 		}
-		
-		var _this = this;
 
 		slidesFromAllSitesToSort = slidesFromAllSitesToSort.filter(function(slide) {
 			if(slide.md5 === null)
@@ -257,6 +255,8 @@ class SitesManager{
 				return true;
 			}
 		});
+
+		var _this = this;
 		
 		slidesFromAllSitesToSort.sort(function(a,b) {
 			var sortingMethod = _this.getSortingMethod();
@@ -383,10 +383,15 @@ class SitesManager{
 
 	decreaseCurrentSlideNumber()
 	{
-		if (this.currentSlideNumber > 1)
+		if (this.canDecreaseCurrentSlideNumber())
 		{
 			this.setCurrentSlideNumber(this.currentSlideNumber - 1);
 		}
+	}
+
+	canDecreaseCurrentSlideNumber()
+	{
+		return (this.currentSlideNumber > 1);
 	}
 
 	decreaseCurrentSlideNumberByTen()

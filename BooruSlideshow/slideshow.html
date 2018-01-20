@@ -40,7 +40,8 @@
 					<ul>
 						<li><label><input type="checkbox" name="sites-to-search" value="DANB" />danbooru.donmai.us</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="DERP" />derpibooru.org</label></li>
-						<li id="derpibooru-api-key-container"><span><a href="https://derpibooru.org/users/edit" target="_blank">(get API key here)</a></span><br><label><input type="password" id="derpibooru-api-key" /></label>
+						<li id="derpibooru-api-key-container"><span><a href="https://derpibooru.org/users/edit" target="_blank">(get API key here)</a></span><br>
+							<label><input type="password" id="derpibooru-api-key" /></label>
 						</li>
 						<li><label><input type="checkbox" name="sites-to-search" value="E621" />e621.net</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="GELB" />gelbooru.com<br>
@@ -97,13 +98,16 @@
 							(Searching for only GIFs or WEBMs may take forever since it is still going through all image results. Consider adding "animated" to the search query.)
 						</li>
 					</ul>
-					<h4>Blacklist</h4>
-					<li>
-						<textarea id="blacklist" placeholder="example dog upside_down"></textarea>
-					</li>
-					<li class="note">
-						(Results with any of these tags will be removed during a search.)
-					</li>
+					
+					<h4>Blacklist <label class="note"><input id="hide-blacklist" type="checkbox" />(hide)</span></h4>
+					<ul id="blacklist-container">
+						<li>
+							<textarea id="blacklist" placeholder="example dog upside_down"></textarea>
+						</li>
+						<li class="note">
+							(Results with any of these tags will be removed during a search.)
+						</li>
+					</ul>
 				</div>
             </div>
 			<div id="module-container">
@@ -112,7 +116,7 @@
 					<ul>
 						<li>Full-screen (F11)</li>
 						<li>Previous (&larr; or A)</li>
-						<li>Next (&rarr; or A)</li>
+						<li>Next (&rarr; or D)</li>
 						<li>Back 10 (W)</li>
 						<li>Forward 10 (S)</li>
 						<li>Play/pause (Enter or space)</li>

@@ -1,325 +1,344 @@
-function SlideshowView(slideshowModel, uiElements) {
-    this._model = slideshowModel;
-    this.uiElements = uiElements;
-	
-    this.currentImageClickedEvent = new Event(this);
-    this.currentVideoClickedEvent = new Event(this);
-	this.currentVideoVolumeChangedEvent = new Event(this);
-    this.searchButtonClickedEvent = new Event(this);
-    this.firstNavButtonClickedEvent = new Event(this);
-    this.previousNavButtonClickedEvent = new Event(this);
-    this.nextNavButtonClickedEvent = new Event(this);
-    this.lastNavButtonClickedEvent = new Event(this);
-	this.goBackTenImagesPressedEvent = new Event(this);
-	this.goForwardTenImagesPressedEvent = new Event(this);
-    this.playButtonClickedEvent = new Event(this);
-    this.pauseButtonClickedEvent = new Event(this);
-    this.enterKeyPressedOutsideOfSearchTextBoxEvent = new Event(this);
-    this.searchTextChangedEvent = new Event(this);
-    this.enterKeyPressedInSearchTextBoxEvent = new Event(this);
-    this.sitesToSearchChangedEvent = new Event(this);
-    this.secondsPerSlideChangedEvent = new Event(this);
-    this.maxWidthChangedEvent = new Event(this);
-    this.maxHeightChangedEvent = new Event(this);
-    this.autoFitSlideChangedEvent = new Event(this);
-    this.includeImagesChangedEvent = new Event(this);
-    this.includeGifsChangedEvent = new Event(this);
-    this.includeWebmsChangedEvent = new Event(this);
-	this.blacklistChangedEvent = new Event(this);
-	this.derpibooruApiKeyChangedEvent = new Event(this);
-	
-	this.isSettingVolume = false;
-	this.isSettingMute = false;
-
-    var _this = this;
-
-    // Attach model listeners
-    this._model.videoVolumeUpdatedEvent.attach(function () {
-        _this.updateVideoVolume();
-        _this.updateVideoMuted();
-    });
-	
-	this._model.currentSlideChangedEvent.attach(function () {
-        _this.updateSlidesAndNavigation();
-    });
-
-    this._model.playingChangedEvent.attach(function () {
-        _this.updatePlayPauseButtons();
-    });
-
-    this._model.sitesToSearchUpdatedEvent.attach(function () {
-        _this.updateSitesToSearch();
-    });
-
-    this._model.secondsPerSlideUpdatedEvent.attach(function () {
-        _this.updateSecondsPerSlide();
-    });
-
-    this._model.maxWidthUpdatedEvent.attach(function () {
-        _this.updateMaxWidth();
-    });
-
-    this._model.maxHeightUpdatedEvent.attach(function () {
-        _this.updateMaxHeight();
-    });
-
-    this._model.autoFitSlideUpdatedEvent.attach(function () {
-        _this.updateAutoFitSlide();
-    });
-	
-	this._model.includeImagesUpdatedEvent.attach(function () {
-        _this.updateIncludeImages();
-    });
-	
-	this._model.includeGifsUpdatedEvent.attach(function () {
-        _this.updateIncludeGifs();
-    });
-	
-	this._model.includeWebmsUpdatedEvent.attach(function () {
-        _this.updateIncludeWebms();
-    });
-	
-	this._model.blacklistUpdatedEvent.attach(function () {
-        _this.updateBlacklist();
-    });
-	
-	this._model.derpibooruApiKeyUpdatedEvent.attach(function () {
-        _this.updateDerpibooruApiKey();
-    });
-
-    // Attach UI element listeners
-    window.addEventListener('resize', function () {
-        _this.windowResized();
-    });
-
-    this.uiElements.currentImage.addEventListener('click', function() {
-        _this.currentImageClickedEvent.notify();
-    });
-	
-	this.uiElements.currentVideo.addEventListener('click', function() {
-        _this.currentVideoClickedEvent.notify();
-    });
-	
-	this.uiElements.currentVideo.addEventListener('volumechange', function() {
-		/*if (_this.isSettingVolume)
-		{
-			_this.isSettingVolume = false;
-			return;
-		}
-		
-		if (_this.isSettingMute)
-		{
-			_this.isSettingMute = false;
-			return;
-		}*/
-		
-		if (_this.isSettingVolume)
-		{
-			return;
-		}
-		
-        _this.currentVideoVolumeChangedEvent.notify();
-    });
+class SlideshowView
+{
+    constructor (slideshowModel, uiElements) {
+        this._model = slideshowModel;
+        this.uiElements = uiElements;
+        
+        this.currentImageClickedEvent = new Event(this);
+        this.currentVideoClickedEvent = new Event(this);
+        this.currentVideoVolumeChangedEvent = new Event(this);
+        this.searchButtonClickedEvent = new Event(this);
+        this.firstNavButtonClickedEvent = new Event(this);
+        this.previousNavButtonClickedEvent = new Event(this);
+        this.nextNavButtonClickedEvent = new Event(this);
+        this.lastNavButtonClickedEvent = new Event(this);
+        this.goBackTenImagesPressedEvent = new Event(this);
+        this.goForwardTenImagesPressedEvent = new Event(this);
+        this.playButtonClickedEvent = new Event(this);
+        this.pauseButtonClickedEvent = new Event(this);
+        this.enterKeyPressedOutsideOfSearchTextBoxEvent = new Event(this);
+        this.searchTextChangedEvent = new Event(this);
+        this.enterKeyPressedInSearchTextBoxEvent = new Event(this);
+        this.sitesToSearchChangedEvent = new Event(this);
+        this.secondsPerSlideChangedEvent = new Event(this);
+        this.maxWidthChangedEvent = new Event(this);
+        this.maxHeightChangedEvent = new Event(this);
+        this.autoFitSlideChangedEvent = new Event(this);
+        this.includeImagesChangedEvent = new Event(this);
+        this.includeGifsChangedEvent = new Event(this);
+        this.includeWebmsChangedEvent = new Event(this);
+        this.hideBlacklistChangedEvent = new Event(this);
+        this.blacklistChangedEvent = new Event(this);
+        this.derpibooruApiKeyChangedEvent = new Event(this);
+        
+        this.isSettingVolume = false;
+        this.isSettingMute = false;
     
-    this.uiElements.firstNavButton.addEventListener('click', function() {
-        _this.firstNavButtonClickedEvent.notify();
-    });
-
-    this.uiElements.previousNavButton.addEventListener('click', function() {
-        _this.previousNavButtonClickedEvent.notify();
-    });
-
-    this.uiElements.nextNavButton.addEventListener('click', function() {
-        _this.nextNavButtonClickedEvent.notify();
-    });
-
-    this.uiElements.lastNavButton.addEventListener('click', function() {
-        _this.lastNavButtonClickedEvent.notify();
-    });
-
-    this.uiElements.playButton.addEventListener('click', function() {
-        _this.playButtonClickedEvent.notify();
-    });
-
-    this.uiElements.pauseButton.addEventListener('click', function() {
-        _this.pauseButtonClickedEvent.notify();
-    });
-
-    document.addEventListener('keydown', function (e) {
-		var key = e.which || e.keyCode;
-		
-        if (!(
-			key == ENTER_KEY_ID ||
-			key == SPACE_KEY_ID ||
-			key == LEFT_ARROW_KEY_ID ||
-			key == RIGHT_ARROW_KEY_ID ||
-			key == A_KEY_ID ||
-			key == W_KEY_ID ||
-			key == S_KEY_ID ||
-			key == D_KEY_ID ||
-			key == F_KEY_ID))
-        {
-            return;
-        }
-
-        if (document.activeElement !== _this.uiElements.searchTextBox &&
-			document.activeElement !== _this.uiElements.secondsPerSlideTextBox &&
-			document.activeElement !== _this.uiElements.maxWidthTextBox &&
-			document.activeElement !== _this.uiElements.maxHeightTextBox &&
-			document.activeElement !== _this.uiElements.blacklist &&
-			document.activeElement !== _this.uiElements.derpibooruApiKey) {
-			
-            if (key == LEFT_ARROW_KEY_ID || key == A_KEY_ID)
-                _this.previousNavButtonClickedEvent.notify();
-            if (key == RIGHT_ARROW_KEY_ID || key == D_KEY_ID)
-                _this.nextNavButtonClickedEvent.notify();
-			if (key == W_KEY_ID)
-                _this.goBackTenImagesPressedEvent.notify();
-			if (key == S_KEY_ID)
-                _this.goForwardTenImagesPressedEvent.notify();
-            if (key == ENTER_KEY_ID || key == SPACE_KEY_ID)
-            {
-                if (document.activeElement !== _this.uiElements.searchButton)
-                    _this.enterKeyPressedOutsideOfSearchTextBoxEvent.notify();
-            }
-			if (key == SPACE_KEY_ID)
-			{
-				e.preventDefault();
-			}
-			if (key == F_KEY_ID)
-			{
-				_this._model.setAutoFitSlide(!_this._model.autoFitSlide);
-			}
-        }
-    });
-
-    this.uiElements.searchTextBox.addEventListener('change', function () {
-        _this.searchTextChangedEvent.notify();
-    });
-
-    this.uiElements.searchTextBox.addEventListener('keypress', function (e) {
-        var key = e.which || e.keyCode;
-
-        if (key == ENTER_KEY_ID) {
-            _this.enterKeyPressedInSearchTextBoxEvent.notify();
-        }
-    });
-
-    this.uiElements.searchButton.addEventListener('click', function () {
-        _this.searchButtonClickedEvent.notify();
-    });
-
-    var sitesToSearchElements = this.uiElements.sitesToSearch;
-
-    for (var i = 0; i < sitesToSearchElements.length; i++)
-    {
-        var siteToSearch = sitesToSearchElements[i];
-
-        siteToSearch.addEventListener('change', function (e) {
-            _this.sitesToSearchChangedEvent.notify({
-                checked: e.target.checked,
-                site: e.target.value
-            });
-        });
-    }
-
-    this.uiElements.secondsPerSlideTextBox.addEventListener('change', function () {
-        _this.secondsPerSlideChangedEvent.notify();
-    });
-
-    this.uiElements.maxWidthTextBox.addEventListener('change', function () {
-        _this.maxWidthChangedEvent.notify();
-    });
-
-    this.uiElements.maxHeightTextBox.addEventListener('change', function() {
-        _this.maxHeightChangedEvent.notify();
-    });
-
-    this.uiElements.autoFitSlideCheckBox.addEventListener('change', function () {
-        _this.autoFitSlideChangedEvent.notify();
-    });
-	
-	this.uiElements.includeImagesCheckBox.addEventListener('change', function () {
-        _this.includeImagesChangedEvent.notify();
-    });
-	
-	this.uiElements.includeGifsCheckBox.addEventListener('change', function () {
-        _this.includeGifsChangedEvent.notify();
-    });
-	
-	this.uiElements.includeWebmsCheckBox.addEventListener('change', function () {
-        _this.includeWebmsChangedEvent.notify();
-    });
-	
-	this.uiElements.blacklist.addEventListener('change', function () {
-        _this.blacklistChangedEvent.notify();
-    });
-	
-	this.uiElements.derpibooruApiKey.addEventListener('change', function () {
-        _this.derpibooruApiKeyChangedEvent.notify();
-    });
-
-    this.initialize();
-}
-
-SlideshowView.prototype = {
-    initialize: function () {
+        var _this = this;
+        
+        this.attachModelListeners();
+        
+        this.attachUiElementListeners();
+    
         this.setupLoadingAnimation();
 
         this.setFocusToSearchBox();
-    },
+    }
 
-    clearUI: function () {
+    attachModelListeners()
+    {
+        var _this = this;
+
+        // Attach model listeners
+        this._model.videoVolumeUpdatedEvent.attach(function () {
+            _this.updateVideoVolume();
+            _this.updateVideoMuted();
+        });
+        
+        this._model.currentSlideChangedEvent.attach(function () {
+            _this.updateSlidesAndNavigation();
+        });
+    
+        this._model.playingChangedEvent.attach(function () {
+            _this.updatePlayPauseButtons();
+        });
+    
+        this._model.sitesToSearchUpdatedEvent.attach(function () {
+            _this.updateSitesToSearch();
+        });
+    
+        this._model.secondsPerSlideUpdatedEvent.attach(function () {
+            _this.updateSecondsPerSlide();
+        });
+    
+        this._model.maxWidthUpdatedEvent.attach(function () {
+            _this.updateMaxWidth();
+        });
+    
+        this._model.maxHeightUpdatedEvent.attach(function () {
+            _this.updateMaxHeight();
+        });
+    
+        this._model.autoFitSlideUpdatedEvent.attach(function () {
+            _this.updateAutoFitSlide();
+        });
+        
+        this._model.includeImagesUpdatedEvent.attach(function () {
+            _this.updateIncludeImages();
+        });
+        
+        this._model.includeGifsUpdatedEvent.attach(function () {
+            _this.updateIncludeGifs();
+        });
+        
+        this._model.includeWebmsUpdatedEvent.attach(function () {
+            _this.updateIncludeWebms();
+        });
+        
+        this._model.hideBlacklistUpdatedEvent.attach(function () {
+            _this.updateHideBlacklist();
+        });
+
+        this._model.blacklistUpdatedEvent.attach(function () {
+            _this.updateBlacklist();
+        });
+        
+        this._model.derpibooruApiKeyUpdatedEvent.attach(function () {
+            _this.updateDerpibooruApiKey();
+        });
+    }
+
+    attachUiElementListeners()
+    {
+        var _this = this;
+
+        window.addEventListener('resize', function () {
+            _this.windowResized();
+        });
+    
+        this.uiElements.currentImage.addEventListener('click', function() {
+            _this.currentImageClickedEvent.notify();
+        });
+        
+        this.uiElements.currentVideo.addEventListener('click', function() {
+            _this.currentVideoClickedEvent.notify();
+        });
+        
+        this.uiElements.currentVideo.addEventListener('volumechange', function() {
+            /*if (_this.isSettingVolume)
+            {
+                _this.isSettingVolume = false;
+                return;
+            }
+            
+            if (_this.isSettingMute)
+            {
+                _this.isSettingMute = false;
+                return;
+            }*/
+            
+            if (_this.isSettingVolume)
+            {
+                return;
+            }
+            
+            _this.currentVideoVolumeChangedEvent.notify();
+        });
+        
+        this.uiElements.firstNavButton.addEventListener('click', function() {
+            _this.firstNavButtonClickedEvent.notify();
+        });
+    
+        this.uiElements.previousNavButton.addEventListener('click', function() {
+            _this.previousNavButtonClickedEvent.notify();
+        });
+    
+        this.uiElements.nextNavButton.addEventListener('click', function() {
+            _this.nextNavButtonClickedEvent.notify();
+        });
+    
+        this.uiElements.lastNavButton.addEventListener('click', function() {
+            _this.lastNavButtonClickedEvent.notify();
+        });
+    
+        this.uiElements.playButton.addEventListener('click', function() {
+            _this.playButtonClickedEvent.notify();
+        });
+    
+        this.uiElements.pauseButton.addEventListener('click', function() {
+            _this.pauseButtonClickedEvent.notify();
+        });
+    
+        document.addEventListener('keydown', function (e) {
+            var key = e.which || e.keyCode;
+            
+            if (!(
+                key == ENTER_KEY_ID ||
+                key == SPACE_KEY_ID ||
+                key == LEFT_ARROW_KEY_ID ||
+                key == RIGHT_ARROW_KEY_ID ||
+                key == A_KEY_ID ||
+                key == W_KEY_ID ||
+                key == S_KEY_ID ||
+                key == D_KEY_ID ||
+                key == F_KEY_ID))
+            {
+                return;
+            }
+    
+            if (document.activeElement !== _this.uiElements.searchTextBox &&
+                document.activeElement !== _this.uiElements.secondsPerSlideTextBox &&
+                document.activeElement !== _this.uiElements.maxWidthTextBox &&
+                document.activeElement !== _this.uiElements.maxHeightTextBox &&
+                document.activeElement !== _this.uiElements.blacklist &&
+                document.activeElement !== _this.uiElements.derpibooruApiKey) {
+                
+                if (key == LEFT_ARROW_KEY_ID || key == A_KEY_ID)
+                    _this.previousNavButtonClickedEvent.notify();
+                if (key == RIGHT_ARROW_KEY_ID || key == D_KEY_ID)
+                    _this.nextNavButtonClickedEvent.notify();
+                if (key == W_KEY_ID)
+                    _this.goBackTenImagesPressedEvent.notify();
+                if (key == S_KEY_ID)
+                    _this.goForwardTenImagesPressedEvent.notify();
+                if (key == ENTER_KEY_ID || key == SPACE_KEY_ID)
+                {
+                    if (document.activeElement !== _this.uiElements.searchButton)
+                        _this.enterKeyPressedOutsideOfSearchTextBoxEvent.notify();
+                }
+                if (key == SPACE_KEY_ID)
+                {
+                    e.preventDefault();
+                }
+                if (key == F_KEY_ID)
+                {
+                    _this._model.setAutoFitSlide(!_this._model.autoFitSlide);
+                }
+            }
+        });
+    
+        this.uiElements.searchTextBox.addEventListener('change', function () {
+            _this.searchTextChangedEvent.notify();
+        });
+    
+        this.uiElements.searchTextBox.addEventListener('keypress', function (e) {
+            var key = e.which || e.keyCode;
+    
+            if (key == ENTER_KEY_ID) {
+                _this.enterKeyPressedInSearchTextBoxEvent.notify();
+            }
+        });
+    
+        this.uiElements.searchButton.addEventListener('click', function () {
+            _this.searchButtonClickedEvent.notify();
+        });
+    
+        var sitesToSearchElements = this.uiElements.sitesToSearch;
+    
+        for (var i = 0; i < sitesToSearchElements.length; i++)
+        {
+            var siteToSearch = sitesToSearchElements[i];
+    
+            siteToSearch.addEventListener('change', function (e) {
+                _this.sitesToSearchChangedEvent.notify({
+                    checked: e.target.checked,
+                    site: e.target.value
+                });
+            });
+        }
+    
+        this.uiElements.secondsPerSlideTextBox.addEventListener('change', function () {
+            _this.secondsPerSlideChangedEvent.notify();
+        });
+    
+        this.uiElements.maxWidthTextBox.addEventListener('change', function () {
+            _this.maxWidthChangedEvent.notify();
+        });
+    
+        this.uiElements.maxHeightTextBox.addEventListener('change', function() {
+            _this.maxHeightChangedEvent.notify();
+        });
+    
+        this.uiElements.autoFitSlideCheckBox.addEventListener('change', function () {
+            _this.autoFitSlideChangedEvent.notify();
+        });
+        
+        this.uiElements.includeImagesCheckBox.addEventListener('change', function () {
+            _this.includeImagesChangedEvent.notify();
+        });
+        
+        this.uiElements.includeGifsCheckBox.addEventListener('change', function () {
+            _this.includeGifsChangedEvent.notify();
+        });
+        
+        this.uiElements.includeWebmsCheckBox.addEventListener('change', function () {
+            _this.includeWebmsChangedEvent.notify();
+        });
+        
+        this.uiElements.blacklist.addEventListener('change', function () {
+            _this.blacklistChangedEvent.notify();
+        });
+    
+        this.uiElements.hideBlacklist.addEventListener('change', function () {
+            _this.hideBlacklistChangedEvent.notify();
+        });
+        
+        this.uiElements.derpibooruApiKey.addEventListener('change', function () {
+            _this.derpibooruApiKeyChangedEvent.notify();
+        });
+    }
+
+    clearUI() {
         this.clearWarningMessage();
         this.clearInfoMessage();
         this.clearImage();
         this.clearVideo();
         this.hideNavigation();
         this.clearThumbnails();
-    },
+    }
 
-    windowResized: function() {
+    windowResized() {
         if (this._model.autoFitSlide)
         {
             this.tryToUpdateSlideSize();
         }
-    },
+    }
 	
-	isDisplayingWarningMessage: function () {
+	isDisplayingWarningMessage() {
 		return this.uiElements.warningMessage.style.display == 'block';
-	},
+	}
 	
-    displayWarningMessage: function (message) {
+    displayWarningMessage(message) {
         this.uiElements.warningMessage.innerHTML = message;
         this.uiElements.warningMessage.style.display = 'block';
-    },
+    }
 
-    clearWarningMessage: function () {
+    clearWarningMessage() {
         this.uiElements.warningMessage.innerHTML = '';
         this.uiElements.warningMessage.style.display = 'none';
-    },
+    }
 	
-	displayInfoMessage: function (message) {
+	displayInfoMessage(message) {
         this.uiElements.infoMessage.innerHTML = message;
         this.uiElements.infoMessage.style.display = 'block';
-    },
+    }
 
-    clearInfoMessage: function () {
+    clearInfoMessage() {
         this.uiElements.infoMessage.innerHTML = '';
         this.uiElements.infoMessage.style.display = 'none';
-    },
+    }
 
-    updateSlidesAndNavigation: function () {
+    updateSlidesAndNavigation() {
         this.updateSlides();
         this.updateNavigation();
-    },
+    }
 
-    updateSlides: function () {
+    updateSlides() {
         this.displayCurrentSlide();
         this.showThumbnails();
-    },
+    }
 
-    setupLoadingAnimation: function () {
+    setupLoadingAnimation() {
         var _this = this;
 
         this.uiElements.currentImage.onload = function () {
@@ -329,9 +348,9 @@ SlideshowView.prototype = {
 		this.uiElements.currentVideo.addEventListener('loadeddata', function() {
 			_this.hideLoadingAnimation();
 		}, false);
-    },
+    }
 
-    displayCurrentSlide: function () {
+    displayCurrentSlide() {
         if (this._model.hasSlidesToDisplay())
 		{
             this.displaySlide();
@@ -355,9 +374,9 @@ SlideshowView.prototype = {
 			
             this.displayWarningMessage(message);
         }
-    },
+    }
 
-    displaySlide: function () {
+    displaySlide() {
         this.showLoadingAnimation();
 
         var currentSlide = this._model.getCurrentSlide();
@@ -374,9 +393,9 @@ SlideshowView.prototype = {
 		{
 			console.log("Trying to display slide that isn't an image or video.")
 		}
-    },
+    }
 	
-	displayImage: function (currentSlide) {
+	displayImage(currentSlide) {
         var currentImage = this.uiElements.currentImage;
 
         currentImage.src = currentSlide.fileUrl;
@@ -385,9 +404,9 @@ SlideshowView.prototype = {
 		
 		this.clearVideo();
         this.updateSlideSize();
-    },
+    }
 	
-	displayVideo: function (currentSlide) {
+	displayVideo(currentSlide) {
         var currentVideo = this.uiElements.currentVideo;
 
         currentVideo.src = currentSlide.fileUrl;
@@ -397,24 +416,24 @@ SlideshowView.prototype = {
         this.updateSlideSize();
 		this.updateVideoVolume();
 		this.updateVideoMuted();
-    },
+    }
 	
-	getVideoVolume: function () {
+	getVideoVolume() {
 		return this.uiElements.currentVideo.volume;
-    },
+    }
 	
-	getVideoMuted: function () {
+	getVideoMuted() {
         return this.uiElements.currentVideo.muted;
-    },
+    }
 
-    tryToUpdateSlideSize: function () {
+    tryToUpdateSlideSize() {
         if (this._model.hasSlidesToDisplay())
         {
 			var currentSlide = this.updateSlideSize();
 		}
-    },
+    }
 	
-    updateSlideSize: function () {
+    updateSlideSize() {
         var currentSlide = this._model.getCurrentSlide();
         var currentImage = this.uiElements.currentImage;
         var currentVideo = this.uiElements.currentVideo;
@@ -506,48 +525,48 @@ SlideshowView.prototype = {
 				}
             }
         }
-    },
+    }
 
-    clearImage: function () {
+    clearImage() {
         var currentImage = this.uiElements.currentImage;
 
         currentImage.src = '';
         currentImage.removeAttribute('alt');
         currentImage.style.display = 'none';
-    },
+    }
 	
-	clearVideo: function () {
+	clearVideo() {
         var currentVideo = this.uiElements.currentVideo;
 
         currentVideo.src = '';
         currentVideo.style.display = 'none';
-    },
+    }
 	
-	updateVideoVolume: function () {
+	updateVideoVolume() {
 		this.isSettingVolume = true;
         this.uiElements.currentVideo.volume = this._model.videoVolume;
 		this.isSettingVolume = false;
-    },
+    }
 	
-	updateVideoMuted: function () {
+	updateVideoMuted() {
 		this.isSettingMute = true;
         this.uiElements.currentVideo.muted = this._model.videoMuted;
 		this.isSettingMute = false;
-    },
+    }
 
-    showLoadingAnimation: function () {
+    showLoadingAnimation() {
         this.uiElements.loadingAnimation.style.display = 'inline';
-    },
+    }
 
-    hideLoadingAnimation: function () {
+    hideLoadingAnimation() {
         this.uiElements.loadingAnimation.style.display = 'none';
-    },
+    }
 
-    showNavigation: function () {
+    showNavigation() {
         this.uiElements.navigation.style.display = 'block';
-    },
+    }
 
-    updateNavigation: function () {
+    updateNavigation() {
         if (this._model.hasSlidesToDisplay())
         {
             this.updateNavigationButtonsAndDisplay();
@@ -557,22 +576,22 @@ SlideshowView.prototype = {
         {
             this.hideNavigation();
         }
-    },
+    }
 
-    updateNavigationButtonsAndDisplay: function () {
+    updateNavigationButtonsAndDisplay() {
         this.updateCurrentNumberDisplay();
         this.updateTotalNumberDisplay();
 
         this.updateFirstPreviousButtons();
         this.updatePlayPauseButtons();
         this.updateNextLastButtons();
-    },
+    }
 
-    updateCurrentNumberDisplay: function () {
+    updateCurrentNumberDisplay() {
         this.uiElements.currentSlideNumber.innerHTML = this._model.getCurrentSlideNumber();
-    },
+    }
 
-    updateTotalNumberDisplay: function () {
+    updateTotalNumberDisplay() {
         var totalNumberText = this._model.getSlideCount();
 
         if (this._model.areThereMoreLoadableSlides()) {
@@ -580,16 +599,16 @@ SlideshowView.prototype = {
         }
 
         this.uiElements.totalSlideNumber.innerHTML = totalNumberText;
-    },
+    }
 
-    updateFirstPreviousButtons: function () {
+    updateFirstPreviousButtons() {
         var currentlyOnFirstSlide = (this._model.getCurrentSlideNumber() == 1);
 
         this.uiElements.firstNavButton.disabled = currentlyOnFirstSlide;
         this.uiElements.previousNavButton.disabled = currentlyOnFirstSlide;
-    },
+    }
 
-    updatePlayPauseButtons: function () {
+    updatePlayPauseButtons() {
         if (this._model.isPlaying) {
             this.uiElements.playButton.style.display = 'none';
             this.uiElements.pauseButton.style.display = 'inline';
@@ -598,20 +617,20 @@ SlideshowView.prototype = {
             this.uiElements.playButton.style.display = 'inline';
             this.uiElements.pauseButton.style.display = 'none';
         }
-    },
+    }
 
-    updateNextLastButtons: function () {
+    updateNextLastButtons() {
         var currentlyOnLastSlide = (this._model.getCurrentSlideNumber() == this._model.getSlideCount());
 
         this.uiElements.nextNavButton.disabled = currentlyOnLastSlide;
         this.uiElements.lastNavButton.disabled = currentlyOnLastSlide;
-    },
+    }
 
-    hideNavigation: function () {
+    hideNavigation() {
         this.uiElements.navigation.style.display = 'none';
-    },
+    }
 
-    showThumbnails: function () {
+    showThumbnails() {
         this.clearThumbnails();
 
         if (this._model.getSlideCount() > 1) {
@@ -632,9 +651,9 @@ SlideshowView.prototype = {
                 });
             }
         }
-    },
+    }
 
-    displayThumbnail: function (thumbnailImageUrl, id, showGreyedOut) {
+    displayThumbnail(thumbnailImageUrl, id, showGreyedOut) {
         var thumbnailList = this.uiElements.thumbnailList;
 
         var newThumbnail = document.createElement("div");
@@ -658,46 +677,46 @@ SlideshowView.prototype = {
 
         newThumbnail.appendChild(newThumbnailImage);
         thumbnailList.appendChild(newThumbnail);
-    },
+    }
 
-    removeThumbnailGreyness: function (id) {
+    removeThumbnailGreyness(id) {
         var thumbnail = document.getElementById('thumbnail-image-' + id);
 
         if (thumbnail != null) {
             this.removeClass(thumbnail, 'thumbnail-image-greyed-out');
         }
-    },
+    }
 
-    removeClass: function(element, classToRemove) {
+    removeClass(element, classToRemove) {
         var regex = new RegExp('(?:^|\\s)' + classToRemove + '(?!\\S)')
         element.className = element.className.replace(regex, '');
-    },
+    }
 
-    clearThumbnails: function () {
+    clearThumbnails() {
         var thumbnailList = this.uiElements.thumbnailList;
 
         while (thumbnailList.firstChild) {
             thumbnailList.removeChild(thumbnailList.firstChild);
         }
-    },
+    }
 
-    getSearchText: function () {
+    getSearchText() {
         return this.uiElements.searchTextBox.value;
-    },
+    }
 
-    setFocusToSearchBox: function() {
+    setFocusToSearchBox() {
         this.uiElements.searchTextBox.focus();
-    },
+    }
 	
-	removeFocusFromSearchTextBox: function () {
+	removeFocusFromSearchTextBox() {
         this.uiElements.searchTextBox.blur();
-    },
+    }
 
-    removeFocusFromSearchButton: function () {
+    removeFocusFromSearchButton() {
         this.uiElements.searchButton.blur();
-    },
+    }
 
-    updateSitesToSearch: function () {
+    updateSitesToSearch() {
         var sitesToSearchElements = this.uiElements.sitesToSearch;
 
         for (var i = 0; i < sitesToSearchElements.length; i++) {
@@ -713,34 +732,34 @@ SlideshowView.prototype = {
 				this.uiElements.derpibooruApiKeyContainer.style.display = checked ? 'inline' : 'none';
 			}
         }
-    },
+    }
 
-    updateOptions: function () {
+    updateOptions() {
         this.updateSecondsPerSlide();
         this.updateMaxWidth();
         this.updateMaxHeight();
-    },
+    }
 
-    getSecondsPerSlide: function () {
+    getSecondsPerSlide() {
         return this.uiElements.secondsPerSlideTextBox.value;
-    },
+    }
 
-    updateSecondsPerSlide: function () {
+    updateSecondsPerSlide() {
         this.uiElements.secondsPerSlideTextBox.value = this._model.secondsPerSlide;
-    },
+    }
 
-    enableOrDisableMaxWidthAndHeight: function () {
+    enableOrDisableMaxWidthAndHeight() {
         var textBoxesDisabled = !this._model.areMaxWithAndHeightEnabled();
 
         this.uiElements.maxWidthTextBox.disabled = textBoxesDisabled;
         this.uiElements.maxHeightTextBox.disabled = textBoxesDisabled;
-    },
+    }
 
-    getMaxWidth: function () {
+    getMaxWidth() {
         return this.uiElements.maxWidthTextBox.value;
-    },
+    }
 
-    updateMaxWidth: function () {
+    updateMaxWidth() {
         var maxWidth = this._model.maxWidth;
 
         if (maxWidth == null)
@@ -750,13 +769,13 @@ SlideshowView.prototype = {
         
         this.uiElements.maxWidthTextBox.value = maxWidth;
         this.tryToUpdateSlideSize();
-    },
+    }
 
-    getMaxHeight: function () {
+    getMaxHeight() {
         return this.uiElements.maxHeightTextBox.value;
-    },
+    }
 
-    updateMaxHeight: function () {
+    updateMaxHeight() {
         var maxHeight = this._model.maxHeight;
 
         if (maxHeight == null) {
@@ -765,73 +784,83 @@ SlideshowView.prototype = {
 
         this.uiElements.maxHeightTextBox.value = maxHeight;
         this.tryToUpdateSlideSize();
-    },
+    }
 
-    getAutoFitSlide: function () {
+    getAutoFitSlide() {
         return this.uiElements.autoFitSlideCheckBox.checked;
-    },
+    }
 	
-	getIncludeImages: function () {
+	getIncludeImages() {
         return this.uiElements.includeImagesCheckBox.checked;
-    },
+    }
 	
-	getIncludeGifs: function () {
+	getIncludeGifs() {
         return this.uiElements.includeGifsCheckBox.checked;
-    },
+    }
 	
-	getIncludeWebms: function () {
+	getIncludeWebms() {
         return this.uiElements.includeWebmsCheckBox.checked;
-    },
+    }
 
-    updateAutoFitSlide: function () {
+    updateAutoFitSlide() {
         this.uiElements.autoFitSlideCheckBox.checked = this._model.autoFitSlide;
 
-        this.enableOrDisableMaxWidthAndHeight()
+        this.enableOrDisableMaxWidthAndHeight();
 
         this.tryToUpdateSlideSize();
-    },
+    }
 	
-	updateIncludeImages: function () {
+	updateIncludeImages() {
         this.uiElements.includeImagesCheckBox.checked = this._model.includeImages;
-    },
+    }
 	
-	updateIncludeGifs: function () {
+	updateIncludeGifs() {
         this.uiElements.includeGifsCheckBox.checked = this._model.includeGifs;
-    },
+    }
 	
-	updateIncludeWebms: function () {
+	updateIncludeWebms() {
         this.uiElements.includeWebmsCheckBox.checked = this._model.includeWebms;
-    },
+    }
 	
-	getBlacklist: function () {
-        return this.uiElements.blacklist.value;
-    },
+	getHideBlacklist() {
+        return this.uiElements.hideBlacklist.checked;
+    }
 
-    updateBlacklist: function () {
+    getBlacklist() {
+        return this.uiElements.blacklist.value;
+    }
+
+    updateHideBlacklist() {
+        this.uiElements.hideBlacklist.checked = this._model.hideBlacklist;
+
+        this.hideOrShowBlacklist();
+    }
+
+    updateBlacklist() {
         this.uiElements.blacklist.value = this._model.blacklist.trim();
 		//this.validateBlacklist();
-    },
+    }
 	
-	validateBlacklist: function () {
-        //var blacklist = this.uiElements.blacklist.value;
+	/*validateBlacklist() {
+        var blacklist = this.uiElements.blacklist.value;
 		
-		//var pattern = new RegExp(/[^\s]+/i);
-		//console.log(pattern.test(blacklist));
-    },
+		var pattern = new RegExp(/[^\s]+/i);
+		console.log(pattern.test(blacklist));
+    }*/
 	
-	getDerpibooruApiKey: function () {
+	getDerpibooruApiKey() {
         return this.uiElements.derpibooruApiKey.value.trim();
-    },
+    }
 
-    updateDerpibooruApiKey: function () {
+    updateDerpibooruApiKey() {
         this.uiElements.derpibooruApiKey.value = this._model.derpibooruApiKey;
-    },
+    }
 
-    openUrlInNewWindow: function (url) {
+    openUrlInNewWindow(url) {
         window.open(url, '_blank');
-    },
+    }
 	
-	showSiteOffline: function (site) {
+	showSiteOffline(site) {
 		var sitesToSearchElements = this.uiElements.sitesToSearch;
 		
 		for (var i = 0; i < sitesToSearchElements.length; i++)
@@ -844,5 +873,10 @@ SlideshowView.prototype = {
 				return;
 			}			
 		}
-	}
+    }
+    
+    hideOrShowBlacklist()
+    {
+        this.uiElements.blacklistContainer.style.display = this._model.hideBlacklist ? "none" : "block";
+    }
 };

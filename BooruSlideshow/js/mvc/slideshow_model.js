@@ -25,6 +25,7 @@ function SlideshowModel() {
     this.includeImages = true;
     this.includeGifs = true;
     this.includeWebms = false;
+    this.hideBlacklist = false;
 	this.blacklist = '';
 	this.derpibooruApiKey = '';
 
@@ -45,6 +46,7 @@ function SlideshowModel() {
     this.includeImagesUpdatedEvent = new Event(this);
     this.includeGifsUpdatedEvent = new Event(this);
     this.includeWebmsUpdatedEvent = new Event(this);
+    this.hideBlacklistUpdatedEvent = new Event(this);
     this.blacklistUpdatedEvent = new Event(this);
     this.derpibooruApiKeyUpdatedEvent = new Event(this);
 
@@ -122,6 +124,11 @@ SlideshowModel.prototype = {
     },
 
     decreaseCurrentSlideNumber: function () {
+        if (!this.sitesManager.canDecreaseCurrentSlideNumber())
+        {
+            return;
+        }
+
         this.sitesManager.decreaseCurrentSlideNumber();
         this.currentSlideChangedEvent.notify();
 
@@ -139,6 +146,11 @@ SlideshowModel.prototype = {
     },
 	
 	decreaseCurrentSlideNumberByTen: function () {
+        if (!this.sitesManager.canDecreaseCurrentSlideNumber())
+        {
+            return;
+        }
+        
         this.sitesManager.decreaseCurrentSlideNumberByTen();
         this.currentSlideChangedEvent.notify();
 
@@ -409,7 +421,15 @@ SlideshowModel.prototype = {
         this.includeWebmsUpdatedEvent.notify();
     },
 	
-	setBlacklist: function (blacklist) {
+	setHideBlacklist: function (onOrOff) {
+        this.hideBlacklist = onOrOff;
+
+        this.saveHideBlacklist();
+
+        this.hideBlacklistUpdatedEvent.notify();
+    },
+
+    setBlacklist: function (blacklist) {
         this.blacklist = blacklist;
 
         this.saveBlacklist();
@@ -439,6 +459,7 @@ SlideshowModel.prototype = {
 			'includeImages',
 			'includeGifs',
 			'includeWebms',
+			'hideBlacklist',
 			'blacklist',
 			'derpibooruApiKey'],
 			function (obj) {
@@ -454,6 +475,7 @@ SlideshowModel.prototype = {
 					var includeImages = obj['includeImages'];
 					var includeGifs = obj['includeGifs'];
 					var includeWebms = obj['includeWebms'];
+					var hideBlacklist = obj['hideBlacklist'];
 					var blacklist = obj['blacklist'];
 					var derpibooruApiKey = obj['derpibooruApiKey'];
 					
@@ -550,6 +572,14 @@ SlideshowModel.prototype = {
 						{
 							_this.setIncludeWebms(includeWebms);
 						}
+                    }
+                    
+                    if (hideBlacklist != null)
+					{
+						if (_this.hideBlacklist != hideBlacklist)
+						{
+							_this.setHideBlacklist(hideBlacklist);
+						}
 					}
 					
 					if (blacklist != null && _this.blacklist != blacklist)
@@ -606,7 +636,11 @@ SlideshowModel.prototype = {
         chrome.storage.sync.set({'includeWebms': this.includeWebms});
     },
 	
-	saveBlacklist: function () {
+	saveHideBlacklist: function () {
+        chrome.storage.sync.set({'hideBlacklist': this.hideBlacklist});
+    },
+
+    saveBlacklist: function () {
         chrome.storage.sync.set({'blacklist': this.blacklist});
     },
 	

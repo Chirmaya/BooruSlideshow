@@ -1,5 +1,10 @@
 Changelog
 
+Version 7.14
+* [Feature] Only one image with the same MD5 will be shown (thanks to DArrigoni)
+* [Feature] MP4 support (thanks to DArrigoni)
+* [Feature] The blacklist can now be hidden
+
 Version 7.13
 * [Fix] Multi-word search terms now work in for Derpibooru (use underscores)
 
