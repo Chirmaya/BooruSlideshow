@@ -1,4 +1,4 @@
-var Slide = function (id, fileUrl, previewFileUrl, viewableWebsitePostUrl, width, height, date, score, mediaType)
+var Slide = function (id, fileUrl, previewFileUrl, viewableWebsitePostUrl, width, height, date, score, mediaType, md5)
 {
 	this.id = id;
 	this.fileUrl = fileUrl;
@@ -14,6 +14,7 @@ var Slide = function (id, fileUrl, previewFileUrl, viewableWebsitePostUrl, width
 	this.preloadingImage = null;
 	this.preloadingVideo = null;
 	this.callbackToRunAfterPreloadingFinishes = null;
+	this.md5 = md5;
 }
 
 Slide.prototype.preload = function()
