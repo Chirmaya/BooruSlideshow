@@ -89,32 +89,19 @@ class SiteManager
     {
         searchQuery = this.addCommasToSearchQuery(searchQuery);
         return this.replaceUnderscoresWithSpaces(searchQuery);
-    }
-}
-
-
-
-
-
-SiteManager.prototype = {
+	}
 	
-	,
-
-	,
-    
-    ,
-    
-	addCommasToSearchQuery: function(searchQuery)
+	addCommasToSearchQuery(searchQuery)
 	{
 		return searchQuery.replace(" ", ",");
-	},
-    
-    replaceUnderscoresWithSpaces: function(searchQuery)
+	}
+
+	replaceUnderscoresWithSpaces(searchQuery)
 	{
 		return searchQuery.replace("_", " ");
-	},
+	}
 
-	resetConnection: function()
+	resetConnection()
 	{
 		if (this.xhr != null) 
 			this.xhr.abort();
@@ -125,14 +112,14 @@ SiteManager.prototype = {
 		this.isEnabled = false;
 		this.allUnsortedSlides = [];
 		this.hasExhaustedSearch = false;
-	},
+	}
 
-	enable: function()
+	enable()
 	{
 		this.isEnabled = true;
-	},
-	
-	pingStatus: function(callback)
+	}
+
+	pingStatus(callback)
 	{
 		var url = this.buildPingRequestUrl();
 		
@@ -144,9 +131,9 @@ SiteManager.prototype = {
 					_this.isOnline = true;
 			}, true);
 		}
-	},
-	
-	doesResponseTextIndicateOnline: function(responseText)
+	}
+
+	doesResponseTextIndicateOnline(responseText)
 	{
 		switch (this.id)
 		{
@@ -191,9 +178,9 @@ SiteManager.prototype = {
 				console.log('Error figuring out if the response text meant the site is online. Supplied site ID is not in the list.');
 				return;
 		}
-	},
-	
-	performSearch: function(searchText, doneSearchingSiteCallback)
+	}
+
+	performSearch(searchText, doneSearchingSiteCallback)
 	{
 		this.ranIntoErrorWhileSearching = false;
 		var pageNumber = this.lastPageLoaded + 1;
@@ -207,9 +194,9 @@ SiteManager.prototype = {
 				siteManager.addSlides(responseText);
 			});
 		}
-	},
+	}
 
-	makeWebsiteRequest: function(url, doneSearchingSiteCallback, onSuccessCallback, useSecondaryXhr = false)
+	makeWebsiteRequest(url, doneSearchingSiteCallback, onSuccessCallback, useSecondaryXhr = false)
 	{
 		var method = 'GET';
 		
@@ -266,9 +253,9 @@ SiteManager.prototype = {
 		};
 		
 		xhr.send();
-	},
+	}
 
-	handleErrorFromSiteResponse: function(responseText, statusCode, hideVisibleWarning = false)
+	handleErrorFromSiteResponse(responseText, statusCode, hideVisibleWarning = false)
 	{
 		this.ranIntoErrorWhileSearching = true;
 		
@@ -297,9 +284,9 @@ SiteManager.prototype = {
 		
         if (!hideVisibleWarning)
             this.sitesManager.displayWarningMessage(warningMessage);
-	},
+	}
 
-	addSlides: function(responseText)
+	addSlides(responseText)
 	{
 		if (this.id == SITE_GELBOORU || this.id == SITE_RULE34 || this.id == SITE_SAFEBOORU)
 		{
@@ -309,9 +296,9 @@ SiteManager.prototype = {
 		{
 			this.addJsonSlides(responseText);
 		}
-	},
-		
-	addXmlSlides: function(xmlResponseText)
+	}
+
+	addXmlSlides(xmlResponseText)
 	{
 		var parser = new DOMParser();
 		var xml = parser.parseFromString(xmlResponseText, "text/xml");
@@ -326,9 +313,9 @@ SiteManager.prototype = {
 			
 			this.addXmlSlide(xmlPost);
 		}
-	},
+	}
 
-	addJsonSlides: function(jsonResponseText)
+	addJsonSlides(jsonResponseText)
 	{
 		var jsonPosts;
 		
@@ -356,14 +343,14 @@ SiteManager.prototype = {
 			
 			this.addJsonSlide(jsonPost);
 		}
-	},
+	}
 
-	addXmlSlide: function(xmlPost)
+	addXmlSlide(xmlPost)
 	{
 		this.addSlideGelRuleSafe(xmlPost);
-	},
+	}
 
-	addJsonSlide: function(jsonPost)
+	addJsonSlide(jsonPost)
 	{
 		switch (this.id)
 		{
@@ -382,9 +369,9 @@ SiteManager.prototype = {
 				this.addSlideIbSearch(jsonPost);
 				break;
 		}
-	},
+	}
 
-	addSlideGelRuleSafe: function(xmlPost)
+	addSlideGelRuleSafe(xmlPost)
 	{
 		if (xmlPost.hasAttribute('file_url') &&
 			xmlPost.hasAttribute('preview_url'))
@@ -409,9 +396,9 @@ SiteManager.prototype = {
 				this.allUnsortedSlides.push(newSlide);
 			}
 		}
-	},
+	}
 
-	reformatUrl: function(url)
+	reformatUrl(url)
 	{
 		// Rule34 starts with two slashes right now.
 		if (url.substring(0,2) == '//')
@@ -420,9 +407,9 @@ SiteManager.prototype = {
 		}
 		
 		return url;
-	},
+	}
 
-	addSlideDanbooru: function(jsonPost)
+	addSlideDanbooru(jsonPost)
 	{
 		if (jsonPost.hasOwnProperty('file_url') &&
 			jsonPost.hasOwnProperty('preview_file_url'))
@@ -446,9 +433,9 @@ SiteManager.prototype = {
 				this.allUnsortedSlides.push(newSlide);
 			}
 		}
-	},
+	}
 
-	addSlideE621KonaYand: function(jsonPost)
+	addSlideE621KonaYand(jsonPost)
 	{
 		if (!jsonPost.hasOwnProperty('id') ||
 			!jsonPost.hasOwnProperty('file_url') ||
@@ -492,9 +479,9 @@ SiteManager.prototype = {
 			this.getMediaTypeFromPath(jsonPost.file_url)
 		);
 		this.allUnsortedSlides.push(newSlide);
-	},
+	}
 
-	addSlideIbSearch: function(jsonPost)
+	addSlideIbSearch(jsonPost)
 	{
 		if (jsonPost.hasOwnProperty('path'))
 		{
@@ -524,9 +511,9 @@ SiteManager.prototype = {
 				this.allUnsortedSlides.push(newSlide);
 			}
 		}
-	},
+	}
 
-	addSlideDerpibooru: function(jsonPost)
+	addSlideDerpibooru(jsonPost)
 	{
 		if (jsonPost.hasOwnProperty('image') &&
 			jsonPost.hasOwnProperty('representations'))
@@ -556,26 +543,26 @@ SiteManager.prototype = {
 				this.allUnsortedSlides.push(newSlide);
 			}
 		}
-	},
+	}
 
-	hasntExhaustedSearch: function()
+	hasntExhaustedSearch()
 	{
 		return this.isEnabled && !this.hasExhaustedSearch && !this.ranIntoErrorWhileSearching;
-	},
-	
-	convertSDateToDate: function(sDate)
-	{
-		return date = new Date(sDate * 1000);
-	},
+	}
 
-	isPathForSupportedMediaType: function (filePath)
+	convertSDateToDate(sDate)
+	{
+		return new Date(sDate * 1000);
+	}
+
+	isPathForSupportedMediaType(filePath)
 	{
 		var mediaType = this.getMediaTypeFromPath(filePath)
 		
 		return this.isMediaTypeSupported(mediaType);
-	},
+	}
 
-	getMediaTypeFromPath: function (filePath)
+	getMediaTypeFromPath(filePath)
 	{
 		var fileExtension = filePath.substring(filePath.length - 4);
 		
@@ -591,16 +578,16 @@ SiteManager.prototype = {
 			default:
 				return MEDIA_TYPE_IMAGE;
 		}
-	},
+	}
 
-	isMediaTypeSupported: function (mediaType)
+	isMediaTypeSupported(mediaType)
 	{
 		return (mediaType == MEDIA_TYPE_IMAGE && this.sitesManager.model.includeImages) ||
 			(mediaType == MEDIA_TYPE_GIF && this.sitesManager.model.includeGifs) ||
 			(mediaType == MEDIA_TYPE_VIDEO && this.sitesManager.model.includeWebms);
-	},
+	}
 
-	areSomeTagsAreBlacklisted: function (tags)
+	areSomeTagsAreBlacklisted(tags)
 	{
 		return this.sitesManager.model.areSomeTagsAreBlacklisted(tags);
 	}
