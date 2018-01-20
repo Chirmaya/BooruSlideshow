@@ -1,5 +1,8 @@
 Changelog
 
+Version 7.13
+* [Fix] Multi-word search terms now work in for Derpibooru (use underscores)
+
 Version 7.12
 * [Fix] Separated status web call from the search web call so they won't interrupt each other.
 

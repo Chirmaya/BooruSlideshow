@@ -1,58 +1,58 @@
-function SitesManager(model, numberOfSlidesToAlwaysHaveReadyToDisplay, maxNumberOfThumbnails)
-{
-	this.model = model;
-	this.numberOfSlidesToAlwaysHaveReadyToDisplay = numberOfSlidesToAlwaysHaveReadyToDisplay;
-	this.maxNumberOfThumbnails = maxNumberOfThumbnails;
-	this.siteManagers = [];
-	this.siteManagersCurrentlySearching = 0;
-	this.currentSlideNumber = 0;
-	this.allSortedSlides = [];
-	this.searchText = '';
-	this.isTryingToLoadMoreSlides = false;
-	this.callbackToRunAfterAllSitesFinishedSearching = null;
-	
-	this.sortingTypeDateDesc = 'order:id_desc';
-	this.sortingTypeDateAsc = 'order:id_asc';
-	this.sortingTypeScoreDesc = 'order:score_desc';
-	this.sortingTypeScoreAsc = 'order:score_asc';
-	
-	this.sortingQueryTerms = {};
-	this.sortingQueryTerms["(?:order|sort):(?:id|id_asc)\\b"] = this.sortingTypeDateAsc;
-	this.sortingQueryTerms["(?:order|sort):id_desc\\b"] = this.sortingTypeDateDesc;
-	this.sortingQueryTerms["(?:order|sort):(?:score|score_desc)\\b"] = this.sortingTypeScoreDesc;
-	this.sortingQueryTerms["(?:order|sort):score_asc\\b"] = this.sortingTypeScoreAsc;
-	
-	// Doesn't seem that this is needed right now.
-	// Investigate later.
-	this.setupRequestHeaders();
-}
+class SitesManager{
+	constructor(model, numberOfSlidesToAlwaysHaveReadyToDisplay, maxNumberOfThumbnails)
+	{
+		this.model = model;
+		this.numberOfSlidesToAlwaysHaveReadyToDisplay = numberOfSlidesToAlwaysHaveReadyToDisplay;
+		this.maxNumberOfThumbnails = maxNumberOfThumbnails;
+		this.siteManagers = [];
+		this.siteManagersCurrentlySearching = 0;
+		this.currentSlideNumber = 0;
+		this.allSortedSlides = [];
+		this.searchText = '';
+		this.isTryingToLoadMoreSlides = false;
+		this.callbackToRunAfterAllSitesFinishedSearching = null;
+		
+		this.sortingTypeDateDesc = 'order:id_desc';
+		this.sortingTypeDateAsc = 'order:id_asc';
+		this.sortingTypeScoreDesc = 'order:score_desc';
+		this.sortingTypeScoreAsc = 'order:score_asc';
+		
+		this.sortingQueryTerms = {};
+		this.sortingQueryTerms["(?:order|sort):(?:id|id_asc)\\b"] = this.sortingTypeDateAsc;
+		this.sortingQueryTerms["(?:order|sort):id_desc\\b"] = this.sortingTypeDateDesc;
+		this.sortingQueryTerms["(?:order|sort):(?:score|score_desc)\\b"] = this.sortingTypeScoreDesc;
+		this.sortingQueryTerms["(?:order|sort):score_asc\\b"] = this.sortingTypeScoreAsc;
+		
+		// Doesn't seem that this is needed right now.
+		// Investigate later.
+		this.setupRequestHeaders();
+	}
 
-SitesManager.prototype = {
-	displayWarningMessage: function(message)
+	displayWarningMessage(message)
 	{
 		if (this.model.view != null)
 		{
 			this.model.view.displayWarningMessage(message);
 		}
-	},
+	}
 
-	displayInfoMessage: function(message)
+	displayInfoMessage(message)
 	{
 		if (this.model.view != null)
 		{
 			this.model.view.displayInfoMessage(message);
 		}
-	},
+	}
 
-	clearInfoMessage: function()
+	clearInfoMessage()
 	{
 		if (this.model.view != null)
 		{
 			this.model.view.clearInfoMessage();
 		}
-	},
+	}
 
-	setupRequestHeaders: function()
+	setupRequestHeaders()
 	{
 		// Only needed for Gelbooru at the moment
 		var listener = function(details) {
@@ -80,14 +80,14 @@ SitesManager.prototype = {
 			requestFilter,
 			extraInfoSpec
 		);
-	},
+	}
 
-	addSite: function(id, url, pageLimit)
+	addSite(id, url, pageLimit)
 	{
 		this.siteManagers.push(new SiteManager(this, id, url, pageLimit));
-	},
+	}
 
-	enableSites: function(sites)
+	enableSites(sites)
 	{
 		for (var i = 0; i < sites.length; i++)
 		{
@@ -95,9 +95,9 @@ SitesManager.prototype = {
 			
 			this.enableSite(site);
 		}
-	},
+	}
 
-	enableSite: function(site)
+	enableSite(site)
 	{
 		for (var i = 0; i < this.siteManagers.length; i++)
 		{
@@ -109,9 +109,9 @@ SitesManager.prototype = {
 				return;
 			}
 		}
-	},
+	}
 
-	getCountOfActiveSiteManagers: function()
+	getCountOfActiveSiteManagers()
 	{
 		var count = 0;
 		
@@ -126,9 +126,9 @@ SitesManager.prototype = {
 		}
 		
 		return count;
-	},
+	}
 
-	getCountOfActiveSiteManagersThatHaventExhaustedSearches: function()
+	getCountOfActiveSiteManagersThatHaventExhaustedSearches()
 	{
 		var count = 0;
 		
@@ -143,9 +143,9 @@ SitesManager.prototype = {
 		}
 		
 		return count;
-	},
+	}
 
-	resetConnections: function()
+	resetConnections()
 	{
 		for (var i = 0; i < this.siteManagers.length; i++)
 		{
@@ -160,9 +160,9 @@ SitesManager.prototype = {
 		this.searchText = '';
 		this.isTryingToLoadMoreSlides = false;
 		this.callbackToRunAfterAllSitesFinishedSearching = null;
-	},
+	}
 	
-	pingSites: function(callback)
+	pingSites(callback)
 	{
 		for (var i = 0; i < this.siteManagers.length; i++)
 		{
@@ -170,9 +170,9 @@ SitesManager.prototype = {
 			
 			siteManager.pingStatus(callback);
 		}
-	},
+	}
 
-	performSearch: function(searchText, doneSearchingAllSitesCallback)
+	performSearch(searchText, doneSearchingAllSitesCallback)
 	{
 		this.searchText = searchText;
 		
@@ -186,9 +186,9 @@ SitesManager.prototype = {
 			
 			doneSearchingAllSitesCallback.call(sitesManager);
 		});
-	},
+	}
 
-	performSearchUntilWeHaveEnoughSlides: function(doneSearchingAllSitesCallback)
+	performSearchUntilWeHaveEnoughSlides(doneSearchingAllSitesCallback)
 	{
 		if (this.doMoreSlidesNeedToBeLoaded())
 		{
@@ -201,9 +201,9 @@ SitesManager.prototype = {
 		{
 			doneSearchingAllSitesCallback.call(this);
 		}
-	},
+	}
 
-	searchSites: function(doneSearchingSitesCallback)
+	searchSites(doneSearchingSitesCallback)
 	{
 		this.siteManagersCurrentlySearching = this.getCountOfActiveSiteManagersThatHaventExhaustedSearches();
 		
@@ -226,9 +226,9 @@ SitesManager.prototype = {
 				});
 			}
 		}
-	},
+	}
 
-	buildSortedSlideList: function()
+	buildSortedSlideList()
 	{
 		var slidesFromAllSitesToSort = [];
 		var md5Hashes = [];
@@ -279,9 +279,9 @@ SitesManager.prototype = {
 		});
 		
 		Array.prototype.push.apply(this.allSortedSlides, slidesFromAllSitesToSort);
-	},
+	}
 
-	getSortingMethod: function()
+	getSortingMethod()
 	{
 		for (var sortingQueryTerm in this.sortingQueryTerms)
 		{
@@ -298,9 +298,9 @@ SitesManager.prototype = {
 		}
 		
 		return this.sortingTypeDateDesc;
-	},
+	}
 
-	doMoreSlidesNeedToBeLoaded: function()
+	doMoreSlidesNeedToBeLoaded()
 	{
 		if (!this.areThereMoreLoadableSlides())
 		{
@@ -312,19 +312,19 @@ SitesManager.prototype = {
 		var moreSlidesNeedToBeLoaded = (this.numberOfSlidesToAlwaysHaveReadyToDisplay > numberOfLoadedSlidesLeftToDisplay);
 		
 		return moreSlidesNeedToBeLoaded;
-	},
+	}
 
-	getTotalSlideNumber: function()
+	getTotalSlideNumber()
 	{
 		return this.allSortedSlides.length;
-	},
+	}
 
-	moveToFirstSlide: function()
+	moveToFirstSlide()
 	{
 		this.setCurrentSlideNumber(1);
-	},
+	}
 
-	moveToLastSlide: function(callbackForAfterPossiblyLoadingMoreSlides)
+	moveToLastSlide(callbackForAfterPossiblyLoadingMoreSlides)
 	{
 		var totalSlideNumber = this.getTotalSlideNumber();
 		this.setCurrentSlideNumber(totalSlideNumber);
@@ -346,9 +346,9 @@ SitesManager.prototype = {
 			
 			this.preloadNextSlideIfNeeded();
 		});
-	},
+	}
 
-	increaseCurrentSlideNumber: function(callbackForAfterPossiblyLoadingMoreSlides)
+	increaseCurrentSlideNumber(callbackForAfterPossiblyLoadingMoreSlides)
 	{
 		if (this.currentSlideNumber < this.getTotalSlideNumber())
 		{
@@ -362,9 +362,9 @@ SitesManager.prototype = {
 				this.preloadNextSlideIfNeeded();
 			});
 		}
-	},
+	}
 
-	increaseCurrentSlideNumberByTen: function(callbackForAfterPossiblyLoadingMoreSlides)
+	increaseCurrentSlideNumberByTen(callbackForAfterPossiblyLoadingMoreSlides)
 	{
 		if (this.currentSlideNumber < this.getTotalSlideNumber())
 		{
@@ -379,34 +379,34 @@ SitesManager.prototype = {
 				this.preloadNextSlideIfNeeded();
 			});
 		}
-	},
+	}
 
-	decreaseCurrentSlideNumber: function()
+	decreaseCurrentSlideNumber()
 	{
 		if (this.currentSlideNumber > 1)
 		{
 			this.setCurrentSlideNumber(this.currentSlideNumber - 1);
 		}
-	},
+	}
 
-	decreaseCurrentSlideNumberByTen: function()
+	decreaseCurrentSlideNumberByTen()
 	{
 		if (this.currentSlideNumber > 1)
 		{
 			var newSlideNumber = Math.max(this.currentSlideNumber - 10, 1);
 			this.setCurrentSlideNumber(newSlideNumber);
 		}
-	},
+	}
 
-	moveToSpecificSlide: function(specificSlideNumber)
+	moveToSpecificSlide(specificSlideNumber)
 	{
 		if (specificSlideNumber > 0 && specificSlideNumber <= this.getTotalSlideNumber())
 		{
 			this.setCurrentSlideNumber(specificSlideNumber);
 		}
-	},
+	}
 
-	isNextSlidePreloaded: function(slideId)
+	isNextSlidePreloaded(slideId)
 	{
 		var nextSlides = this.getNextSlidesForThumbnails();
 		
@@ -421,9 +421,9 @@ SitesManager.prototype = {
 		}
 		
 		return false;
-	},
+	}
 
-	tryToMoveToPreloadedSlide: function(slideId)
+	tryToMoveToPreloadedSlide(slideId)
 	{
 		var nextSlides = this.getNextSlidesForThumbnails();
 		
@@ -445,9 +445,9 @@ SitesManager.prototype = {
 		}
 		
 		return false;
-	},
+	}
 
-	moveToSlide: function(slideId)
+	moveToSlide(slideId)
 	{
 		var nextSlides = this.getNextSlidesForThumbnails();
 		
@@ -466,31 +466,31 @@ SitesManager.prototype = {
 		}
 		
 		return false;
-	},
+	}
 
-	setCurrentSlideNumber: function(newCurrentSlideNumber)
+	setCurrentSlideNumber(newCurrentSlideNumber)
 	{
 		this.clearCallbacksForPreloadingSlides();
 		this.currentSlideNumber = newCurrentSlideNumber;
 		this.preloadCurrentSlideIfNeeded();
 		this.preloadNextSlideIfNeeded();
-	},
+	}
 
-	clearCallbacksForPreloadingSlides: function()
+	clearCallbacksForPreloadingSlides()
 	{
 		if (this.currentSlideNumber > 0)
 		{
 			var currentSlide = this.getCurrentSlide();
 			currentSlide.clearCallback();
 		}
-	},
+	}
 
-	clearCallbacksForLoadingSlides: function()
+	clearCallbacksForLoadingSlides()
 	{
 		this.callbackToRunAfterAllSitesFinishedSearching = null;
-	},
+	}
 
-	runCodeWhenCurrentSlideFinishesLoading: function(callback)
+	runCodeWhenCurrentSlideFinishesLoading(callback)
 	{
 		var currentSlide = this.getCurrentSlide();
 		var sitesManager = this;
@@ -501,30 +501,30 @@ SitesManager.prototype = {
 				callback.call();
 			}
 		});
-	},
+	}
 
-	runCodeWhenFinishGettingMoreSlides: function(callback)
+	runCodeWhenFinishGettingMoreSlides(callback)
 	{
 		this.callbackToRunAfterAllSitesFinishedSearching = callback
-	},
+	}
 
-	getCurrentSlide: function()
+	getCurrentSlide()
 	{
 		if (this.currentSlideNumber > 0)
 		{
 			return this.allSortedSlides[this.currentSlideNumber - 1];
 		}
-	},
+	}
 
-	getNextSlidesForThumbnails: function()
+	getNextSlidesForThumbnails()
 	{
 		if (this.currentSlideNumber > 0)
 		{
 			return this.allSortedSlides.slice(this.currentSlideNumber, this.currentSlideNumber + this.maxNumberOfThumbnails);
 		}
-	},
+	}
 
-	areThereMoreLoadableSlides: function()
+	areThereMoreLoadableSlides()
 	{
 		for (var i = 0; i < this.siteManagers.length; i++)
 		{
@@ -537,25 +537,25 @@ SitesManager.prototype = {
 		}
 		
 		return false;
-	},
+	}
 
-	preloadCurrentSlideIfNeeded: function()
+	preloadCurrentSlideIfNeeded()
 	{
 		var currentSlide = this.allSortedSlides[this.currentSlideNumber - 1];
 		
 		currentSlide.preload();
-	},
+	}
 
-	preloadNextSlideIfNeeded: function()
+	preloadNextSlideIfNeeded()
 	{
 		if (this.currentSlideNumber < this.getTotalSlideNumber())
 		{
 			var currentSlide = this.getCurrentSlide();
 			this.preloadNextUnpreloadedSlideIfInRange();
 		}
-	},
+	}
 
-	preloadNextUnpreloadedSlideIfInRange: function()
+	preloadNextUnpreloadedSlideIfInRange()
 	{
 		if (this.currentSlideNumber < this.getTotalSlideNumber())
 		{
@@ -572,9 +572,9 @@ SitesManager.prototype = {
 				}
 			}
 		}
-	},
+	}
 
-	preloadNextUnpreloadedSlideAfterThisOneIfInRange: function(startingSlide)
+	preloadNextUnpreloadedSlideAfterThisOneIfInRange(startingSlide)
 	{
 		if (this.currentSlideNumber < this.getTotalSlideNumber())
 		{
@@ -600,9 +600,9 @@ SitesManager.prototype = {
 				}
 			}
 		}
-	},
+	}
 
-	isCurrentSlideLoaded: function()
+	isCurrentSlideLoaded()
 	{
 		if (this.currentSlideNumber > 0)
 		{
