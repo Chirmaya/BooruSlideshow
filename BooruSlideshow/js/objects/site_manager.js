@@ -569,6 +569,7 @@ class SiteManager
 		switch (fileExtension.toLowerCase())
 		{
 			case 'webm':
+			case '.mp4':
 				return MEDIA_TYPE_VIDEO;
 			case '.gif':
 				return MEDIA_TYPE_GIF;
