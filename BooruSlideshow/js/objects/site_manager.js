@@ -1,21 +1,22 @@
-function SiteManager (sitesManager, id, url, pageLimit)
+class SiteManager
 {
-	this.sitesManager = sitesManager;
-	this.id = id;
-	this.url = url;
-	this.pageLimit = pageLimit;
-	this.lastPageLoaded = 0;
-	this.isEnabled = false;
-	this.allUnsortedSlides = [];
-	this.hasExhaustedSearch = false;
-	this.ranIntoErrorWhileSearching = false;
-	this.isOnline = false;
-	
-	this.siteQueryTermAssociations = SITE_QUERY_TERM_ASSOCIATIONS[id];
-}
-
-SiteManager.prototype = {
-	buildPingRequestUrl: function()
+    constructor(sitesManager, id, url, pageLimit)
+    {
+        this.sitesManager = sitesManager;
+        this.id = id;
+        this.url = url;
+        this.pageLimit = pageLimit;
+        this.lastPageLoaded = 0;
+        this.isEnabled = false;
+        this.allUnsortedSlides = [];
+        this.hasExhaustedSearch = false;
+        this.ranIntoErrorWhileSearching = false;
+        this.isOnline = false;
+        
+        this.siteQueryTermAssociations = SITE_QUERY_TERM_ASSOCIATIONS[id];
+    }
+    
+    buildPingRequestUrl()
 	{
 		switch (this.id)
 		{
@@ -38,9 +39,9 @@ SiteManager.prototype = {
 				console.log('Error building the ping URL. Supplied site ID is not in the list.');
 				return;
 		}
-	},
-	
-	buildRequestUrl: function(searchText, pageNumber)
+    }
+    
+    buildRequestUrl(searchText, pageNumber)
 	{
 		var query = this.buildSiteSpecificQuery(searchText);
 		
@@ -54,7 +55,7 @@ SiteManager.prototype = {
 				return this.url + '/posts.json?tags=' + query + '&page=' + pageNumber + '&limit=' + this.pageLimit;
 			case SITE_DERPIBOORU:
 				var possibleAddedKey = this.sitesManager.model.derpibooruApiKey ? '&key=' + this.sitesManager.model.derpibooruApiKey : '';
-				return this.url + '/search.json?q=' + this.addCommasToSearchQuery(query) + '&page=' + pageNumber + '&limit=' + this.pageLimit + possibleAddedKey;
+				return this.url + '/search.json?q=' + this.prepareQueryForDerpibooru(query) + '&page=' + pageNumber + '&limit=' + this.pageLimit + possibleAddedKey;
 			case SITE_KONACHAN:
 			case SITE_YANDERE:
 				return this.url + '/post.json?tags=' + query + '&page=' + pageNumber + '&limit=' + this.pageLimit;
@@ -66,9 +67,9 @@ SiteManager.prototype = {
 				console.log('Error building the URL. Supplied site ID is not in the list.');
 				return;
 		}
-	},
-
-	buildSiteSpecificQuery: function(searchText)
+	}
+    
+    buildSiteSpecificQuery(searchText)
 	{
 		var query = searchText.trim();
 		
@@ -82,11 +83,35 @@ SiteManager.prototype = {
 		}
 		
 		return query;
-	},
+	}
+    
+    prepareQueryForDerpibooru(searchQuery)
+    {
+        searchQuery = this.addCommasToSearchQuery(searchQuery);
+        return this.replaceUnderscoresWithSpaces(searchQuery);
+    }
+}
 
+
+
+
+
+SiteManager.prototype = {
+	
+	,
+
+	,
+    
+    ,
+    
 	addCommasToSearchQuery: function(searchQuery)
 	{
 		return searchQuery.replace(" ", ",");
+	},
+    
+    replaceUnderscoresWithSpaces: function(searchQuery)
+	{
+		return searchQuery.replace("_", " ");
 	},
 
 	resetConnection: function()
@@ -230,7 +255,7 @@ SiteManager.prototype = {
 			}
 			else
 			{
-				siteManager.handleErrorFromSiteResponse(responseText, xhr.status);
+				siteManager.handleErrorFromSiteResponse(responseText, xhr.status, useSecondaryXhr);
 			}
 			
 			doneSearchingSiteCallback(siteManager);
@@ -243,7 +268,7 @@ SiteManager.prototype = {
 		xhr.send();
 	},
 
-	handleErrorFromSiteResponse: function(responseText, statusCode)
+	handleErrorFromSiteResponse: function(responseText, statusCode, hideVisibleWarning = false)
 	{
 		this.ranIntoErrorWhileSearching = true;
 		
@@ -270,7 +295,8 @@ SiteManager.prototype = {
 			warningMessage += ' Requests were made too quickly. (Likely from the initial site status check.) Please try again.';
         }
 		
-		this.sitesManager.displayWarningMessage(warningMessage);
+        if (!hideVisibleWarning)
+            this.sitesManager.displayWarningMessage(warningMessage);
 	},
 
 	addSlides: function(responseText)
