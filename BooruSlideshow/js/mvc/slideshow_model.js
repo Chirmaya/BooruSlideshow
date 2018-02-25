@@ -13,6 +13,7 @@ function SlideshowModel() {
         [SITE_GELBOORU]: false,
         [SITE_IBSEARCH]: false,
         [SITE_KONACHAN]: false,
+		[SITE_REALBOORU]: false,
 		[SITE_RULE34]: false,
         [SITE_SAFEBOORU]: true,
         [SITE_YANDERE]: false
@@ -68,6 +69,7 @@ SlideshowModel.prototype = {
         this.sitesManager.addSite(SITE_GELBOORU, 'https://gelbooru.com', pageLimit);
         this.sitesManager.addSite(SITE_IBSEARCH, 'https://ibsearch.xxx', pageLimit);
         this.sitesManager.addSite(SITE_KONACHAN, 'https://konachan.com', pageLimit);
+        this.sitesManager.addSite(SITE_REALBOORU, 'https://realbooru.com', pageLimit);
         this.sitesManager.addSite(SITE_RULE34, 'https://rule34.xxx', pageLimit);
         this.sitesManager.addSite(SITE_SAFEBOORU, 'http://safebooru.org', pageLimit);
         this.sitesManager.addSite(SITE_YANDERE, 'https://yande.re', pageLimit);
@@ -511,6 +513,7 @@ SlideshowModel.prototype = {
 							sitesToSearch.hasOwnProperty(SITE_GELBOORU) &&
 							sitesToSearch.hasOwnProperty(SITE_IBSEARCH) &&
 							sitesToSearch.hasOwnProperty(SITE_KONACHAN) &&
+							sitesToSearch.hasOwnProperty(SITE_REALBOORU) &&
 							sitesToSearch.hasOwnProperty(SITE_RULE34) &&
 							sitesToSearch.hasOwnProperty(SITE_SAFEBOORU) &&
 							sitesToSearch.hasOwnProperty(SITE_YANDERE))

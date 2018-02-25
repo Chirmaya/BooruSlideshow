@@ -4,6 +4,7 @@ var SITE_E621 = 'E621';
 var SITE_GELBOORU = 'GELB';
 var SITE_IBSEARCH = 'IBSE';
 var SITE_KONACHAN = 'KONA';
+var SITE_REALBOORU = 'REAL';
 var SITE_RULE34 = 'RULE';
 var SITE_SAFEBOORU = 'SAFE';
 var SITE_YANDERE = 'YAND';
@@ -78,6 +79,18 @@ SITE_QUERY_TERM_ASSOCIATIONS[SITE_KONACHAN] = {
 	"sort:score" : "order:score",
 	"sort:score_asc" : "order:score_asc",
 	"sort:score_desc" : "order:score_desc",
+	"sort:-upload" : ""
+};
+SITE_QUERY_TERM_ASSOCIATIONS[SITE_REALBOORU] = {
+	"rating:s\\S*" : "rating:safe",
+	"rating:q\\S*" : "rating:questionable",
+	"rating:e\\S*" : "rating:explicit",
+	"order:id" : "sort:id",
+	"order:id_asc" : "sort:id_asc",
+	"order:id_desc" : "sort:id_desc",
+	"order:score" : "sort:score",
+	"order:score_asc" : "sort:score_asc",
+	"order:score_desc" : "sort:score_desc",
 	"sort:-upload" : ""
 };
 SITE_QUERY_TERM_ASSOCIATIONS[SITE_RULE34] = {

@@ -21,6 +21,7 @@ class SiteManager
 		switch (this.id)
 		{
 			case SITE_GELBOORU:
+			case SITE_REALBOORU:
 			case SITE_RULE34:
 			case SITE_SAFEBOORU:
 				return this.url + '/index.php?page=dapi&s=post&q=index&limit=1';
@@ -48,6 +49,7 @@ class SiteManager
 		switch (this.id)
 		{
 			case SITE_GELBOORU:
+			case SITE_REALBOORU:
 			case SITE_RULE34:
 			case SITE_SAFEBOORU:
 				return this.url + '/index.php?page=dapi&s=post&q=index&tags=' + query + '&pid=' + (pageNumber - 1) + '&limit=' + this.pageLimit;
@@ -138,6 +140,7 @@ class SiteManager
 		switch (this.id)
 		{
 			case SITE_GELBOORU:
+			case SITE_REALBOORU:
 			case SITE_RULE34:
 			case SITE_SAFEBOORU:
 				var parser = new DOMParser();
@@ -288,7 +291,7 @@ class SiteManager
 
 	addSlides(responseText)
 	{
-		if (this.id == SITE_GELBOORU || this.id == SITE_RULE34 || this.id == SITE_SAFEBOORU)
+		if (this.id == SITE_GELBOORU || this.id == SITE_REALBOORU || this.id == SITE_RULE34 || this.id == SITE_SAFEBOORU)
 		{
 			this.addXmlSlides(responseText);
 		}
@@ -380,7 +383,7 @@ class SiteManager
 			{
 				if (this.areSomeTagsAreBlacklisted(xmlPost.getAttribute('tags')))
 					return;
-				
+
 				var newSlide = new Slide(
 					xmlPost.getAttribute('id'),
 					this.reformatUrl(xmlPost.getAttribute('file_url')),

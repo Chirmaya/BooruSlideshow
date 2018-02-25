@@ -1,5 +1,8 @@
 Changelog
 
+Version 7.15
+* [Feature] Added support for realbooru.com
+
 Version 7.14
 * [Feature] Only one image with the same MD5 will be shown (thanks to DArrigoni)
 * [Feature] MP4 support (thanks to DArrigoni)
