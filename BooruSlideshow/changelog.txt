@@ -1,5 +1,8 @@
 Changelog
 
+Version 7.16
+* [Fix] Fixed Derpibooru filtering issue
+
 Version 7.15
 * [Feature] Added support for realbooru.com
 

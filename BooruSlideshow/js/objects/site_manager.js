@@ -339,7 +339,7 @@ class SiteManager
 		}
 		
 		this.hasExhaustedSearch = (jsonPosts.length < this.pageLimit);
-		
+
 		for (var i = 0; i < jsonPosts.length; i++)
 		{
 			var jsonPost = jsonPosts[i];
@@ -546,7 +546,7 @@ class SiteManager
 					new Date(jsonPost.created_at),
 					jsonPost.score,
 					this.getMediaTypeFromPath(jsonPost.image),
-					jsonPost.md5
+					jsonPost.sha512_hash
 				);
 				this.allUnsortedSlides.push(newSlide);
 			}
