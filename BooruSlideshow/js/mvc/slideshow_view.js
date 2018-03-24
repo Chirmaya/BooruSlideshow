@@ -879,4 +879,4 @@ class SlideshowView
     {
         this.uiElements.blacklistContainer.style.display = this._model.hideBlacklist ? "none" : "block";
     }
-};
+}

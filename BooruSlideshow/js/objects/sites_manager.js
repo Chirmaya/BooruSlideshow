@@ -30,6 +30,7 @@ class SitesManager{
 
 	displayWarningMessage(message)
 	{
+		console.log(message);
 		if (this.model.view != null)
 		{
 			this.model.view.displayWarningMessage(message);
@@ -82,9 +83,10 @@ class SitesManager{
 		);
 	}
 
-	addSite(id, url, pageLimit)
+	addSite(id, pageLimit)
 	{
-		this.siteManagers.push(new SiteManager(this, id, url, pageLimit));
+		let siteManager = SiteManagerFactory.createSiteManager(this, id, pageLimit);
+		this.siteManagers.push(siteManager);
 	}
 
 	enableSites(sites)
@@ -136,7 +138,7 @@ class SitesManager{
 		{
 			var siteManager = this.siteManagers[i];
 			
-			if (siteManager.hasntExhaustedSearch())
+			if (siteManager.isOnline && siteManager.hasntExhaustedSearch())
 			{
 				count++;
 			}
@@ -193,6 +195,7 @@ class SitesManager{
 		if (this.doMoreSlidesNeedToBeLoaded())
 		{
 			var sitesManager = this;
+
 			this.searchSites(function() {
 				sitesManager.performSearchUntilWeHaveEnoughSlides(doneSearchingAllSitesCallback);
 			});
@@ -211,7 +214,7 @@ class SitesManager{
 		{
 			var siteManager = this.siteManagers[i];
 			
-			if (siteManager.hasntExhaustedSearch())
+			if (siteManager.isOnline && siteManager.hasntExhaustedSearch())
 			{
 				var sitesManager = this;
 				
@@ -535,7 +538,7 @@ class SitesManager{
 		{
 			var siteManager = this.siteManagers[i];
 			
-			if (siteManager.hasntExhaustedSearch())
+			if (siteManager.isOnline && siteManager.hasntExhaustedSearch())
 			{
 				return true;
 			}
@@ -613,5 +616,18 @@ class SitesManager{
 		{
 			return this.getCurrentSlide().isPreloaded;
 		}
+	}
+
+	hasAtLeastOneOnlineSiteSelected()
+	{
+		for (var i = 0; i < this.siteManagers.length; i++)
+		{
+			var siteManager = this.siteManagers[i];
+			
+			if (siteManager.isEnabled && siteManager.isOnline)
+				return true;
+		}
+
+		return false;
 	}
 }

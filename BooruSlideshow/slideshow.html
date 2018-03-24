@@ -46,7 +46,7 @@
 						<li><label><input type="checkbox" name="sites-to-search" value="E621" />e621.net</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="GELB" />gelbooru.com<br>
 							<span>(need to be logged in)</span></label></li>
-						<li><label><input type="checkbox" name="sites-to-search" value="IBSE" />ibsearch.xxx</label></li>
+						<!--<li><label><input type="checkbox" name="sites-to-search" value="IBSE" />ibsearch.xxx</label></li>-->
 						<li><label><input type="checkbox" name="sites-to-search" value="KONA" />konachan.com</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="REAL" />realbooru.com</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="RULE" />rule34.xxx</label></li>
@@ -128,8 +128,20 @@
             </div>
         </div>
 		
-		<script src="js/objects/sites_manager.js"></script>
+		<script src="js/objects/web_requester.js"></script>
 		<script src="js/objects/site_manager.js"></script>
+		<script src="js/objects/site_managers/site_manager_danbooru.js"></script>
+		<script src="js/objects/site_managers/site_manager_derpibooru.js"></script>
+		<script src="js/objects/site_managers/site_manager_e621.js"></script>
+		<script src="js/objects/site_managers/site_manager_gelbooru.js"></script>
+		<!--<script src="js/objects/site_managers/site_manager_ibsearch.js"></script>-->
+		<script src="js/objects/site_managers/site_manager_konachan.js"></script>
+		<script src="js/objects/site_managers/site_manager_realbooru.js"></script>
+		<script src="js/objects/site_managers/site_manager_rule34.js"></script>
+		<script src="js/objects/site_managers/site_manager_safebooru.js"></script>
+		<script src="js/objects/site_managers/site_manager_yandere.js"></script>
+		<script src="js/objects/site_manager_factory.js"></script>
+		<script src="js/objects/sites_manager.js"></script>
 		<script src="js/objects/slide.js"></script>
 		<script src="js/objects/event.js"></script>
 		<script src="js/mvc/slideshow_model.js"></script>

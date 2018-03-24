@@ -1,5 +1,13 @@
 Changelog
 
+Version 7.17
+* [Change] Removed IbSearch since it has been down for a long time
+* [Fix] Will no longer try to search offline sites
+* [Fix] Fixed some danbooru images that were not displaying properly
+* [Fix] Added support for derpibooru special search syntax
+* [Fix] If a search runs into an error, it will no longer disable further subsequent searches
+* [Fix] Sites added in the future will not clear your existing site settings
+
 Version 7.16
 * [Fix] Fixed Derpibooru filtering issue
 

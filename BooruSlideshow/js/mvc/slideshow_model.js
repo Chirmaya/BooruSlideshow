@@ -1,61 +1,63 @@
-function SlideshowModel() {
-    this.view = null;
-	
-	this.videoVolume = 0;
-	this.videoMuted = false;
-	
-	this.searchText = "";
-	
-    this.sitesToSearch = {
-        [SITE_DANBOORU]: false,
-        [SITE_DERPIBOORU]: false,
-        [SITE_E621]: false,
-        [SITE_GELBOORU]: false,
-        [SITE_IBSEARCH]: false,
-        [SITE_KONACHAN]: false,
-		[SITE_REALBOORU]: false,
-		[SITE_RULE34]: false,
-        [SITE_SAFEBOORU]: true,
-        [SITE_YANDERE]: false
-    };
+class SlideshowModel{
+    constructor()
+    {
+        this.view = null;
+        
+        this.videoVolume = 0;
+        this.videoMuted = false;
+        
+        this.searchText = "";
+        
+        this.sitesToSearch = {
+            [SITE_DANBOORU]: false,
+            [SITE_DERPIBOORU]: false,
+            [SITE_E621]: false,
+            [SITE_GELBOORU]: false,
+            //[SITE_IBSEARCH]: false,
+            [SITE_KONACHAN]: false,
+            [SITE_REALBOORU]: false,
+            [SITE_RULE34]: false,
+            [SITE_SAFEBOORU]: true,
+            [SITE_YANDERE]: false
+        };
 
-    this.secondsPerSlide = 6;
-    this.maxWidth = null;
-    this.maxHeight = null;
-    this.autoFitSlide = false;
-    this.includeImages = true;
-    this.includeGifs = true;
-    this.includeWebms = false;
-    this.hideBlacklist = false;
-	this.blacklist = '';
-	this.derpibooruApiKey = '';
+        this.secondsPerSlide = 6;
+        this.maxWidth = null;
+        this.maxHeight = null;
+        this.autoFitSlide = false;
+        this.includeImages = true;
+        this.includeGifs = true;
+        this.includeWebms = false;
+        this.hideBlacklist = false;
+        this.blacklist = '';
+        this.derpibooruApiKey = '';
 
-    this.isPlaying = false;
-    this.timer = null;
-    this.timerMs = 0;
+        this.isPlaying = false;
+        this.timer = null;
+        this.timerMs = 0;
 
-    this.sitesManager = null;
+        this.sitesManager = null;
 
-    this.currentSlideChangedEvent = new Event(this);
-    this.playingChangedEvent = new Event(this);
-    this.videoVolumeUpdatedEvent = new Event(this);
-    this.sitesToSearchUpdatedEvent = new Event(this);
-    this.secondsPerSlideUpdatedEvent = new Event(this);
-    this.maxWidthUpdatedEvent = new Event(this);
-    this.maxHeightUpdatedEvent = new Event(this);
-    this.autoFitSlideUpdatedEvent = new Event(this);
-    this.includeImagesUpdatedEvent = new Event(this);
-    this.includeGifsUpdatedEvent = new Event(this);
-    this.includeWebmsUpdatedEvent = new Event(this);
-    this.hideBlacklistUpdatedEvent = new Event(this);
-    this.blacklistUpdatedEvent = new Event(this);
-    this.derpibooruApiKeyUpdatedEvent = new Event(this);
+        this.currentSlideChangedEvent = new Event(this);
+        this.playingChangedEvent = new Event(this);
+        this.videoVolumeUpdatedEvent = new Event(this);
+        this.sitesToSearchUpdatedEvent = new Event(this);
+        this.secondsPerSlideUpdatedEvent = new Event(this);
+        this.maxWidthUpdatedEvent = new Event(this);
+        this.maxHeightUpdatedEvent = new Event(this);
+        this.autoFitSlideUpdatedEvent = new Event(this);
+        this.includeImagesUpdatedEvent = new Event(this);
+        this.includeGifsUpdatedEvent = new Event(this);
+        this.includeWebmsUpdatedEvent = new Event(this);
+        this.hideBlacklistUpdatedEvent = new Event(this);
+        this.blacklistUpdatedEvent = new Event(this);
+        this.derpibooruApiKeyUpdatedEvent = new Event(this);
 
-    this.initialize();
-}
+        this.initialize();
+    }
 
-SlideshowModel.prototype = {
-    initialize: function () {
+    initialize()
+    {
         var numberOfSlidesToAlwaysHaveReadyToDisplay = 20;
         var maxNumberOfThumbnails = 10;
 
@@ -63,27 +65,29 @@ SlideshowModel.prototype = {
 		
 		var pageLimit = 100;
 		
-        this.sitesManager.addSite(SITE_DANBOORU, 'https://danbooru.donmai.us', pageLimit);
-        this.sitesManager.addSite(SITE_DERPIBOORU, 'https://derpibooru.org', 10);
-        this.sitesManager.addSite(SITE_E621, 'https://e621.net', pageLimit);
-        this.sitesManager.addSite(SITE_GELBOORU, 'https://gelbooru.com', pageLimit);
-        this.sitesManager.addSite(SITE_IBSEARCH, 'https://ibsearch.xxx', pageLimit);
-        this.sitesManager.addSite(SITE_KONACHAN, 'https://konachan.com', pageLimit);
-        this.sitesManager.addSite(SITE_REALBOORU, 'https://realbooru.com', pageLimit);
-        this.sitesManager.addSite(SITE_RULE34, 'https://rule34.xxx', pageLimit);
-        this.sitesManager.addSite(SITE_SAFEBOORU, 'http://safebooru.org', pageLimit);
-        this.sitesManager.addSite(SITE_YANDERE, 'https://yande.re', pageLimit);
-    },
+        this.sitesManager.addSite(SITE_DANBOORU, pageLimit);
+        this.sitesManager.addSite(SITE_DERPIBOORU, 10);
+        this.sitesManager.addSite(SITE_E621, pageLimit);
+        this.sitesManager.addSite(SITE_GELBOORU, pageLimit);
+        //this.sitesManager.addSite(SITE_IBSEARCH, pageLimit);
+        this.sitesManager.addSite(SITE_KONACHAN, pageLimit);
+        this.sitesManager.addSite(SITE_REALBOORU, pageLimit);
+        this.sitesManager.addSite(SITE_RULE34, pageLimit);
+        this.sitesManager.addSite(SITE_SAFEBOORU, pageLimit);
+        this.sitesManager.addSite(SITE_YANDERE, pageLimit);
+    }
 	
-	pingSites: function () {
+    pingSites()
+    {
 		var _this = this;
 		this.sitesManager.pingSites(function(siteManager){
 			if (!siteManager.isOnline)
 				_this.view.showSiteOffline(siteManager.id);
 		});
-	},
+	}
 
-    performSearch: function (searchText) {
+    performSearch(searchText)
+    {
         this.sitesManager.resetConnections();
 
         var selectedSites = this.getSelectedSitesToSearch();
@@ -95,9 +99,10 @@ SlideshowModel.prototype = {
 			_this.view.clearInfoMessage();
             _this.currentSlideChangedEvent.notify();
         });
-    },
+    }
 	
-	areSomeTagsAreBlacklisted: function (tags) {
+    areSomeTagsAreBlacklisted(tags)
+    {
 		var postTags = tags.trim().split(" ");
 		var blacklistTags = this.blacklist.trim().replace(/(\r\n|\n|\r)/gm," ").split(" ");
 		
@@ -116,16 +121,18 @@ SlideshowModel.prototype = {
 		}
 		
 		return false;
-	},
+	}
 
-    setSlideNumberToFirst: function () {
+    setSlideNumberToFirst()
+    {
         this.sitesManager.moveToFirstSlide();
         this.currentSlideChangedEvent.notify();
 
         this.restartSlideshowIfOn();
-    },
+    }
 
-    decreaseCurrentSlideNumber: function () {
+    decreaseCurrentSlideNumber()
+    {
         if (!this.sitesManager.canDecreaseCurrentSlideNumber())
         {
             return;
@@ -135,9 +142,10 @@ SlideshowModel.prototype = {
         this.currentSlideChangedEvent.notify();
 
         this.restartSlideshowIfOn();
-    },
+    }
 
-    increaseCurrentSlideNumber: function () {
+    increaseCurrentSlideNumber()
+    {
         var _this = this;
 
         this.sitesManager.increaseCurrentSlideNumber(function () {
@@ -145,9 +153,10 @@ SlideshowModel.prototype = {
         });
 
         this.restartSlideshowIfOn();
-    },
+    }
 	
-	decreaseCurrentSlideNumberByTen: function () {
+    decreaseCurrentSlideNumberByTen()
+    {
         if (!this.sitesManager.canDecreaseCurrentSlideNumber())
         {
             return;
@@ -157,9 +166,10 @@ SlideshowModel.prototype = {
         this.currentSlideChangedEvent.notify();
 
         this.restartSlideshowIfOn();
-    },
+    }
 	
-	increaseCurrentSlideNumberByTen: function () {
+    increaseCurrentSlideNumberByTen()
+    {
         var _this = this;
 
         this.sitesManager.increaseCurrentSlideNumberByTen(function () {
@@ -167,9 +177,10 @@ SlideshowModel.prototype = {
         });
 
         this.restartSlideshowIfOn();
-    },
+    }
 
-    setSlideNumberToLast: function () {
+    setSlideNumberToLast()
+    {
         var _this = this;
 
         this.sitesManager.moveToLastSlide(function () {
@@ -177,21 +188,24 @@ SlideshowModel.prototype = {
         });
 
         this.restartSlideshowIfOn();
-    },
+    }
 
-    moveToSlide: function (id) {
+    moveToSlide(id)
+    {
         if (this.sitesManager.moveToSlide(id))
         {
             this.currentSlideChangedEvent.notify();
             //restartSlideshowIfOn();
         }
-    },
+    }
 
-    preloadNextUnpreloadedSlideAfterThisOneIfInRange: function (slide) {
+    preloadNextUnpreloadedSlideAfterThisOneIfInRange(slide)
+    {
         this.sitesManager.preloadNextUnpreloadedSlideAfterThisOneIfInRange(slide);
-    },
+    }
 
-    tryToPlayOrPause: function () {
+    tryToPlayOrPause()
+    {
         if (this.hasSlidesToDisplay())
         {
             if (this.isPlaying)
@@ -199,17 +213,19 @@ SlideshowModel.prototype = {
             else
                 this.startSlideshow();
         }
-    },
+    }
 
-    startSlideshow: function () {
+    startSlideshow()
+    {
         this.tryToStartCountdown();
 
         this.isPlaying = true;
 
         this.playingChangedEvent.notify();
-    },
+    }
 
-    tryToStartCountdown: function () {
+    tryToStartCountdown()
+    {
         if (this.sitesManager.isCurrentSlideLoaded())
         {
             this.startCountdown();
@@ -222,9 +238,10 @@ SlideshowModel.prototype = {
                 _this.startCountdown();
             });
         }
-    },
+    }
 
-    startCountdown: function () {
+    startCountdown()
+    {
         var millisecondsPerSlide = this.secondsPerSlide * 1000;
 	    
         var _this = this;
@@ -249,9 +266,10 @@ SlideshowModel.prototype = {
             }
 		
         }, millisecondsPerSlide);
-    },
+    }
 
-    restartSlideshowIfOn: function () {
+    restartSlideshowIfOn()
+    {
         
         if (this.isPlaying)
         {
@@ -260,9 +278,10 @@ SlideshowModel.prototype = {
 		
             this.tryToStartCountdown();
         }
-    },
+    }
 
-    pauseSlideshow: function () {
+    pauseSlideshow()
+    {
         clearTimeout(this.timer);
         this.sitesManager.clearCallbacksForPreloadingSlides();
         this.sitesManager.clearCallbacksForLoadingSlides();
@@ -270,41 +289,60 @@ SlideshowModel.prototype = {
         this.isPlaying = false;
 
         this.playingChangedEvent.notify();
-    },
+    }
 
-    getSlideCount: function () {
+    hasAtLeastOneOnlineSiteSelected()
+    {
+        this.sitesManager.resetConnections();
+
+        var selectedSites = this.getSelectedSitesToSearch();
+        this.sitesManager.enableSites(selectedSites);
+
+        return this.sitesManager.hasAtLeastOneOnlineSiteSelected();
+    }
+
+    getSlideCount()
+    {
         return this.sitesManager.getTotalSlideNumber();
-    },
+    }
 
-    hasSlidesToDisplay: function () {
+    hasSlidesToDisplay()
+    {
         return (this.getSlideCount() > 0);
-    },
+    }
 
-    hasNextSlide: function () {
+    hasNextSlide()
+    {
         return (this.getSlideCount() > this.getCurrentSlideNumber());
-    },
+    }
 
-    isTryingToLoadMoreSlides: function () {
+    isTryingToLoadMoreSlides()
+    {
         return this.sitesManager.isTryingToLoadMoreSlides;
-    },
+    }
 
-    getCurrentSlide: function() {
+    getCurrentSlide()
+    {
         return this.sitesManager.getCurrentSlide();
-    },
+    }
 
-    getCurrentSlideNumber: function () {
+    getCurrentSlideNumber()
+    {
         return this.sitesManager.currentSlideNumber;
-    },
+    }
 
-    areThereMoreLoadableSlides: function () {
+    areThereMoreLoadableSlides()
+    {
         return this.sitesManager.areThereMoreLoadableSlides();
-    },
+    }
 
-    getNextSlidesForThumbnails: function () {
+    getNextSlidesForThumbnails()
+    {
         return this.sitesManager.getNextSlidesForThumbnails();
-    },
+    }
 
-    getSelectedSitesToSearch: function () {
+    getSelectedSitesToSearch()
+    {
         var selectedSitesToSearch = [];
 
         for (var siteToSearch in this.sitesToSearch)
@@ -316,53 +354,60 @@ SlideshowModel.prototype = {
         }
 
         return selectedSitesToSearch;
-    },
+    }
 
-    areMaxWithAndHeightEnabled: function () {
+    areMaxWithAndHeightEnabled()
+    {
         return !this.autoFitSlide;
-    },
+    }
 	
-	setVideoVolume: function (volume) {
+    setVideoVolume(volume)
+    {
         this.videoVolume = volume;
 
         this.saveVideoVolume();
 
         this.videoVolumeUpdatedEvent.notify();
-    },
+    }
 	
-	setVideoMuted: function (muted) {
+    setVideoMuted(muted)
+    {
         this.videoMuted = muted;
 
         this.saveVideoMuted();
 
         this.videoVolumeUpdatedEvent.notify();
-    },
+    }
 
-    setSitesToSearch: function (sitesToSearch) {
+    setSitesToSearch(sitesToSearch)
+    {
         this.sitesToSearch = sitesToSearch;
 
         this.saveSitesToSearch();
 
         this.sitesToSearchUpdatedEvent.notify();
-    },
+    }
 
-    setSiteToSearch: function (site, checked) {
+    setSiteToSearch(site, checked)
+    {
         this.sitesToSearch[site] = checked;
 
         this.saveSitesToSearch();
 
         this.sitesToSearchUpdatedEvent.notify();
-    },
+    }
 	
-    setSecondsPerSlide: function (secondsPerSlide) {
+    setSecondsPerSlide(secondsPerSlide)
+    {
         this.secondsPerSlide = secondsPerSlide;
 
         this.saveSecondsPerSlide();
 
         this.secondsPerSlideUpdatedEvent.notify();
-    },
+    }
 	
-	setSecondsPerSlideIfValid: function (secondsPerSlide) {
+    setSecondsPerSlideIfValid(secondsPerSlide)
+    {
 		if (secondsPerSlide == '')
             return;
 
@@ -373,81 +418,91 @@ SlideshowModel.prototype = {
             return;
 
         this.setSecondsPerSlide(secondsPerSlide);
-	},
+	}
 
-    setMaxWidth: function (maxWidth) {
+    setMaxWidth(maxWidth)
+    {
         this.maxWidth = maxWidth;
 
         this.saveMaxWidth();
 
         this.maxWidthUpdatedEvent.notify();
-    },
+    }
 
-    setMaxHeight: function (maxHeight) {
+    setMaxHeight(maxHeight)
+    {
         this.maxHeight = maxHeight;
 
         this.saveMaxHeight();
 
         this.maxHeightUpdatedEvent.notify();
-    },
+    }
 
-    setAutoFitSlide: function (onOrOff) {
+    setAutoFitSlide(onOrOff)
+    {
         this.autoFitSlide = onOrOff;
 
         this.saveAutoFitSlide();
 
         this.autoFitSlideUpdatedEvent.notify();
-    },
+    }
 	
-	setIncludeImages: function (onOrOff) {
+    setIncludeImages(onOrOff)
+    {
         this.includeImages = onOrOff;
 
         this.saveIncludeImages();
 
         this.includeImagesUpdatedEvent.notify();
-    },
+    }
 	
-	setIncludeGifs: function (onOrOff) {
+    setIncludeGifs(onOrOff)
+    {
         this.includeGifs = onOrOff;
 
         this.saveIncludeGifs();
 
         this.includeGifsUpdatedEvent.notify();
-    },
+    }
 	
-	setIncludeWebms: function (onOrOff) {
+    setIncludeWebms(onOrOff)
+    {
         this.includeWebms = onOrOff;
 
         this.saveIncludeWebms();
 
         this.includeWebmsUpdatedEvent.notify();
-    },
+    }
 	
-	setHideBlacklist: function (onOrOff) {
+    setHideBlacklist(onOrOff)
+    {
         this.hideBlacklist = onOrOff;
 
         this.saveHideBlacklist();
 
         this.hideBlacklistUpdatedEvent.notify();
-    },
+    }
 
-    setBlacklist: function (blacklist) {
+    setBlacklist(blacklist)
+    {
         this.blacklist = blacklist;
 
         this.saveBlacklist();
 
         this.blacklistUpdatedEvent.notify();
-    },
+    }
 	
-	setDerpibooruApiKey: function (derpibooruApiKey) {
+    setDerpibooruApiKey(derpibooruApiKey)
+    {
         this.derpibooruApiKey = derpibooruApiKey;
 
         this.saveDerpibooruApiKey();
 
         this.derpibooruApiKeyUpdatedEvent.notify();
-    },
+    }
 
-    loadUserSettings: function () {
+    loadUserSettings()
+    {
         var _this = this;
 
         chrome.storage.sync.get([
@@ -507,19 +562,20 @@ SlideshowModel.prototype = {
 					
 					if (sitesToSearch != null)
 					{
-						if (sitesToSearch.hasOwnProperty(SITE_DANBOORU) &&
-							sitesToSearch.hasOwnProperty(SITE_DERPIBOORU) &&
-							sitesToSearch.hasOwnProperty(SITE_E621) &&
-							sitesToSearch.hasOwnProperty(SITE_GELBOORU) &&
-							sitesToSearch.hasOwnProperty(SITE_IBSEARCH) &&
-							sitesToSearch.hasOwnProperty(SITE_KONACHAN) &&
-							sitesToSearch.hasOwnProperty(SITE_REALBOORU) &&
-							sitesToSearch.hasOwnProperty(SITE_RULE34) &&
-							sitesToSearch.hasOwnProperty(SITE_SAFEBOORU) &&
-							sitesToSearch.hasOwnProperty(SITE_YANDERE))
-						{
-							_this.setSitesToSearch(sitesToSearch);
-						}
+                        let cleanSitesToSearch = Object.assign({}, this.sitesToSearch);
+
+                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_DANBOORU);
+                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_DERPIBOORU);
+                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_E621);
+                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_GELBOORU);
+                        //_this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_IBSEARCH);
+                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_KONACHAN);
+                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_REALBOORU);
+                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_RULE34);
+                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_SAFEBOORU);
+                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_YANDERE);
+
+                        _this.setSitesToSearch(cleanSitesToSearch);
 					}
 					
 					if (_this.secondsPerSlide != secondsPerSlide)
@@ -597,57 +653,78 @@ SlideshowModel.prototype = {
 				}
 			}
 		);
-    },
+    }
+
+    addPropertyIfExists(sitesToSearch, cleanSitesToSearch, siteEnum)
+    {
+        if (sitesToSearch.hasOwnProperty(siteEnum))
+        {
+            cleanSitesToSearch[siteEnum] = sitesToSearch[siteEnum];
+        }
+    }
 	
-	saveVideoVolume: function () {
+    saveVideoVolume()
+    {
         chrome.storage.sync.set({'videoVolume': this.videoVolume});
-    },
+    }
 	
-	saveVideoMuted: function () {
+    saveVideoMuted()
+    {
         chrome.storage.sync.set({'videoMuted': this.videoMuted});
-    },
+    }
 
-    saveSitesToSearch: function () {
+    saveSitesToSearch()
+    {
         chrome.storage.sync.set({'sitesToSearch': this.sitesToSearch});
-    },
+    }
 
-    saveSecondsPerSlide: function () {
+    saveSecondsPerSlide()
+    {
         chrome.storage.sync.set({'secondsPerSlide': this.secondsPerSlide});
-    },
+    }
 
-    saveMaxWidth: function () {
+    saveMaxWidth()
+    {
         chrome.storage.sync.set({'maxWidth': this.maxWidth});
-    },
+    }
 
-    saveMaxHeight: function () {
+    saveMaxHeight()
+    {
         chrome.storage.sync.set({'maxHeight': this.maxHeight});
-    },
+    }
 
-    saveAutoFitSlide: function () {
+    saveAutoFitSlide()
+    {
         chrome.storage.sync.set({'autoFitSlide': this.autoFitSlide});
-    },
+    }
 	
-	saveIncludeImages: function () {
+    saveIncludeImages()
+    {
         chrome.storage.sync.set({'includeImages': this.includeImages});
-    },
+    }
 	
-	saveIncludeGifs: function () {
+    saveIncludeGifs()
+    {
         chrome.storage.sync.set({'includeGifs': this.includeGifs});
-    },
+    }
 	
-	saveIncludeWebms: function () {
+    saveIncludeWebms()
+    {
         chrome.storage.sync.set({'includeWebms': this.includeWebms});
-    },
+    }
 	
-	saveHideBlacklist: function () {
+    saveHideBlacklist()
+    {
         chrome.storage.sync.set({'hideBlacklist': this.hideBlacklist});
-    },
+    }
 
-    saveBlacklist: function () {
+    saveBlacklist()
+    {
         chrome.storage.sync.set({'blacklist': this.blacklist});
-    },
+    }
 	
-	saveDerpibooruApiKey: function () {
+    saveDerpibooruApiKey()
+    {
         chrome.storage.sync.set({'derpibooruApiKey': this.derpibooruApiKey});
     }
-};
+}
