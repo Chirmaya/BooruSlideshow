@@ -113,6 +113,9 @@ class SlideshowModel{
 
     storeSearchHistory(searchText)
     {
+        if (!this.storeHistory)
+            return;
+            
         if (searchText == null || searchText.length == 0)
             return;
         

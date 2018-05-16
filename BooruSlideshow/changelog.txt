@@ -1,5 +1,8 @@
 Changelog
 
+Version 7.19
+* [Fix] Made the "Store Search History" checkbox actually work
+
 Version 7.18
 * [Feature] Added a search history (which can be disabled or cleaned)
 * [Feature] Added support for atfbooru.ninja
