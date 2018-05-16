@@ -1,8 +1,8 @@
-class SiteManagerDanbooru extends SiteManager
+class SiteManagerAtfBooru extends SiteManager
 {
     constructor(sitesManager, pageLimit)
     {
-		super(sitesManager, SITE_DANBOORU, 'https://danbooru.donmai.us', pageLimit);
+		super(sitesManager, SITE_ATFBOORU, 'https://atfbooru.ninja', pageLimit);
     }
     
     buildPingRequestUrl()

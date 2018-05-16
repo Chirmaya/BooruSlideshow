@@ -4,6 +4,8 @@ class SiteManagerFactory
     {
         switch (id)
 		{
+			case SITE_ATFBOORU:
+				return new SiteManagerAtfBooru(sitesManager, pageLimit);
 			case SITE_DANBOORU:
 				return new SiteManagerDanbooru(sitesManager, pageLimit);
 			case SITE_DERPIBOORU:
@@ -22,7 +24,9 @@ class SiteManagerFactory
 				return new SiteManagerRule34(sitesManager, pageLimit);
 			case SITE_SAFEBOORU:
 				return new SiteManagerSafebooru(sitesManager, pageLimit);
-			case SITE_YANDERE:
+			case SITE_XBOORU:
+				return new SiteManagerXbooru(sitesManager, pageLimit);
+				case SITE_YANDERE:
 				return new SiteManagerYandere(sitesManager, pageLimit);
 			default:
                 console.log('SiteManagerFactory cannot handle the supplied site ID: ' + id);

@@ -1,3 +1,4 @@
+var SITE_ATFBOORU = 'ATFB';
 var SITE_DANBOORU = 'DANB';
 var SITE_DERPIBOORU = 'DERP';
 var SITE_E621 = 'E621';
@@ -7,6 +8,7 @@ var SITE_KONACHAN = 'KONA';
 var SITE_REALBOORU = 'REAL';
 var SITE_RULE34 = 'RULE';
 var SITE_SAFEBOORU = 'SAFE';
+var SITE_XBOORU = 'XBOO';
 var SITE_YANDERE = 'YAND';
 
 var MEDIA_TYPE_IMAGE = 'IMAGE';
@@ -16,6 +18,15 @@ var MEDIA_TYPE_UNSUPPORTED = 'UNSUPPORTED';
 
 var SITE_QUERY_TERM_ASSOCIATIONS = {};
 
+SITE_QUERY_TERM_ASSOCIATIONS[SITE_ATFBOORU] = {
+	"sort:id" : "order:id",
+	"sort:id_asc" : "order:id_asc",
+	"sort:id_desc" : "order:id_desc",
+	"sort:score" : "order:score",
+	"sort:score_asc" : "order:score_asc",
+	"sort:score_desc" : "order:score_desc",
+	"sort:-upload" : ""
+};
 SITE_QUERY_TERM_ASSOCIATIONS[SITE_DANBOORU] = {
 	"sort:id" : "order:id",
 	"sort:id_asc" : "order:id_asc",
@@ -117,6 +128,18 @@ SITE_QUERY_TERM_ASSOCIATIONS[SITE_SAFEBOORU] = {
 	"order:score_desc" : "sort:score_desc",
 	"sort:-upload" : ""
 };
+SITE_QUERY_TERM_ASSOCIATIONS[SITE_XBOORU] = {
+	"rating:s\\S*" : "rating:safe",
+	"rating:q\\S*" : "rating:questionable",
+	"rating:e\\S*" : "rating:explicit",
+	// Can't sort by ID
+	
+	// ASC/DESC not implemented?
+	"order:score" : "sort:score",
+	"order:score_desc" : "sort:score",
+	"sort:score_desc" : "sort:score",
+	"sort:-upload" : ""
+};
 SITE_QUERY_TERM_ASSOCIATIONS[SITE_YANDERE] = {
 	"sort:id" : "order:id",
 	"sort:id_asc" : "order:id_asc",
@@ -170,6 +193,9 @@ document.addEventListener('DOMContentLoaded', function () {
         'blacklistContainer': document.getElementById('blacklist-container'),
         'blacklist': document.getElementById('blacklist'),
         'derpibooruApiKey': document.getElementById('derpibooru-api-key'),
-        'derpibooruApiKeyContainer': document.getElementById('derpibooru-api-key-container')
+        'derpibooruApiKeyContainer': document.getElementById('derpibooru-api-key-container'),
+        'storeHistoryCheckBox': document.getElementById('store-history'),
+		'clearHistoryButton': document.getElementById('clear-history'),
+		'searchHistory': document.getElementById('search-history')
     });
 });

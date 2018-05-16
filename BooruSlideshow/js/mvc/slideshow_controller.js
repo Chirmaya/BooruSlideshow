@@ -116,6 +116,14 @@ class SlideshowController
             _this.derpibooruApiKeyChanged();
         });
 
+        this._view.storeHistoryChangedEvent.attach(function () {
+            _this.storeHistoryChanged();
+        });
+
+        this._view.clearHistoryClickedEvent.attach(function () {
+            _this.clearHistoryClicked();
+        });
+
         this._model.loadUserSettings();
         
         this._model.pingSites();
@@ -330,5 +338,19 @@ class SlideshowController
         var derpibooruApiKey = this._view.getDerpibooruApiKey();
 
         this._model.setDerpibooruApiKey(derpibooruApiKey);
+    }
+
+    storeHistoryChanged()
+    {
+        var storeHistory = this._view.getStoreHistory();
+
+        this._model.setStoreHistory(storeHistory);
+    }
+
+    clearHistoryClicked()
+    {
+        var searchHistory = [];
+
+        this._model.setSearchHistory(searchHistory);
     }
 }

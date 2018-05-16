@@ -31,13 +31,15 @@
 				</div>
 			</div>
 			<div id="search">
-				<input id="search-text" /><br>
+				<input id="search-text" type="search" list="search-history" /><br>
 				<button id="search-button">Search</button>
+				<datalist id="search-history"></datalist>
 			</div>
 			<div id="module-container">
 				<div id="sites-to-search">
-					<h4>Sites to Search</h4>
+					<h4>Sites</h4>
 					<ul>
+						<li><label><input type="checkbox" name="sites-to-search" value="ATFB" />atfbooru.ninja</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="DANB" />danbooru.donmai.us</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="DERP" />derpibooru.org</label></li>
 						<li id="derpibooru-api-key-container"><span><a href="https://derpibooru.org/users/edit" target="_blank">(get API key here)</a></span><br>
@@ -51,12 +53,13 @@
 						<li><label><input type="checkbox" name="sites-to-search" value="REAL" />realbooru.com</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="RULE" />rule34.xxx</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="SAFE" />safebooru.org</label></li>
+						<li><label><input type="checkbox" name="sites-to-search" value="XBOO" />xbooru.com</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="YAND" />yande.re</label></li>
 						<li class="note">Red sites are offline</li>
 					</ul>
 				</div>
 				<div class="options">
-					<h4>Presentation Options</h4>
+					<h4>Presentation</h4>
 					<ul>
 						<li>
 							Seconds per Slide
@@ -84,7 +87,7 @@
 				</div>
 				
 				<div class="options">
-					<h4>Search Filtering</h4>
+					<h4>Filtering</h4>
 					<ul>
 						<li>
 							<label><input id="include-images" type="checkbox" checked />Include Images</label>
@@ -112,6 +115,16 @@
 				</div>
             </div>
 			<div id="module-container">
+				<div class="options">
+					<h4>History</h4>
+					<ul>
+						<li><label><input id="store-history" type="checkbox" checked />Store Search History</label></li>
+						<li class="note">
+							(Up to 100 queries are saved. Let me know if there is an issue.)
+						</li>
+						<li><button id="clear-history">Clear Search History</button></li>
+					</ul>
+				</div>
 				<div id="tips">
 					<h4>Hotkeys</h4>
 					<ul>
@@ -130,6 +143,7 @@
 		
 		<script src="js/objects/web_requester.js"></script>
 		<script src="js/objects/site_manager.js"></script>
+		<script src="js/objects/site_managers/site_manager_atfbooru.js"></script>
 		<script src="js/objects/site_managers/site_manager_danbooru.js"></script>
 		<script src="js/objects/site_managers/site_manager_derpibooru.js"></script>
 		<script src="js/objects/site_managers/site_manager_e621.js"></script>
@@ -139,6 +153,7 @@
 		<script src="js/objects/site_managers/site_manager_realbooru.js"></script>
 		<script src="js/objects/site_managers/site_manager_rule34.js"></script>
 		<script src="js/objects/site_managers/site_manager_safebooru.js"></script>
+		<script src="js/objects/site_managers/site_manager_xbooru.js"></script>
 		<script src="js/objects/site_managers/site_manager_yandere.js"></script>
 		<script src="js/objects/site_manager_factory.js"></script>
 		<script src="js/objects/sites_manager.js"></script>

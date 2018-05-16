@@ -1,5 +1,11 @@
 Changelog
 
+Version 7.18
+* [Feature] Added a search history (which can be disabled or cleaned)
+* [Feature] Added support for atfbooru.ninja
+* [Feature] Added support for xbooru.com
+* [Fix] Fixed danbooru thumbnails not displaying properly
+
 Version 7.17
 * [Change] Removed IbSearch since it has been down for a long time
 * [Fix] Will no longer try to search offline sites

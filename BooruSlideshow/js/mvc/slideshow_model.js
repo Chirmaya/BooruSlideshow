@@ -9,6 +9,7 @@ class SlideshowModel{
         this.searchText = "";
         
         this.sitesToSearch = {
+            [SITE_ATFBOORU]: false,
             [SITE_DANBOORU]: false,
             [SITE_DERPIBOORU]: false,
             [SITE_E621]: false,
@@ -18,6 +19,7 @@ class SlideshowModel{
             [SITE_REALBOORU]: false,
             [SITE_RULE34]: false,
             [SITE_SAFEBOORU]: true,
+            [SITE_XBOORU]: false,
             [SITE_YANDERE]: false
         };
 
@@ -31,6 +33,8 @@ class SlideshowModel{
         this.hideBlacklist = false;
         this.blacklist = '';
         this.derpibooruApiKey = '';
+        this.storeHistory = true;
+        this.searchHistory = [];
 
         this.isPlaying = false;
         this.timer = null;
@@ -52,6 +56,8 @@ class SlideshowModel{
         this.hideBlacklistUpdatedEvent = new Event(this);
         this.blacklistUpdatedEvent = new Event(this);
         this.derpibooruApiKeyUpdatedEvent = new Event(this);
+        this.storeHistoryUpdatedEvent = new Event(this);
+        this.searchHistoryUpdatedEvent = new Event(this);
 
         this.initialize();
     }
@@ -65,6 +71,7 @@ class SlideshowModel{
 		
 		var pageLimit = 100;
 		
+        this.sitesManager.addSite(SITE_ATFBOORU, pageLimit);
         this.sitesManager.addSite(SITE_DANBOORU, pageLimit);
         this.sitesManager.addSite(SITE_DERPIBOORU, 10);
         this.sitesManager.addSite(SITE_E621, pageLimit);
@@ -74,6 +81,7 @@ class SlideshowModel{
         this.sitesManager.addSite(SITE_REALBOORU, pageLimit);
         this.sitesManager.addSite(SITE_RULE34, pageLimit);
         this.sitesManager.addSite(SITE_SAFEBOORU, pageLimit);
+        this.sitesManager.addSite(SITE_XBOORU, pageLimit);
         this.sitesManager.addSite(SITE_YANDERE, pageLimit);
     }
 	
@@ -99,6 +107,34 @@ class SlideshowModel{
 			_this.view.clearInfoMessage();
             _this.currentSlideChangedEvent.notify();
         });
+
+        this.storeSearchHistory(searchText);
+    }
+
+    storeSearchHistory(searchText)
+    {
+        if (searchText == null || searchText.length == 0)
+            return;
+        
+        if (this.searchHistory.includes(searchText))
+        {
+            var index = this.searchHistory.indexOf(searchText)
+
+            if (index == 0)
+                return;
+
+            this.searchHistory.splice(index, 1);
+            this.searchHistory.unshift(searchText);
+        }
+        else
+        {
+            this.searchHistory.unshift(searchText);
+            this.searchHistory = this.searchHistory.slice(0, 100);
+        }
+
+        this.saveSearchHistory();
+
+        this.searchHistoryUpdatedEvent.notify();
     }
 	
     areSomeTagsAreBlacklisted(tags)
@@ -501,6 +537,24 @@ class SlideshowModel{
         this.derpibooruApiKeyUpdatedEvent.notify();
     }
 
+    setStoreHistory(onOrOff)
+    {
+        this.storeHistory = onOrOff;
+
+        this.saveStoreHistory();
+
+        this.storeHistoryUpdatedEvent.notify();
+    }
+
+    setSearchHistory(searchHistory)
+    {
+        this.searchHistory = searchHistory;
+
+        this.saveSearchHistory();
+
+        this.searchHistoryUpdatedEvent.notify();
+    }
+
     loadUserSettings()
     {
         var _this = this;
@@ -518,7 +572,9 @@ class SlideshowModel{
 			'includeWebms',
 			'hideBlacklist',
 			'blacklist',
-			'derpibooruApiKey'],
+            'derpibooruApiKey',
+            'storeHistory',
+            'searchHistory'],
 			function (obj) {
 				if (obj != null)
 				{
@@ -535,6 +591,8 @@ class SlideshowModel{
 					var hideBlacklist = obj['hideBlacklist'];
 					var blacklist = obj['blacklist'];
 					var derpibooruApiKey = obj['derpibooruApiKey'];
+					var storeHistory = obj['storeHistory'];
+					var searchHistory = obj['searchHistory'];
 					
 					if (videoVolume == null)
 					{
@@ -564,6 +622,7 @@ class SlideshowModel{
 					{
                         let cleanSitesToSearch = Object.assign({}, this.sitesToSearch);
 
+                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_ATFBOORU);
                         _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_DANBOORU);
                         _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_DERPIBOORU);
                         _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_E621);
@@ -573,6 +632,7 @@ class SlideshowModel{
                         _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_REALBOORU);
                         _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_RULE34);
                         _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_SAFEBOORU);
+                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_XBOORU);
                         _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_YANDERE);
 
                         _this.setSitesToSearch(cleanSitesToSearch);
@@ -649,7 +709,23 @@ class SlideshowModel{
 					if (derpibooruApiKey != null && _this.derpibooruApiKey != derpibooruApiKey)
 					{
 						_this.setDerpibooruApiKey(derpibooruApiKey);
-					}
+                    }
+                    
+                    if (storeHistory != null)
+					{
+						if (_this.storeHistory != storeHistory)
+						{
+							_this.setStoreHistory(storeHistory);
+						}
+                    }
+
+                    if (searchHistory != null)
+					{
+						if (_this.searchHistory.toString() != searchHistory.toString())
+						{
+							_this.setSearchHistory(searchHistory);
+						}
+                    }
 				}
 			}
 		);
@@ -726,5 +802,15 @@ class SlideshowModel{
     saveDerpibooruApiKey()
     {
         chrome.storage.sync.set({'derpibooruApiKey': this.derpibooruApiKey});
+    }
+
+    saveStoreHistory()
+    {
+        chrome.storage.sync.set({'storeHistory': this.storeHistory});
+    }
+
+    saveSearchHistory()
+    {
+        chrome.storage.sync.set({'searchHistory': this.searchHistory});
     }
 }

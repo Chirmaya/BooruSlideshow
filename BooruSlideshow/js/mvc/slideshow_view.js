@@ -30,6 +30,8 @@ class SlideshowView
         this.hideBlacklistChangedEvent = new Event(this);
         this.blacklistChangedEvent = new Event(this);
         this.derpibooruApiKeyChangedEvent = new Event(this);
+        this.storeHistoryChangedEvent = new Event(this);
+        this.clearHistoryClickedEvent = new Event(this);
         
         this.isSettingVolume = false;
         this.isSettingMute = false;
@@ -105,6 +107,14 @@ class SlideshowView
         
         this._model.derpibooruApiKeyUpdatedEvent.attach(function () {
             _this.updateDerpibooruApiKey();
+        });
+
+        this._model.storeHistoryUpdatedEvent.attach(function () {
+            _this.updateStoreHistory();
+        });
+
+        this._model.searchHistoryUpdatedEvent.attach(function () {
+            _this.updateSearchHistory();
         });
     }
 
@@ -285,6 +295,14 @@ class SlideshowView
         
         this.uiElements.derpibooruApiKey.addEventListener('change', function () {
             _this.derpibooruApiKeyChangedEvent.notify();
+        });
+
+        this.uiElements.storeHistoryCheckBox.addEventListener('change', function () {
+            _this.storeHistoryChangedEvent.notify();
+        });
+
+        this.uiElements.clearHistoryButton.addEventListener('click', function () {
+            _this.clearHistoryClickedEvent.notify();
         });
     }
 
@@ -802,6 +820,10 @@ class SlideshowView
         return this.uiElements.includeWebmsCheckBox.checked;
     }
 
+    getStoreHistory() {
+        return this.uiElements.storeHistoryCheckBox.checked;
+    }
+
     updateAutoFitSlide() {
         this.uiElements.autoFitSlideCheckBox.checked = this._model.autoFitSlide;
 
@@ -820,6 +842,30 @@ class SlideshowView
 	
 	updateIncludeWebms() {
         this.uiElements.includeWebmsCheckBox.checked = this._model.includeWebms;
+    }
+
+    updateStoreHistory() {
+        this.uiElements.storeHistoryCheckBox.checked = this._model.storeHistory;
+    }
+
+    updateSearchHistory() {
+        var searchHistory = this.uiElements.searchHistory;
+
+        while (searchHistory.hasChildNodes())
+        {
+            searchHistory.removeChild(searchHistory.lastChild);
+        }
+
+        for (let i = 0; i < this._model.searchHistory.length; i++)
+        {
+            
+            var searchHistoryItem = this._model.searchHistory[i];
+            
+            var optionElement = document.createElement("option");
+            optionElement.value = searchHistoryItem;
+
+            searchHistory.appendChild(optionElement);
+        }
     }
 	
 	getHideBlacklist() {
