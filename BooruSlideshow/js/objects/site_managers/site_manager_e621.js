@@ -76,6 +76,7 @@ class SiteManagerE621 extends SiteManager
 			date = this.convertSDateToDate(jsonPost.created_at)
 		
 		var newSlide = new Slide(
+			SITE_E621,
 			jsonPost.id,
 			prefix + jsonPost.file_url,
 			prefix + jsonPost.preview_url,

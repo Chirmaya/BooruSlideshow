@@ -76,6 +76,7 @@ class SiteManagerYandere extends SiteManager
 			date = this.convertSDateToDate(jsonPost.created_at)
 		
 		var newSlide = new Slide(
+			SITE_YANDERE,
 			jsonPost.id,
 			prefix + jsonPost.file_url,
 			prefix + jsonPost.preview_url,

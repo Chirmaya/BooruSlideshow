@@ -76,6 +76,7 @@ class SiteManagerKonachan extends SiteManager
 			date = this.convertSDateToDate(jsonPost.created_at)
 		
 		var newSlide = new Slide(
+			SITE_KONACHAN,
 			jsonPost.id,
 			prefix + jsonPost.file_url,
 			prefix + jsonPost.preview_url,

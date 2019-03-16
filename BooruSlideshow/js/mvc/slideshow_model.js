@@ -42,6 +42,8 @@ class SlideshowModel{
 
         this.sitesManager = null;
 
+        this.personalList = new PersonalList();
+
         this.currentSlideChangedEvent = new Event(this);
         this.playingChangedEvent = new Event(this);
         this.videoVolumeUpdatedEvent = new Event(this);
@@ -58,6 +60,9 @@ class SlideshowModel{
         this.derpibooruApiKeyUpdatedEvent = new Event(this);
         this.storeHistoryUpdatedEvent = new Event(this);
         this.searchHistoryUpdatedEvent = new Event(this);
+        this.favoriteButtonUpdatedEvent = new Event(this);
+
+        this.dataLoader = new DataLoader(this);
 
         this.initialize();
     }
@@ -83,6 +88,11 @@ class SlideshowModel{
         this.sitesManager.addSite(SITE_SAFEBOORU, pageLimit);
         this.sitesManager.addSite(SITE_XBOORU, pageLimit);
         this.sitesManager.addSite(SITE_YANDERE, pageLimit);
+    }
+
+    loadUserSettings()
+    {
+        this.dataLoader.loadUserSettings();
     }
 	
     pingSites()
@@ -135,7 +145,7 @@ class SlideshowModel{
             this.searchHistory = this.searchHistory.slice(0, 100);
         }
 
-        this.saveSearchHistory();
+        this.dataLoader.saveSearchHistory();
 
         this.searchHistoryUpdatedEvent.notify();
     }
@@ -404,7 +414,7 @@ class SlideshowModel{
     {
         this.videoVolume = volume;
 
-        this.saveVideoVolume();
+        this.dataLoader.saveVideoVolume();
 
         this.videoVolumeUpdatedEvent.notify();
     }
@@ -413,7 +423,7 @@ class SlideshowModel{
     {
         this.videoMuted = muted;
 
-        this.saveVideoMuted();
+        this.dataLoader.saveVideoMuted();
 
         this.videoVolumeUpdatedEvent.notify();
     }
@@ -422,7 +432,7 @@ class SlideshowModel{
     {
         this.sitesToSearch = sitesToSearch;
 
-        this.saveSitesToSearch();
+        this.dataLoader.saveSitesToSearch();
 
         this.sitesToSearchUpdatedEvent.notify();
     }
@@ -431,7 +441,7 @@ class SlideshowModel{
     {
         this.sitesToSearch[site] = checked;
 
-        this.saveSitesToSearch();
+        this.dataLoader.saveSitesToSearch();
 
         this.sitesToSearchUpdatedEvent.notify();
     }
@@ -440,7 +450,7 @@ class SlideshowModel{
     {
         this.secondsPerSlide = secondsPerSlide;
 
-        this.saveSecondsPerSlide();
+        this.dataLoader.saveSecondsPerSlide();
 
         this.secondsPerSlideUpdatedEvent.notify();
     }
@@ -463,7 +473,7 @@ class SlideshowModel{
     {
         this.maxWidth = maxWidth;
 
-        this.saveMaxWidth();
+        this.dataLoader.saveMaxWidth();
 
         this.maxWidthUpdatedEvent.notify();
     }
@@ -472,7 +482,7 @@ class SlideshowModel{
     {
         this.maxHeight = maxHeight;
 
-        this.saveMaxHeight();
+        this.dataLoader.saveMaxHeight();
 
         this.maxHeightUpdatedEvent.notify();
     }
@@ -481,7 +491,7 @@ class SlideshowModel{
     {
         this.autoFitSlide = onOrOff;
 
-        this.saveAutoFitSlide();
+        this.dataLoader.saveAutoFitSlide();
 
         this.autoFitSlideUpdatedEvent.notify();
     }
@@ -490,7 +500,7 @@ class SlideshowModel{
     {
         this.includeImages = onOrOff;
 
-        this.saveIncludeImages();
+        this.dataLoader.saveIncludeImages();
 
         this.includeImagesUpdatedEvent.notify();
     }
@@ -499,7 +509,7 @@ class SlideshowModel{
     {
         this.includeGifs = onOrOff;
 
-        this.saveIncludeGifs();
+        this.dataLoader.saveIncludeGifs();
 
         this.includeGifsUpdatedEvent.notify();
     }
@@ -508,7 +518,7 @@ class SlideshowModel{
     {
         this.includeWebms = onOrOff;
 
-        this.saveIncludeWebms();
+        this.dataLoader.saveIncludeWebms();
 
         this.includeWebmsUpdatedEvent.notify();
     }
@@ -517,7 +527,7 @@ class SlideshowModel{
     {
         this.hideBlacklist = onOrOff;
 
-        this.saveHideBlacklist();
+        this.dataLoader.saveHideBlacklist();
 
         this.hideBlacklistUpdatedEvent.notify();
     }
@@ -526,7 +536,7 @@ class SlideshowModel{
     {
         this.blacklist = blacklist;
 
-        this.saveBlacklist();
+        this.dataLoader.saveBlacklist();
 
         this.blacklistUpdatedEvent.notify();
     }
@@ -535,7 +545,7 @@ class SlideshowModel{
     {
         this.derpibooruApiKey = derpibooruApiKey;
 
-        this.saveDerpibooruApiKey();
+        this.dataLoader.saveDerpibooruApiKey();
 
         this.derpibooruApiKeyUpdatedEvent.notify();
     }
@@ -544,7 +554,7 @@ class SlideshowModel{
     {
         this.storeHistory = onOrOff;
 
-        this.saveStoreHistory();
+        this.dataLoader.saveStoreHistory();
 
         this.storeHistoryUpdatedEvent.notify();
     }
@@ -553,267 +563,46 @@ class SlideshowModel{
     {
         this.searchHistory = searchHistory;
 
-        this.saveSearchHistory();
+        this.dataLoader.saveSearchHistory();
 
         this.searchHistoryUpdatedEvent.notify();
     }
 
-    loadUserSettings()
+    setPersonalList(personalList)
     {
-        var _this = this;
+        this.personalList = personalList;
 
-        chrome.storage.sync.get([
-			'videoVolume',
-			'videoMuted',
-			'sitesToSearch',
-			'secondsPerSlide',
-			'maxWidth',
-			'maxHeight',
-			'autoFitSlide',
-			'includeImages',
-			'includeGifs',
-			'includeWebms',
-			'hideBlacklist',
-			'blacklist',
-            'derpibooruApiKey',
-            'storeHistory',
-            'searchHistory'],
-			function (obj) {
-				if (obj != null)
-				{
-					var videoVolume = obj['videoVolume'];
-					var videoMuted = obj['videoMuted'];
-					var sitesToSearch = obj['sitesToSearch'];
-					var secondsPerSlide = obj['secondsPerSlide'];
-					var maxWidth = obj['maxWidth'];
-					var maxHeight = obj['maxHeight'];
-					var autoFitSlide = obj['autoFitSlide'];
-					var includeImages = obj['includeImages'];
-					var includeGifs = obj['includeGifs'];
-					var includeWebms = obj['includeWebms'];
-					var hideBlacklist = obj['hideBlacklist'];
-					var blacklist = obj['blacklist'];
-					var derpibooruApiKey = obj['derpibooruApiKey'];
-					var storeHistory = obj['storeHistory'];
-					var searchHistory = obj['searchHistory'];
-					
-					if (videoVolume == null)
-					{
-						_this.setVideoVolume(_this.videoVolume);
-					}
-					else
-					{
-						if (_this.videoVolume != videoVolume)
-						{
-							_this.setVideoVolume(videoVolume);
-						}
-					}
-					
-					if (videoMuted == null)
-					{
-						_this.setVideoMuted(_this.videoMuted);
-					}
-					else
-					{
-						if (_this.videoMuted != videoMuted)
-						{
-							_this.setVideoMuted(videoMuted);
-						}
-					}
-					
-					if (sitesToSearch != null)
-					{
-                        let cleanSitesToSearch = Object.assign({}, this.sitesToSearch);
-
-                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_ATFBOORU);
-                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_DANBOORU);
-                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_DERPIBOORU);
-                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_E621);
-                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_GELBOORU);
-                        //_this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_IBSEARCH);
-                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_KONACHAN);
-                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_REALBOORU);
-                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_RULE34);
-                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_SAFEBOORU);
-                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_XBOORU);
-                        _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_YANDERE);
-
-                        _this.setSitesToSearch(cleanSitesToSearch);
-					}
-					
-					if (_this.secondsPerSlide != secondsPerSlide)
-					{
-						_this.setSecondsPerSlideIfValid(secondsPerSlide);
-					}
-
-					if (_this.maxWidth != maxWidth)
-					{
-						_this.setMaxWidth(maxWidth);
-					}
-
-					if (_this.maxHeight != maxHeight)
-					{
-						_this.setMaxHeight(maxHeight);
-					}
-					
-					if (autoFitSlide != null)
-					{
-						if (_this.autoFitSlide != autoFitSlide)
-						{
-							_this.setAutoFitSlide(autoFitSlide);
-						}
-					}
-					
-					if (includeImages == null)
-					{
-						_this.setIncludeImages(_this.includeImages);
-					}
-					else
-					{
-						if (_this.includeImages != includeImages)
-						{
-							_this.setIncludeImages(includeImages);
-						}
-					}
-					
-					if (includeGifs == null)
-					{
-						_this.setIncludeGifs(_this.includeGifs);
-					}
-					else
-					{
-						if (_this.includeGifs != includeGifs)
-						{
-							_this.setIncludeGifs(includeGifs);
-						}
-					}
-					
-					if (includeWebms != null)
-					{
-						if (_this.includeWebms != includeWebms)
-						{
-							_this.setIncludeWebms(includeWebms);
-						}
-                    }
-                    
-                    if (hideBlacklist != null)
-					{
-						if (_this.hideBlacklist != hideBlacklist)
-						{
-							_this.setHideBlacklist(hideBlacklist);
-						}
-					}
-					
-					if (blacklist != null && _this.blacklist != blacklist)
-					{
-						_this.setBlacklist(blacklist);
-					}
-					
-					if (derpibooruApiKey != null && _this.derpibooruApiKey != derpibooruApiKey)
-					{
-						_this.setDerpibooruApiKey(derpibooruApiKey);
-                    }
-                    
-                    if (storeHistory != null)
-					{
-						if (_this.storeHistory != storeHistory)
-						{
-							_this.setStoreHistory(storeHistory);
-						}
-                    }
-
-                    if (searchHistory != null)
-					{
-						if (_this.searchHistory.toString() != searchHistory.toString())
-						{
-							_this.setSearchHistory(searchHistory);
-						}
-                    }
-				}
-			}
-		);
+        this.dataLoader.savePersonalList();
     }
 
-    addPropertyIfExists(sitesToSearch, cleanSitesToSearch, siteEnum)
+    toggleSlideFave()
     {
-        if (sitesToSearch.hasOwnProperty(siteEnum))
+        let currentSlide = this.getCurrentSlide();
+
+        if (currentSlide == null)
+            return;
+
+        if (this.isCurrentSlideFaved())
         {
-            cleanSitesToSearch[siteEnum] = sitesToSearch[siteEnum];
+            this.personalList.tryToRemove(currentSlide);
         }
-    }
-	
-    saveVideoVolume()
-    {
-        chrome.storage.sync.set({'videoVolume': this.videoVolume});
-    }
-	
-    saveVideoMuted()
-    {
-        chrome.storage.sync.set({'videoMuted': this.videoMuted});
+        else
+        {
+            this.personalList.tryToAdd(currentSlide);
+        }
+
+        this.dataLoader.savePersonalList();
+        this.favoriteButtonUpdatedEvent.notify();
     }
 
-    saveSitesToSearch()
+    isCurrentSlideFaved()
     {
-        chrome.storage.sync.set({'sitesToSearch': this.sitesToSearch});
-    }
+        let currentSlide = this.getCurrentSlide();
 
-    saveSecondsPerSlide()
-    {
-        chrome.storage.sync.set({'secondsPerSlide': this.secondsPerSlide});
-    }
+        if (currentSlide == null)
+            return false;
 
-    saveMaxWidth()
-    {
-        chrome.storage.sync.set({'maxWidth': this.maxWidth});
-    }
-
-    saveMaxHeight()
-    {
-        chrome.storage.sync.set({'maxHeight': this.maxHeight});
-    }
-
-    saveAutoFitSlide()
-    {
-        chrome.storage.sync.set({'autoFitSlide': this.autoFitSlide});
-    }
-	
-    saveIncludeImages()
-    {
-        chrome.storage.sync.set({'includeImages': this.includeImages});
-    }
-	
-    saveIncludeGifs()
-    {
-        chrome.storage.sync.set({'includeGifs': this.includeGifs});
-    }
-	
-    saveIncludeWebms()
-    {
-        chrome.storage.sync.set({'includeWebms': this.includeWebms});
-    }
-	
-    saveHideBlacklist()
-    {
-        chrome.storage.sync.set({'hideBlacklist': this.hideBlacklist});
-    }
-
-    saveBlacklist()
-    {
-        chrome.storage.sync.set({'blacklist': this.blacklist});
-    }
-	
-    saveDerpibooruApiKey()
-    {
-        chrome.storage.sync.set({'derpibooruApiKey': this.derpibooruApiKey});
-    }
-
-    saveStoreHistory()
-    {
-        chrome.storage.sync.set({'storeHistory': this.storeHistory});
-    }
-
-    saveSearchHistory()
-    {
-        chrome.storage.sync.set({'searchHistory': this.searchHistory});
+        console.log("current slide md5 = " + currentSlide.md5);
+        return this.personalList.contains(currentSlide);
     }
 }

@@ -43,6 +43,7 @@ class SiteManagerSafebooru extends SiteManager
 					return;
 
 				var newSlide = new Slide(
+					SITE_SAFEBOORU,
 					xmlPost.getAttribute('id'),
 					this.reformatFileUrl(xmlPost.getAttribute('file_url')),
 					this.reformatFileUrl(xmlPost.getAttribute('preview_url')),

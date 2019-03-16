@@ -62,6 +62,7 @@ class SiteManagerIbSearch extends SiteManager
 			date = new Date(this.convertSDateToDate(jsonPost.found));
 		
 		var newSlide = new Slide(
+			SITE_IBSEARCH,
 			jsonPost.id,
 			'https://im1.ibsearch.xxx/' + jsonPost.path,
 			'https://im1.ibsearch.xxx/t' + jsonPost.path,

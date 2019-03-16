@@ -110,6 +110,7 @@ class SiteManagerDerpibooru extends SiteManager
 					return;
 				
 				var newSlide = new Slide(
+					SITE_DERPIBOORU,
 					jsonPost.id,
 					"https://" + jsonPost.image,
 					"https://" + jsonPost.representations["thumb"],

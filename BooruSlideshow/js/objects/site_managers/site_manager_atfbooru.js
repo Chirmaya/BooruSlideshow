@@ -54,6 +54,7 @@ class SiteManagerAtfBooru extends SiteManager
 					return;
 				
 				var newSlide = new Slide(
+					SITE_ATFBOORU,
 					jsonPost.id,
 					this.getCorrectFileUrl(jsonPost.file_url),
 					this.getCorrectFileUrl(jsonPost.preview_file_url),

@@ -1,5 +1,10 @@
 Changelog
 
+Version 8.0
+* [Feature] Favorites (with simple navigation)
+* [Feature] Press G -> Adds the current image to your personal list
+* [Feature] Press L -> Saves the current image to Downloads/bs/
+
 Version 7.19
 * [Fix] Made the "Store Search History" checkbox actually work
 

@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Booru Slideshow</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="css/personal_list.css">
+	</head>
+	
+	<body>
+		<p id="warning-message"></p>
+		<p id="info-message"></p>
+		<div id="slide-wrapper">
+			<img id="current-image" />
+			<video id="current-video" autoplay='true' loop='true' volume='0' controls>
+				<source type="video/webm"></source>
+			</video>
+			<img id="loading-animation" src="img/loading.gif" alt="Loading Slide" />
+		</div>
+		<div id="indentation">
+			<div id="navigation">
+				Favorite <span id="current-slide-number">12</span> of <span id="total-slide-number">34</span><br>
+				<button class="nav-button" id="first-button">&lt;&lt;</button>
+				<button class="nav-button" id="previous-button">&lt;</button>
+				<button class="nav-button" id="play-button">&#9658;</button>
+				<button class="nav-button" id="pause-button">&#9646;&#9646;</button>
+				<button class="nav-button" id="next-button">&gt;</button>
+				<button class="nav-button" id="last-button">&gt;&gt;</button>
+			</div>
+			<div id="thumbnail-list-wrapper">
+				<div id="thumbnail-list">
+				</div>
+			</div>
+			<div id="filter">
+				SLIDESHOW, PRELOADING, AND FILTERING DOESN'T WORK YET!<br>
+				<input id="filter-text" type="search" /><br>
+				<button id="filter-button">Filter</button>
+			</div>
+			<div id="module-container">
+				<div class="options">
+					<h4>Presentation</h4>
+					<ul>
+						<li>
+							Seconds per Slide
+							<br>
+							<input id="seconds-per-slide" type="number" min="1" />
+						</li>
+						<li>
+							Max. Width
+							<br>
+							<input id="max-width" type="number" min="1" /><br>
+						</li>
+						<li>
+							Max. Height
+							<br>
+							<input id="max-height" type="number" min="1" />
+						</li>
+						<li>
+							<label><input id="auto-fit-slide" type="checkbox" />Auto-Fit</label>
+						</li>
+						
+					</ul>
+					<h4>Hotkeys</h4>
+					<ul>
+						<li>Unfave Image (G)</li>
+					</ul>
+					<li><a href="slideshow.html">Back to Slideshow</a></li>
+				</div>
+            </div>
+        </div>
+		
+		<script src="js/globals.js"></script>
+		<script src="js/objects/web_requester.js"></script>
+		<script src="js/objects/site_manager.js"></script>
+		<script src="js/objects/site_managers/site_manager_atfbooru.js"></script>
+		<script src="js/objects/site_managers/site_manager_danbooru.js"></script>
+		<script src="js/objects/site_managers/site_manager_derpibooru.js"></script>
+		<script src="js/objects/site_managers/site_manager_e621.js"></script>
+		<script src="js/objects/site_managers/site_manager_gelbooru.js"></script>
+		<script src="js/objects/site_managers/site_manager_konachan.js"></script>
+		<script src="js/objects/site_managers/site_manager_realbooru.js"></script>
+		<script src="js/objects/site_managers/site_manager_rule34.js"></script>
+		<script src="js/objects/site_managers/site_manager_safebooru.js"></script>
+		<script src="js/objects/site_managers/site_manager_xbooru.js"></script>
+		<script src="js/objects/site_managers/site_manager_yandere.js"></script>
+		<script src="js/objects/site_manager_factory.js"></script>
+		<script src="js/objects/sites_manager.js"></script>
+		<script src="js/objects/slide.js"></script>
+		<script src="js/objects/personal_list.js"></script>
+		<script src="js/objects/event.js"></script>
+		<script src="js/objects/data_loader.js"></script>
+		<script src="js/mvc/slideshow_model.js"></script>
+		<script src="js/mvc/personal_list_model.js"></script>
+		<script src="js/mvc/personal_list_view.js"></script>
+		<script src="js/mvc/personal_list_controller.js"></script>
+		<script src="js/personal_list_initialize.js"></script>
+	</body>
+</html>

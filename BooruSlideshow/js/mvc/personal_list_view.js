@@ -1,13 +1,13 @@
-class SlideshowView
+class PersonalListView
 {
-    constructor (slideshowModel, uiElements) {
-        this._model = slideshowModel;
+    constructor (personalListModel, uiElements) {
+        this._model = personalListModel;
         this.uiElements = uiElements;
         
         this.currentImageClickedEvent = new Event(this);
         this.currentVideoClickedEvent = new Event(this);
         this.currentVideoVolumeChangedEvent = new Event(this);
-        this.searchButtonClickedEvent = new Event(this);
+        this.filterButtonClickedEvent = new Event(this);
         this.firstNavButtonClickedEvent = new Event(this);
         this.previousNavButtonClickedEvent = new Event(this);
         this.nextNavButtonClickedEvent = new Event(this);
@@ -16,24 +16,14 @@ class SlideshowView
         this.goForwardTenImagesPressedEvent = new Event(this);
         this.playButtonClickedEvent = new Event(this);
         this.pauseButtonClickedEvent = new Event(this);
-        this.enterKeyPressedOutsideOfSearchTextBoxEvent = new Event(this);
-        this.searchTextChangedEvent = new Event(this);
-        this.enterKeyPressedInSearchTextBoxEvent = new Event(this);
-        this.sitesToSearchChangedEvent = new Event(this);
+        this.enterKeyPressedOutsideOfFilterTextBoxEvent = new Event(this);
+        this.filterTextChangedEvent = new Event(this);
+        this.enterKeyPressedInFilterTextBoxEvent = new Event(this);
         this.secondsPerSlideChangedEvent = new Event(this);
         this.maxWidthChangedEvent = new Event(this);
         this.maxHeightChangedEvent = new Event(this);
         this.autoFitSlideChangedEvent = new Event(this);
-        this.includeImagesChangedEvent = new Event(this);
-        this.includeGifsChangedEvent = new Event(this);
-        this.includeWebmsChangedEvent = new Event(this);
-        this.hideBlacklistChangedEvent = new Event(this);
-        this.blacklistChangedEvent = new Event(this);
-        this.derpibooruApiKeyChangedEvent = new Event(this);
-        this.storeHistoryChangedEvent = new Event(this);
-        this.clearHistoryClickedEvent = new Event(this);
-        this.favoriteKeyPressedEvent = new Event(this);
-        this.favoriteButtonClickedEvent = new Event(this);
+        this.removeCurrentImageFromFavesPressedEvent = new Event(this);
         
         this.isSettingVolume = false;
         this.isSettingMute = false;
@@ -46,7 +36,7 @@ class SlideshowView
     
         this.setupLoadingAnimation();
 
-        this.setFocusToSearchBox();
+        //this.setFocusToFilterBox();
     }
 
     attachModelListeners()
@@ -67,10 +57,6 @@ class SlideshowView
             _this.updatePlayPauseButtons();
         });
     
-        this._model.sitesToSearchUpdatedEvent.attach(function () {
-            _this.updateSitesToSearch();
-        });
-    
         this._model.secondsPerSlideUpdatedEvent.attach(function () {
             _this.updateSecondsPerSlide();
         });
@@ -86,41 +72,11 @@ class SlideshowView
         this._model.autoFitSlideUpdatedEvent.attach(function () {
             _this.updateAutoFitSlide();
         });
-        
-        this._model.includeImagesUpdatedEvent.attach(function () {
-            _this.updateIncludeImages();
-        });
-        
-        this._model.includeGifsUpdatedEvent.attach(function () {
-            _this.updateIncludeGifs();
-        });
-        
-        this._model.includeWebmsUpdatedEvent.attach(function () {
-            _this.updateIncludeWebms();
-        });
-        
-        this._model.hideBlacklistUpdatedEvent.attach(function () {
-            _this.updateHideBlacklist();
-        });
 
-        this._model.blacklistUpdatedEvent.attach(function () {
-            _this.updateBlacklist();
-        });
-        
-        this._model.derpibooruApiKeyUpdatedEvent.attach(function () {
-            _this.updateDerpibooruApiKey();
-        });
-
-        this._model.storeHistoryUpdatedEvent.attach(function () {
-            _this.updateStoreHistory();
-        });
-
-        this._model.searchHistoryUpdatedEvent.attach(function () {
-            _this.updateSearchHistory();
-        });
-
-        this._model.favoriteButtonUpdatedEvent.attach(function (){
-            _this.updateFavoriteButton();
+        this._model.personalListLoadedEvent.attach(function () {
+            _this.clearWarningMessage();
+            _this.clearInfoMessage();
+            _this.updateSlidesAndNavigation();
         });
     }
 
@@ -141,18 +97,6 @@ class SlideshowView
         });
         
         this.uiElements.currentVideo.addEventListener('volumechange', function() {
-            /*if (_this.isSettingVolume)
-            {
-                _this.isSettingVolume = false;
-                return;
-            }
-            
-            if (_this.isSettingMute)
-            {
-                _this.isSettingMute = false;
-                return;
-            }*/
-            
             if (_this.isSettingVolume)
             {
                 return;
@@ -204,7 +148,7 @@ class SlideshowView
                 return;
             }
     
-            if (document.activeElement !== _this.uiElements.searchTextBox &&
+            if (document.activeElement !== _this.uiElements.filterTextBox &&
                 document.activeElement !== _this.uiElements.secondsPerSlideTextBox &&
                 document.activeElement !== _this.uiElements.maxWidthTextBox &&
                 document.activeElement !== _this.uiElements.maxHeightTextBox &&
@@ -221,8 +165,8 @@ class SlideshowView
                     _this.goForwardTenImagesPressedEvent.notify();
                 if (key == ENTER_KEY_ID || key == SPACE_KEY_ID)
                 {
-                    if (document.activeElement !== _this.uiElements.searchButton)
-                        _this.enterKeyPressedOutsideOfSearchTextBoxEvent.notify();
+                    if (document.activeElement !== _this.uiElements.filterButton)
+                        _this.enterKeyPressedOutsideOfFilterTextBoxEvent.notify();
                 }
                 if (key == SPACE_KEY_ID)
                 {
@@ -238,40 +182,26 @@ class SlideshowView
                 }
                 if (key == G_KEY_ID)
                 {
-                    _this.favoriteKeyPressedEvent.notify();
+                    _this.removeCurrentImageFromFavesPressedEvent.notify();
                 }
             }
         });
     
-        this.uiElements.searchTextBox.addEventListener('change', function () {
-            _this.searchTextChangedEvent.notify();
+        this.uiElements.filterTextBox.addEventListener('change', function () {
+            _this.filterTextChangedEvent.notify();
         });
     
-        this.uiElements.searchTextBox.addEventListener('keypress', function (e) {
+        this.uiElements.filterTextBox.addEventListener('keypress', function (e) {
             var key = e.which || e.keyCode;
     
             if (key == ENTER_KEY_ID) {
-                _this.enterKeyPressedInSearchTextBoxEvent.notify();
+                _this.enterKeyPressedInFilterTextBoxEvent.notify();
             }
         });
     
-        this.uiElements.searchButton.addEventListener('click', function () {
-            _this.searchButtonClickedEvent.notify();
+        this.uiElements.filterButton.addEventListener('click', function () {
+            _this.filterButtonClickedEvent.notify();
         });
-    
-        var sitesToSearchElements = this.uiElements.sitesToSearch;
-    
-        for (var i = 0; i < sitesToSearchElements.length; i++)
-        {
-            var siteToSearch = sitesToSearchElements[i];
-    
-            siteToSearch.addEventListener('change', function (e) {
-                _this.sitesToSearchChangedEvent.notify({
-                    checked: e.target.checked,
-                    site: e.target.value
-                });
-            });
-        }
     
         this.uiElements.secondsPerSlideTextBox.addEventListener('change', function () {
             _this.secondsPerSlideChangedEvent.notify();
@@ -287,42 +217,6 @@ class SlideshowView
     
         this.uiElements.autoFitSlideCheckBox.addEventListener('change', function () {
             _this.autoFitSlideChangedEvent.notify();
-        });
-        
-        this.uiElements.includeImagesCheckBox.addEventListener('change', function () {
-            _this.includeImagesChangedEvent.notify();
-        });
-        
-        this.uiElements.includeGifsCheckBox.addEventListener('change', function () {
-            _this.includeGifsChangedEvent.notify();
-        });
-        
-        this.uiElements.includeWebmsCheckBox.addEventListener('change', function () {
-            _this.includeWebmsChangedEvent.notify();
-        });
-        
-        this.uiElements.blacklist.addEventListener('change', function () {
-            _this.blacklistChangedEvent.notify();
-        });
-    
-        this.uiElements.hideBlacklist.addEventListener('change', function () {
-            _this.hideBlacklistChangedEvent.notify();
-        });
-        
-        this.uiElements.derpibooruApiKey.addEventListener('change', function () {
-            _this.derpibooruApiKeyChangedEvent.notify();
-        });
-
-        this.uiElements.storeHistoryCheckBox.addEventListener('change', function () {
-            _this.storeHistoryChangedEvent.notify();
-        });
-
-        this.uiElements.clearHistoryButton.addEventListener('click', function () {
-            _this.clearHistoryClickedEvent.notify();
-        });
-
-        this.uiElements.favoriteButton.addEventListener('click', function() {
-            _this.favoriteButtonClickedEvent.notify();
         });
     }
 
@@ -373,7 +267,6 @@ class SlideshowView
 
     updateSlides() {
         this.displayCurrentSlide();
-        this.updateFavoriteButton();
         this.showThumbnails();
     }
 
@@ -390,7 +283,7 @@ class SlideshowView
     }
 
     displayCurrentSlide() {
-        if (this._model.hasSlidesToDisplay())
+        if (this._model.hasPersonalListItems())
 		{
             this.displaySlide();
         }
@@ -466,7 +359,7 @@ class SlideshowView
     }
 
     tryToUpdateSlideSize() {
-        if (this._model.hasSlidesToDisplay())
+        if (this._model.hasPersonalListItems())
         {
 			this.updateSlideSize();
 		}
@@ -607,7 +500,7 @@ class SlideshowView
     }
 
     updateNavigation() {
-        if (this._model.hasSlidesToDisplay())
+        if (this._model.hasPersonalListItems())
         {
             this.updateNavigationButtonsAndDisplay();
             this.showNavigation();
@@ -615,6 +508,7 @@ class SlideshowView
         else
         {
             this.hideNavigation();
+            this.displayInfoMessage("No images have been faved yet.");
         }
     }
 
@@ -632,11 +526,7 @@ class SlideshowView
     }
 
     updateTotalNumberDisplay() {
-        var totalNumberText = this._model.getSlideCount();
-
-        if (this._model.areThereMoreLoadableSlides()) {
-            totalNumberText += '+';
-        }
+        var totalNumberText = this._model.getPersonalListItemCount();
 
         this.uiElements.totalSlideNumber.innerHTML = totalNumberText;
     }
@@ -660,7 +550,7 @@ class SlideshowView
     }
 
     updateNextLastButtons() {
-        var currentlyOnLastSlide = (this._model.getCurrentSlideNumber() == this._model.getSlideCount());
+        var currentlyOnLastSlide = (this._model.getCurrentSlideNumber() == this._model.getPersonalListItemCount());
 
         this.uiElements.nextNavButton.disabled = currentlyOnLastSlide;
         this.uiElements.lastNavButton.disabled = currentlyOnLastSlide;
@@ -673,8 +563,8 @@ class SlideshowView
     showThumbnails() {
         this.clearThumbnails();
 
-        if (this._model.getSlideCount() > 1) {
-            var nextSlides = this._model.getNextSlidesForThumbnails();
+        if (this._model.getPersonalListItemCount() > 1) {
+            var nextSlides = this._model.getNextListItemsForThumbnails();
             var _this = this;
 
             for (var i = 0; i < nextSlides.length; i++) {
@@ -740,38 +630,20 @@ class SlideshowView
         }
     }
 
-    getSearchText() {
-        return this.uiElements.searchTextBox.value;
+    getFilterText() {
+        return this.uiElements.filterTextBox.value;
     }
 
-    setFocusToSearchBox() {
-        this.uiElements.searchTextBox.focus();
+    setFocusToFilterBox() {
+        this.uiElements.filterTextBox.focus();
     }
 	
-	removeFocusFromSearchTextBox() {
-        this.uiElements.searchTextBox.blur();
+	removeFocusFromFilterTextBox() {
+        this.uiElements.filterTextBox.blur();
     }
 
-    removeFocusFromSearchButton() {
-        this.uiElements.searchButton.blur();
-    }
-
-    updateSitesToSearch() {
-        var sitesToSearchElements = this.uiElements.sitesToSearch;
-
-        for (var i = 0; i < sitesToSearchElements.length; i++) {
-            var siteToSearch = sitesToSearchElements[i];
-
-            var site = siteToSearch.value;
-            var checked = this._model.sitesToSearch[site];
-
-            siteToSearch.checked = checked;
-			
-			if (site == SITE_DERPIBOORU)
-			{
-				this.uiElements.derpibooruApiKeyContainer.style.display = checked ? 'inline' : 'none';
-			}
-        }
+    removeFocusFromFilterButton() {
+        this.uiElements.filterButton.blur();
     }
 
     updateOptions() {
@@ -829,22 +701,6 @@ class SlideshowView
     getAutoFitSlide() {
         return this.uiElements.autoFitSlideCheckBox.checked;
     }
-	
-	getIncludeImages() {
-        return this.uiElements.includeImagesCheckBox.checked;
-    }
-	
-	getIncludeGifs() {
-        return this.uiElements.includeGifsCheckBox.checked;
-    }
-	
-	getIncludeWebms() {
-        return this.uiElements.includeWebmsCheckBox.checked;
-    }
-
-    getStoreHistory() {
-        return this.uiElements.storeHistoryCheckBox.checked;
-    }
 
     updateAutoFitSlide() {
         this.uiElements.autoFitSlideCheckBox.checked = this._model.autoFitSlide;
@@ -853,99 +709,9 @@ class SlideshowView
 
         this.tryToUpdateSlideSize();
     }
-	
-	updateIncludeImages() {
-        this.uiElements.includeImagesCheckBox.checked = this._model.includeImages;
-    }
-	
-	updateIncludeGifs() {
-        this.uiElements.includeGifsCheckBox.checked = this._model.includeGifs;
-    }
-	
-	updateIncludeWebms() {
-        this.uiElements.includeWebmsCheckBox.checked = this._model.includeWebms;
-    }
-
-    updateStoreHistory() {
-        this.uiElements.storeHistoryCheckBox.checked = this._model.storeHistory;
-    }
-
-    updateSearchHistory() {
-        var searchHistory = this.uiElements.searchHistory;
-
-        while (searchHistory.hasChildNodes())
-        {
-            searchHistory.removeChild(searchHistory.lastChild);
-        }
-
-        for (let i = 0; i < this._model.searchHistory.length; i++)
-        {
-            
-            var searchHistoryItem = this._model.searchHistory[i];
-            
-            var optionElement = document.createElement("option");
-            optionElement.value = searchHistoryItem;
-
-            searchHistory.appendChild(optionElement);
-        }
-    }
-	
-	getHideBlacklist() {
-        return this.uiElements.hideBlacklist.checked;
-    }
-
-    getBlacklist() {
-        return this.uiElements.blacklist.value;
-    }
-
-    updateHideBlacklist() {
-        this.uiElements.hideBlacklist.checked = this._model.hideBlacklist;
-
-        this.hideOrShowBlacklist();
-    }
-
-    updateBlacklist() {
-        this.uiElements.blacklist.value = this._model.blacklist.trim();
-		//this.validateBlacklist();
-    }
-	
-	/*validateBlacklist() {
-        var blacklist = this.uiElements.blacklist.value;
-		
-		var pattern = new RegExp(/[^\s]+/i);
-		console.log(pattern.test(blacklist));
-    }*/
-	
-	getDerpibooruApiKey() {
-        return this.uiElements.derpibooruApiKey.value.trim();
-    }
-
-    updateDerpibooruApiKey() {
-        this.uiElements.derpibooruApiKey.value = this._model.derpibooruApiKey;
-    }
 
     openUrlInNewWindow(url) {
         window.open(url, '_blank');
-    }
-	
-	showSiteOffline(site) {
-		var sitesToSearchElements = this.uiElements.sitesToSearch;
-		
-		for (var i = 0; i < sitesToSearchElements.length; i++)
-		{
-			var siteToSearch = sitesToSearchElements[i];
-			
-			if (siteToSearch.value == site)
-			{
-				siteToSearch.parentElement.classList.add("siteOffline");
-				return;
-			}			
-		}
-    }
-    
-    hideOrShowBlacklist()
-    {
-        this.uiElements.blacklistContainer.style.display = this._model.hideBlacklist ? "none" : "block";
     }
 
     downloadCurrentSlide()
@@ -963,18 +729,5 @@ class SlideshowView
             filename: filename,
             conflictAction: "overwrite"
         });
-    }
-
-    updateFavoriteButton() {
-        if (this._model.isCurrentSlideFaved())
-        {
-            console.log("IS FAVE");
-            this.uiElements.favoriteButton.classList.add("faved");
-        }
-        else
-        {
-            console.log("IS NOT FAVE");
-            this.uiElements.favoriteButton.classList.remove("faved");
-        }
     }
 }

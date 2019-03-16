@@ -4,7 +4,7 @@ class SlideshowController
     {
         this._model = new SlideshowModel();
         this._view = new SlideshowView(this._model, uiElements);
-        this._model.view = this._view
+        this._model.view = this._view;
 
         this._view.updateSitesToSearch();
         this._view.updateOptions();
@@ -122,6 +122,14 @@ class SlideshowController
 
         this._view.clearHistoryClickedEvent.attach(function () {
             _this.clearHistoryClicked();
+        });
+
+        this._view.favoriteKeyPressedEvent.attach(function () {
+            _this.favoriteButtonClicked();
+        });
+
+        this._view.favoriteButtonClickedEvent.attach(function () {
+            _this.favoriteButtonClicked();
         });
 
         this._model.loadUserSettings();
@@ -352,5 +360,10 @@ class SlideshowController
         var searchHistory = [];
 
         this._model.setSearchHistory(searchHistory);
+    }
+
+    favoriteButtonClicked()
+    {
+        this._model.toggleSlideFave();
     }
 }

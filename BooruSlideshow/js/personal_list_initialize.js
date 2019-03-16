@@ -1,7 +1,7 @@
-//let slideshowController = null;
+//var personalListController = null;
 
 document.addEventListener('DOMContentLoaded', function () {
-    new SlideshowController({
+    new PersonalListController({
         'warningMessage': document.getElementById('warning-message'),
         'infoMessage': document.getElementById('info-message'),
         'currentImage': document.getElementById('current-image'),
@@ -11,30 +11,17 @@ document.addEventListener('DOMContentLoaded', function () {
         'currentSlideNumber': document.getElementById('current-slide-number'),
         'totalSlideNumber': document.getElementById('total-slide-number'),
         'thumbnailList': document.getElementById('thumbnail-list'),
-        'searchTextBox': document.getElementById('search-text'),
-        'searchButton': document.getElementById('search-button'),
+        'filterTextBox': document.getElementById('filter-text'),
+        'filterButton': document.getElementById('filter-button'),
         'firstNavButton': document.getElementById('first-button'),
         'previousNavButton': document.getElementById('previous-button'),
         'nextNavButton': document.getElementById('next-button'),
         'lastNavButton': document.getElementById('last-button'),
         'playButton': document.getElementById('play-button'),
         'pauseButton': document.getElementById('pause-button'),
-        'sitesToSearch': document.getElementsByName('sites-to-search'),
         'secondsPerSlideTextBox': document.getElementById('seconds-per-slide'),
         'maxWidthTextBox': document.getElementById('max-width'),
         'maxHeightTextBox': document.getElementById('max-height'),
-        'autoFitSlideCheckBox': document.getElementById('auto-fit-slide'),
-        'includeImagesCheckBox': document.getElementById('include-images'),
-        'includeGifsCheckBox': document.getElementById('include-gifs'),
-        'includeWebmsCheckBox': document.getElementById('include-webms'),
-        'hideBlacklist': document.getElementById('hide-blacklist'),
-        'blacklistContainer': document.getElementById('blacklist-container'),
-        'blacklist': document.getElementById('blacklist'),
-        'derpibooruApiKey': document.getElementById('derpibooru-api-key'),
-        'derpibooruApiKeyContainer': document.getElementById('derpibooru-api-key-container'),
-        'storeHistoryCheckBox': document.getElementById('store-history'),
-		'clearHistoryButton': document.getElementById('clear-history'),
-        'searchHistory': document.getElementById('search-history'),
-        'favoriteButton': document.getElementById('favorite-button')
+        'autoFitSlideCheckBox': document.getElementById('auto-fit-slide')
     });
 });
