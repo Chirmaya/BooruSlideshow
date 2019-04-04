@@ -46,4 +46,4 @@ Temporary Items
 .idea
 
 # Chrome extension package files
-*.crx
+#*.crx
