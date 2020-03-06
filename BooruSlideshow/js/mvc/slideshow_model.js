@@ -79,7 +79,7 @@ class SlideshowModel{
         this.sitesManager.addSite(SITE_ATFBOORU, pageLimit);
         this.sitesManager.addSite(SITE_DANBOORU, pageLimit);
         this.sitesManager.addSite(SITE_DERPIBOORU, 10);
-        this.sitesManager.addSite(SITE_E621, pageLimit);
+        this.sitesManager.addSite(SITE_E621, 40);
         this.sitesManager.addSite(SITE_GELBOORU, pageLimit);
         //this.sitesManager.addSite(SITE_IBSEARCH, pageLimit);
         this.sitesManager.addSite(SITE_KONACHAN, pageLimit);
@@ -99,6 +99,7 @@ class SlideshowModel{
     {
 		var _this = this;
 		this.sitesManager.pingSites(function(siteManager){
+            // console.log(siteManager)
 			if (!siteManager.isOnline)
 				_this.view.showSiteOffline(siteManager.id);
 		});
@@ -150,26 +151,42 @@ class SlideshowModel{
         this.searchHistoryUpdatedEvent.notify();
     }
 	
-    areSomeTagsAreBlacklisted(tags)
+    areSomeTagsAreBlacklisted(tags, e6)
     {
-		var postTags = tags.trim().split(" ");
-		var blacklistTags = this.blacklist.trim().replace(/(\r\n|\n|\r)/gm," ").split(" ");
-		
-		if (postTags.length == 0 || blacklistTags.length == 0)
-			return false;
-		
-		for (let blacklistTag of blacklistTags)
-		{
-			for (let postTag of postTags)
-			{
-				if (blacklistTag == postTag)
-				{
-					return true;
-				}
-			}
-		}
-		
-		return false;
+        // console.log(e6)
+        if(e6){
+            var blacklistTags = this.blacklist.trim().replace(/(\r\n|\n|\r)/gm," ").split(" ");
+            if (Object.keys(tags).length == 0 || blacklistTags.length == 0)
+                return false;
+            for(let prop in tags){
+                for(let tag of tags[prop]){
+                    if(blacklistTags.includes(tag)){
+                        return true
+                    }
+                }
+            }
+            
+            return false;
+        }else{
+            var postTags = tags.trim().split(" ");
+            var blacklistTags = this.blacklist.trim().replace(/(\r\n|\n|\r)/gm," ").split(" ");
+            
+            if (postTags.length == 0 || blacklistTags.length == 0)
+                return false;
+            
+            for (let blacklistTag of blacklistTags)
+            {
+                for (let postTag of postTags)
+                {
+                    if (blacklistTag == postTag)
+                    {
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
+        }
 	}
 
     setSlideNumberToFirst()

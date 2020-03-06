@@ -69,15 +69,18 @@ class SiteManager
 			this.webRequester.makeWebsiteRequest(
 				url,
 				function(responseText){
+					// console.log(responseText)
 					if (_this.doesResponseTextIndicateOnline(responseText))
 						_this.isOnline = true;
 				},
 				this.handleErrorFromSiteResponse.bind(_this),
 				function(){
+					// console.log(_this, "THOS")
 					callback(_this);
 				},
 				function(url, hideVisibleWarning = false){
 					_this.handleGeneralError(url, hideVisibleWarning);
+					// console.log(_this, "THIS")
 					callback(_this);
 				},
 				true);
@@ -199,6 +202,9 @@ class SiteManager
 		if (this.id == SITE_DERPIBOORU)
 		{
 			jsonPosts = jsonPosts["search"];
+		}else if(this.id == SITE_E621){
+			jsonPosts = jsonPosts["posts"]
+			// console.log(jsonPosts)
 		}
 		
 		this.hasExhaustedSearch = (jsonPosts.length < this.pageLimit);
@@ -259,9 +265,9 @@ class SiteManager
 			(mediaType == MEDIA_TYPE_VIDEO && this.sitesManager.model.includeWebms);
 	}
 
-	areSomeTagsAreBlacklisted(tags)
+	areSomeTagsAreBlacklisted(tags, e6)
 	{
-		return this.sitesManager.model.areSomeTagsAreBlacklisted(tags);
+		return this.sitesManager.model.areSomeTagsAreBlacklisted(tags, e6);
 	}
 
 	reformatFileUrl(url)

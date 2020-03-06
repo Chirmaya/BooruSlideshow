@@ -199,7 +199,8 @@ class SlideshowView
                 key == D_KEY_ID ||
                 key == F_KEY_ID ||
                 key == L_KEY_ID ||
-                key == G_KEY_ID))
+                key == G_KEY_ID ||
+                key == E_KEY_ID))
             {
                 return;
             }
@@ -239,6 +240,10 @@ class SlideshowView
                 if (key == G_KEY_ID)
                 {
                     _this.favoriteKeyPressedEvent.notify();
+                }
+                if(key == E_KEY_ID){
+                    // console.log("k")
+                    _this.openCurrentSlide();
                 }
             }
         });
@@ -372,6 +377,7 @@ class SlideshowView
     }
 
     updateSlides() {
+        // console.log("update")
         this.displayCurrentSlide();
         this.updateFavoriteButton();
         this.showThumbnails();
@@ -437,6 +443,7 @@ class SlideshowView
 	displayImage(currentSlide) {
         var currentImage = this.uiElements.currentImage;
 
+        // console.log(currentSlide)
         currentImage.src = currentSlide.fileUrl;
         currentImage.setAttribute('alt', currentSlide.id);
         currentImage.style.display = 'inline';
@@ -963,6 +970,12 @@ class SlideshowView
             filename: filename,
             conflictAction: "overwrite"
         });
+    }
+
+    openCurrentSlide(){
+        let currentSlide = this._model.getCurrentSlide();
+        if(currentSlide == null) return
+        window.open(currentSlide.viewableWebsitePostUrl, "_blank")
     }
 
     updateFavoriteButton() {

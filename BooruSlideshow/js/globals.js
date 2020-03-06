@@ -27,6 +27,7 @@ let W_KEY_ID = 87;
 let F_KEY_ID = 70;
 let L_KEY_ID = 76;
 let G_KEY_ID = 71;
+let E_KEY_ID = 69;
 
 let SITE_QUERY_TERM_ASSOCIATIONS = {};
 

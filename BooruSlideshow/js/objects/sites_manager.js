@@ -418,8 +418,9 @@ class SitesManager{
 	{
 		var nextSlides = this.getNextSlidesForThumbnails();
 		
-		for (var i = 0; i <= nextSlides.length; i++)
+		for (var i = 0; i <= 1; i++)
 		{
+			if(!nextSlides[i]) return
 			var nextSlide = nextSlides[i];
 			
 			if (nextSlide.id == slideId)
@@ -435,8 +436,9 @@ class SitesManager{
 	{
 		var nextSlides = this.getNextSlidesForThumbnails();
 		
-		for (var i = 0; i < nextSlides.length; i++)
+		for (var i = 0; i< 6; i++)
 		{
+			if(!nextSlides[i]) return
 			var nextSlide = nextSlides[i];
 			
 			if (nextSlide.id == slideId)
@@ -461,6 +463,7 @@ class SitesManager{
 		
 		for (var i = 0; i < nextSlides.length; i++)
 		{
+			if(!nextSlides[i]) return
 			var nextSlide = nextSlides[i];
 			
 			if (nextSlide.id == slideId)
@@ -569,8 +572,9 @@ class SitesManager{
 		{
 			var nextSlides = this.getNextSlidesForThumbnails();
 			
-			for (var i = 0; i < nextSlides.length; i++)
+			for (var i = 0; i< 6; i++)
 			{
+				if(!nextSlides[i]) return
 				var slide = nextSlides[i];
 				
 				if (!slide.isPreloaded)
@@ -589,7 +593,7 @@ class SitesManager{
 			var nextSlides = this.getNextSlidesForThumbnails();
 			var foundStartingSlide = false;
 			
-			for (var i = 0; i < nextSlides.length; i++)
+			for (var i = 0; i< 6; i++)
 			{
 				var slide = nextSlides[i];
 				

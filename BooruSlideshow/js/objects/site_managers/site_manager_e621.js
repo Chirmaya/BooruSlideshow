@@ -7,14 +7,13 @@ class SiteManagerE621 extends SiteManager
     
     buildPingRequestUrl()
 	{
-		return this.url + '/post/index.json?limit=1';
+		return this.url + '/posts.json?limit=1';
     }
     
     buildRequestUrl(searchText, pageNumber)
 	{
 		var query = this.buildSiteSpecificQuery(searchText);
-		
-		return this.url + '/post/index.json?tags=' + query + '&page=' + pageNumber + '&limit=' + this.pageLimit;
+		return this.url + '/posts.json?tags=' + query + '&page=' + pageNumber + '&limit=' + this.pageLimit;
 	}
 
 	doesResponseTextIndicateOnline(responseText)
@@ -24,6 +23,7 @@ class SiteManagerE621 extends SiteManager
 		try
 		{
 			jsonPosts = JSON.parse(responseText);
+			// console.log(jsonPosts)
 		}
 		catch(e)
 		{
@@ -35,7 +35,7 @@ class SiteManagerE621 extends SiteManager
 		if (jsonPosts == null)
 			return false;
 		
-		return (jsonPosts.length > 0);
+		return (jsonPosts.posts.length > 0);
 	}
 
 	addSlides(responseText)
@@ -43,22 +43,39 @@ class SiteManagerE621 extends SiteManager
 		this.addJsonSlides(responseText);
 	}
 
+	// condenseTags(jsonPost){
+	// 	console.log(jsonPost)
+	// 	throw new Error()
+	// 	var arr = []
+	// 	for(var prop in jsonPost.tags){
+	// 		arr = arr.concat(jsonPost.tags[prop])
+	// 	}
+	// 	return arr.join(" ")
+	// }
+
 	addSlide(jsonPost)
 	{
+		// console.log(jsonPost)
 		if (!jsonPost.hasOwnProperty('id') ||
-			!jsonPost.hasOwnProperty('file_url') ||
-			!jsonPost.hasOwnProperty('preview_url') ||
-			!jsonPost.hasOwnProperty('width') ||
-			!jsonPost.hasOwnProperty('height') ||
+			!jsonPost.hasOwnProperty('file') ||
+			!jsonPost.hasOwnProperty('preview') ||
 			!jsonPost.hasOwnProperty('created_at') ||
 			!jsonPost.hasOwnProperty('score') ||
 			!jsonPost.hasOwnProperty('tags'))
 			return;
+			// console.log("good")
+			jsonPost.file_url = jsonPost.file.url
+			jsonPost.md5 = jsonPost.file.md5
+			if(!jsonPost.file_url) return
+			jsonPost.width = jsonPost.file.width
+			jsonPost.height = jsonPost.file.height
+			jsonPost.preview_url = jsonPost.preview.url
+			// jsonPost.tags = this.condenseTags(jsonPost)
 		
 		if (!this.isPathForSupportedMediaType(jsonPost.file_url))
 			return;
 			
-		if (this.areSomeTagsAreBlacklisted(jsonPost.tags))
+		if (this.areSomeTagsAreBlacklisted(jsonPost.tags, true))
 			return;
 		
 		var url = this.url + '/post/show/' + jsonPost.id;
