@@ -79,7 +79,7 @@ class SlideshowModel{
         this.sitesManager.addSite(SITE_ATFBOORU, pageLimit);
         this.sitesManager.addSite(SITE_DANBOORU, pageLimit);
         this.sitesManager.addSite(SITE_DERPIBOORU, 10);
-        this.sitesManager.addSite(SITE_E621, 40);
+        this.sitesManager.addSite(SITE_E621, pageLimit);
         this.sitesManager.addSite(SITE_GELBOORU, pageLimit);
         //this.sitesManager.addSite(SITE_IBSEARCH, pageLimit);
         this.sitesManager.addSite(SITE_KONACHAN, pageLimit);
