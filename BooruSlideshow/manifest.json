@@ -21,6 +21,7 @@
 	
 	"permissions":
 	[
+		"unlimitedStorage",
 		"storage",
 		"webRequest",
 		"webRequestBlocking",
