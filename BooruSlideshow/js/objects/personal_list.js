@@ -34,6 +34,7 @@ class PersonalList
     add(slide)
     {
         let newItem = slide.clone();
+        console.log(newItem)
         this.personalListItems.push(newItem);
     }
 
@@ -97,7 +98,7 @@ class PersonalList
     get(index)
     {
         let li = this.personalListItems[index];
-        let slide = new Slide(li.siteId, li.id, li.fileUrl, li.previewFileUrl, li.viewableWebsitePostUrl, li.width, li.height, li.date, li.score, li.mediaType, li.md5);
+        let slide = new Slide(li.siteId, li.id, li.fileUrl, li.previewFileUrl, li.viewableWebsitePostUrl, li.width, li.height, li.date, li.score, li.mediaType, li.md5, li.tags);
         return slide;
     }
 

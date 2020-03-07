@@ -53,7 +53,8 @@ class SiteManagerRealbooru extends SiteManager
 					new Date(xmlPost.getAttribute('created_at')),
 					xmlPost.getAttribute('score'),
 					this.getMediaTypeFromPath(xmlPost.getAttribute('file_url')),
-					xmlPost.getAttribute('md5')
+					xmlPost.getAttribute('md5'),
+					xmlPost.getAttribute('tags')
 				);
 				
 				this.allUnsortedSlides.push(newSlide);

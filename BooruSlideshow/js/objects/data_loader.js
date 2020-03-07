@@ -294,5 +294,6 @@ class DataLoader
     savePersonalList()
     {
         chrome.storage.local.set({'personalListItems': this._model.personalList.personalListItems});
+        // console.log("Saved", this._model.personalList.personalListItems)
     }
 }

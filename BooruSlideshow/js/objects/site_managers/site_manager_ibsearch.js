@@ -72,7 +72,8 @@ class SiteManagerIbSearch extends SiteManager
 			date,
 			0,// No score
 			this.getMediaTypeFromPath(jsonPost.path),
-			jsonPost.md5
+			jsonPost.md5,
+			jsonPost.tags
 		);
 		
 		this.allUnsortedSlides.push(newSlide);

@@ -591,6 +591,7 @@ class SitesManager{
 		if (this.currentSlideNumber < this.getTotalSlideNumber())
 		{
 			var nextSlides = this.getNextSlidesForThumbnails();
+			if(!nextSlides) return
 			var foundStartingSlide = false;
 			
 			for (var i = 0; i< 6; i++)

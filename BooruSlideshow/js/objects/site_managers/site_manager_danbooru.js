@@ -52,7 +52,8 @@ class SiteManagerDanbooru extends SiteManager
 			{
 				if (this.areSomeTagsAreBlacklisted(jsonPost.tag_string))
 					return;
-				
+				// console.log(jsonPost)
+
 				var newSlide = new Slide(
 					SITE_DANBOORU,
 					jsonPost.id,
@@ -64,7 +65,8 @@ class SiteManagerDanbooru extends SiteManager
 					new Date(jsonPost.created_at),
 					jsonPost.score,
 					this.getMediaTypeFromPath(jsonPost.file_url),
-					jsonPost.md5
+					jsonPost.md5,
+					jsonPost.tag_string
 				);
 				this.allUnsortedSlides.push(newSlide);
 			}

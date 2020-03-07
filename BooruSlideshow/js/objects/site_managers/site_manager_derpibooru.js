@@ -120,7 +120,8 @@ class SiteManagerDerpibooru extends SiteManager
 					new Date(jsonPost.created_at),
 					jsonPost.score,
 					this.getMediaTypeFromPath(jsonPost.image),
-					jsonPost.sha512_hash
+					jsonPost.sha512_hash,
+					jsonPost.tags
 				);
 				this.allUnsortedSlides.push(newSlide);
 			}

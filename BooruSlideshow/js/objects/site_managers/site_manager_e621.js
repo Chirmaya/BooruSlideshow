@@ -103,8 +103,10 @@ class SiteManagerE621 extends SiteManager
 			date,
 			jsonPost.score,
 			this.getMediaTypeFromPath(jsonPost.file_url),
-			jsonPost.md5
+			jsonPost.md5,
+			jsonPost.tags
 		);
+		// console.log(newSlide)
 		this.allUnsortedSlides.push(newSlide);
 	}
 }

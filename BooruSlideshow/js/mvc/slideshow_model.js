@@ -608,6 +608,7 @@ class SlideshowModel{
             this.personalList.tryToAdd(currentSlide);
         }
 
+        // console.log("Added")
         this.dataLoader.savePersonalList();
         this.favoriteButtonUpdatedEvent.notify();
     }

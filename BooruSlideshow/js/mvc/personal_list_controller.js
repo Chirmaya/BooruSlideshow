@@ -127,6 +127,7 @@ class PersonalListController
     nextNavButtonClicked()
     {
         this._model.increaseCurrentSlideNumber();
+        // console.log(this._model.getCurrentSlide())
     }
 
     lastNavButtonClicked()

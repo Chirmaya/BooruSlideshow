@@ -1,6 +1,6 @@
 class Slide
 {
-	constructor(siteId, id, fileUrl, previewFileUrl, viewableWebsitePostUrl, width, height, date, score, mediaType, md5)
+	constructor(siteId, id, fileUrl, previewFileUrl, viewableWebsitePostUrl, width, height, date, score, mediaType, md5, tags)
 	{
 		this.siteId = siteId;
 		this.id = id;
@@ -18,11 +18,12 @@ class Slide
 		this.preloadingImage = null;
 		this.preloadingVideo = null;
 		this.callbackToRunAfterPreloadingFinishes = null;
-		this.tags = null;
+		this.tags = tags;
 	}
 
 	clone()
 	{
+		// console.log(this.tags)
 		return new Slide(
 			this.siteId,
 			this.id,
@@ -34,7 +35,8 @@ class Slide
 			this.date,
 			this.score,
 			this.mediaType,
-			this.md5
+			this.md5,
+			this.tags
 		);
 	}
 

@@ -42,18 +42,21 @@ class SiteManagerSafebooru extends SiteManager
 				if (this.areSomeTagsAreBlacklisted(xmlPost.getAttribute('tags')))
 					return;
 
+					// console.log(xmlPost.getAttribute('preview_url'))
+
 				var newSlide = new Slide(
 					SITE_SAFEBOORU,
 					xmlPost.getAttribute('id'),
 					this.reformatFileUrl(xmlPost.getAttribute('file_url')),
-					this.reformatFileUrl(xmlPost.getAttribute('preview_url')),
+					this.reformatFileUrl(xmlPost.getAttribute('file_url')),
 					this.url + '/index.php?page=post&s=view&id=' + xmlPost.getAttribute('id'),
 					xmlPost.getAttribute('width'),
 					xmlPost.getAttribute('height'),
 					new Date(xmlPost.getAttribute('created_at')),
 					xmlPost.getAttribute('score'),
 					this.getMediaTypeFromPath(xmlPost.getAttribute('file_url')),
-					xmlPost.getAttribute('md5')
+					xmlPost.getAttribute('md5'),
+					xmlPost.getAttribute('tags')
 				);
 				
 				this.allUnsortedSlides.push(newSlide);
