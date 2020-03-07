@@ -1,5 +1,12 @@
 Changelog
 
+Version 8.2
+* [Change] Meta data change
+
+Version 8.1
+* [Feature] Press E -> Opens current image in new tab
+* [Fix] E621 updated, now compatible
+
 Version 8.0
 * [Feature] Favorites (with simple navigation)
 * [Feature] Press G -> Adds the current image to your personal list
