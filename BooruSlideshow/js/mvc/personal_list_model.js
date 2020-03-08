@@ -90,7 +90,7 @@ class PersonalListModel{
                     let tags = (" " + item.tags.split(" ").join("  ") + " ")
                     let matched = tags.match(notRegex)
                     if(matched) return false
-                }else if(filterTextAsArray[i].startsWith("-") && filterTextAsArray[i].endsWith("*") && item.tags.includes(filterTextAsArray[i].slice(1, -1))){
+                }else if(filterTextAsArray[i].startsWith("-") && filterTextAsArray[i].endsWith("*") && item.tags.includes(" " + filterTextAsArray[i].slice(1, -1))){
                     return false
                 }else if(filterTextAsArray[i].startsWith("~")){
                     let tags = (" " + item.tags.split(" ").join("  ") + " ")

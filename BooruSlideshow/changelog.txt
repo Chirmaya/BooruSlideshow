@@ -1,5 +1,8 @@
 Changelog
 
+Version 8.5
+* [Feature] Wildcards, ors and nots added to the favorites filter (end with *, start with ~, start with -, respectively. You can not wildcard as well ex. -male*)
+
 Version 8.4
 * [Fix] E621 bug
 
