@@ -45,6 +45,7 @@ class SiteManagerAtfBooru extends SiteManager
 
 	addSlide(jsonPost)
 	{
+		// console.log(jsonPost)
 		if (jsonPost.hasOwnProperty('file_url') &&
 			jsonPost.hasOwnProperty('preview_file_url'))
 		{
@@ -52,6 +53,8 @@ class SiteManagerAtfBooru extends SiteManager
 			{
 				if (this.areSomeTagsAreBlacklisted(jsonPost.tag_string))
 					return;
+				if(!this.isRatingAllowed(jsonPost.rating))
+					return
 			
 				var newSlide = new Slide(
 					SITE_ATFBOORU,

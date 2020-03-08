@@ -108,6 +108,10 @@ class SiteManagerDerpibooru extends SiteManager
 				
 				if (this.areSomeTagsAreBlacklisted(tags))
 					return;
+				jsonPost.rating = jsonPost.tags.includes("explicit") ? "e" : jsonPost.tags.includes("suggestive") || jsonPost.tags.includes("questionable") ? "q" : "s"
+				if(!this.isRatingAllowed(jsonPost.rating))
+					return
+				// console.log(jsonPost)
 				
 				var newSlide = new Slide(
 					SITE_DERPIBOORU,
@@ -121,7 +125,7 @@ class SiteManagerDerpibooru extends SiteManager
 					jsonPost.score,
 					this.getMediaTypeFromPath(jsonPost.image),
 					jsonPost.sha512_hash,
-					jsonPost.tags
+					tags
 				);
 				this.allUnsortedSlides.push(newSlide);
 			}

@@ -45,6 +45,7 @@ class SiteManagerDanbooru extends SiteManager
 
 	addSlide(jsonPost)
 	{
+		// console.log(jsonPost)
 		if (jsonPost.hasOwnProperty('file_url') &&
 			jsonPost.hasOwnProperty('preview_file_url'))
 		{
@@ -53,6 +54,8 @@ class SiteManagerDanbooru extends SiteManager
 				if (this.areSomeTagsAreBlacklisted(jsonPost.tag_string))
 					return;
 				// console.log(jsonPost)
+				if(!this.isRatingAllowed(jsonPost.rating))
+					return
 
 				var newSlide = new Slide(
 					SITE_DANBOORU,

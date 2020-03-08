@@ -24,7 +24,7 @@ class PersonalListView
         this.maxHeightChangedEvent = new Event(this);
         this.autoFitSlideChangedEvent = new Event(this);
         this.removeCurrentImageFromFavesPressedEvent = new Event(this);
-        
+
         this.isSettingVolume = false;
         this.isSettingMute = false;
     
@@ -143,7 +143,8 @@ class PersonalListView
                 key == D_KEY_ID ||
                 key == F_KEY_ID ||
                 key == L_KEY_ID ||
-                key == G_KEY_ID))
+                key == G_KEY_ID ||
+                key == E_KEY_ID))
             {
                 return;
             }
@@ -184,6 +185,9 @@ class PersonalListView
                 {
                     _this.removeCurrentImageFromFavesPressedEvent.notify();
                 }
+                if(key == E_KEY_ID){
+                    _this.openCurrentSlide();
+                }
             }
         });
     
@@ -218,6 +222,12 @@ class PersonalListView
         this.uiElements.autoFitSlideCheckBox.addEventListener('change', function () {
             _this.autoFitSlideChangedEvent.notify();
         });
+    }
+
+    openCurrentSlide(){
+        let currentSlide = this._model.getCurrentSlide();
+        if(currentSlide == null) return
+        window.open(currentSlide.viewableWebsitePostUrl, "_blank")
     }
 
     clearUI() {

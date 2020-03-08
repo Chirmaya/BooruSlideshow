@@ -43,15 +43,14 @@ class SiteManagerE621 extends SiteManager
 		this.addJsonSlides(responseText);
 	}
 
-	// condenseTags(jsonPost){
-	// 	console.log(jsonPost)
-	// 	throw new Error()
-	// 	var arr = []
-	// 	for(var prop in jsonPost.tags){
-	// 		arr = arr.concat(jsonPost.tags[prop])
-	// 	}
-	// 	return arr.join(" ")
-	// }
+	condenseTags(jsonPost){
+		// console.log(jsonPost)
+		var arr = []
+		for(var prop in jsonPost.tags){
+			arr = arr.concat(jsonPost.tags[prop])
+		}
+		return arr.join(" ")
+	}
 
 	addSlide(jsonPost)
 	{
@@ -70,10 +69,14 @@ class SiteManagerE621 extends SiteManager
 			jsonPost.width = jsonPost.file.width
 			jsonPost.height = jsonPost.file.height
 			jsonPost.preview_url = jsonPost.preview.url
-			// jsonPost.tags = this.condenseTags(jsonPost)
+			jsonPost.tags = this.condenseTags(jsonPost)
+			// console.log(jsonPost.tags)
 		
 		if (!this.isPathForSupportedMediaType(jsonPost.file_url))
 			return;
+
+		if(!this.isRatingAllowed(jsonPost.rating))
+		return
 			
 		if (this.areSomeTagsAreBlacklisted(jsonPost.tags, true))
 			return;

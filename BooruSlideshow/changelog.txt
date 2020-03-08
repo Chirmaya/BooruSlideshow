@@ -1,5 +1,9 @@
 Changelog
 
+Verson 8.3
+* [Feature] Filter favorites
+* [Feature] Checkboxes to include ratings (Explicit, Questionable and Safe) (These are tagged by users on sites, this filters it by what they believe it is)
+
 Version 8.2
 * [Change] Meta data change
 

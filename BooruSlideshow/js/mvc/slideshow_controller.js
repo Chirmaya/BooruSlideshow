@@ -103,6 +103,18 @@ class SlideshowController
         this._view.includeWebmsChangedEvent.attach(function () {
             _this.includeWebmsChanged();
         });
+
+        this._view.includeExplicitChangedEvent.attach(function () {
+            _this.includeExplicitChanged();
+        });
+
+        this._view.includeQuestionableChangedEvent.attach(function () {
+            _this.includeQuestionableChanged();
+        });
+
+        this._view.includeSafeChangedEvent.attach(function () {
+            _this.includeSafeChanged();
+        });
         
         this._view.hideBlacklistChangedEvent.attach(function () {
             _this.hideBlacklistChanged();
@@ -325,6 +337,27 @@ class SlideshowController
         var includeWebms = this._view.getIncludeWebms();
 
         this._model.setIncludeWebms(includeWebms);
+    }
+
+    includeExplicitChanged()
+    {
+        var includeExplicit = this._view.getIncludeExplicit();
+
+        this._model.setIncludeExplicit(includeExplicit);
+    }
+
+    includeQuestionableChanged()
+    {
+        var includeQuestionable = this._view.getIncludeQuestionable();
+
+        this._model.setIncludeQuestionable(includeQuestionable);
+    }
+
+    includeSafeChanged()
+    {
+        var includeSafe = this._view.getIncludeSafe();
+
+        this._model.setIncludeSafe(includeSafe);
     }
 	
     hideBlacklistChanged()

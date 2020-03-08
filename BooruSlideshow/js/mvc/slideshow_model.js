@@ -30,6 +30,9 @@ class SlideshowModel{
         this.includeImages = true;
         this.includeGifs = true;
         this.includeWebms = false;
+        this.includeExplicit = false
+        this.includeQuestionable = false
+        this.includeSafe = true
         this.hideBlacklist = false;
         this.blacklist = '';
         this.derpibooruApiKey = '';
@@ -55,6 +58,9 @@ class SlideshowModel{
         this.includeImagesUpdatedEvent = new Event(this);
         this.includeGifsUpdatedEvent = new Event(this);
         this.includeWebmsUpdatedEvent = new Event(this);
+        this.includeExplicitUpdatedEvent = new Event(this);
+        this.includeQuestionableUpdatedEvent = new Event(this);
+        this.includeSafeUpdatedEvent = new Event(this);
         this.hideBlacklistUpdatedEvent = new Event(this);
         this.blacklistUpdatedEvent = new Event(this);
         this.derpibooruApiKeyUpdatedEvent = new Event(this);
@@ -538,6 +544,30 @@ class SlideshowModel{
         this.dataLoader.saveIncludeWebms();
 
         this.includeWebmsUpdatedEvent.notify();
+    }
+
+    setIncludeExplicit(onOrOff){
+        this.includeExplicit = onOrOff;
+
+        this.dataLoader.saveIncludeExplicit();
+
+        this.includeExplicitUpdatedEvent.notify();
+    }
+
+    setIncludeQuestionable(onOrOff){
+        this.includeQuestionable = onOrOff;
+
+        this.dataLoader.saveIncludeQuestionable();
+
+        this.includeQuestionableUpdatedEvent.notify();
+    }
+
+    setIncludeSafe(onOrOff){
+        this.includeSafe = onOrOff;
+
+        this.dataLoader.saveIncludeSafe();
+
+        this.includeSafeUpdatedEvent.notify();
     }
 	
     setHideBlacklist(onOrOff)

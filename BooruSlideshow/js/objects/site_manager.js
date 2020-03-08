@@ -265,6 +265,13 @@ class SiteManager
 			(mediaType == MEDIA_TYPE_VIDEO && this.sitesManager.model.includeWebms);
 	}
 
+	isRatingAllowed(rating){
+		if(!this.sitesManager.model.includeExplicit && !this.sitesManager.model.includeQuestionable && !this.sitesManager.model.includeSafe) return true
+		return (rating == "e" && this.sitesManager.model.includeExplicit) || 
+		(rating == "q" && this.sitesManager.model.includeQuestionable) ||
+		(rating == "s" && this.sitesManager.model.includeSafe)
+	}
+
 	areSomeTagsAreBlacklisted(tags, e6)
 	{
 		return this.sitesManager.model.areSomeTagsAreBlacklisted(tags, e6);

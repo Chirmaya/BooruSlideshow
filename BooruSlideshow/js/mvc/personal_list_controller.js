@@ -6,6 +6,18 @@ class PersonalListController
         this._view = new PersonalListView(this._model, uiElements);
         this._model.view = this._view;
 
+        setTimeout(() => {
+            if(!this._model.personalList.indexed){
+                this._view.displayWarningMessage("Your favorites are not indexed, filtering will be inaccurate.")
+                var checkInterval = setInterval(() => {
+                    if(this._model.personalList.indexed){ 
+                        this._view.clearWarningMessage()
+                        clearInterval(checkInterval)
+                    }
+                }, 5000)
+            }
+        }, 1000)
+
         this._view.updateOptions();
 
         var _this = this;
@@ -178,6 +190,16 @@ class PersonalListController
         this._view.removeFocusFromFilterButton();
 
         let filterText = this._model.filterText;
+
+        if(filterText == ""){
+            this._model.filtered = false
+            this._model.filteredPersonalList = null
+            this._view.clearUI();
+            this._view.removeFocusFromFilterButton();
+            this._model.currentListItem = 1
+            this._model.currentSlideChangedEvent.notify()
+            return
+        }
 		
 		//var message = '';
 		
@@ -235,4 +257,5 @@ class PersonalListController
     {
         this._model.removeCurrentImageFromFaves();
     }
+
 }

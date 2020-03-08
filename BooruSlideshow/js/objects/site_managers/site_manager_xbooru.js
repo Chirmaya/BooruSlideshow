@@ -34,6 +34,7 @@ class SiteManagerXbooru extends SiteManager
 
 	addSlide(xmlPost)
 	{
+		console.log(xmlPost)
 		if (xmlPost.hasAttribute('file_url') &&
 			xmlPost.hasAttribute('preview_url'))
 		{
@@ -41,6 +42,8 @@ class SiteManagerXbooru extends SiteManager
 			{
 				if (this.areSomeTagsAreBlacklisted(xmlPost.getAttribute('tags')))
 					return;
+				if(!this.isRatingAllowed(xmlPost.getAttribute('rating')))
+					return
 
 				var newSlide = new Slide(
 					SITE_XBOORU,

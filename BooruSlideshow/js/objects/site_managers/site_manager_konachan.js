@@ -45,6 +45,7 @@ class SiteManagerKonachan extends SiteManager
 
 	addSlide(jsonPost)
 	{
+		// console.log(jsonPost)
 		if (!jsonPost.hasOwnProperty('id') ||
 			!jsonPost.hasOwnProperty('file_url') ||
 			!jsonPost.hasOwnProperty('preview_url') ||
@@ -60,6 +61,9 @@ class SiteManagerKonachan extends SiteManager
 			
 		if (this.areSomeTagsAreBlacklisted(jsonPost.tags))
 			return;
+
+		if(!this.isRatingAllowed(jsonPost.rating))
+			return
 		
 		var url = this.url + '/post/show/' + jsonPost.id;
 		

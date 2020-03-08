@@ -20,6 +20,8 @@ class PersonalListModel{
         this.sitesManager = null;
 
         this.personalList = new PersonalList();
+        this.filtered = false
+        this.filteredPersonalList = null
 
         this.currentSlideChangedEvent = new Event(this);
         this.playingChangedEvent = new Event(this);
@@ -69,6 +71,21 @@ class PersonalListModel{
         //this.sitesManager.resetConnections();
 
         var _this = this;
+        var filterTextAsArray = filterText.split(" ")
+        this.filtered = true
+        var items = this.personalList.personalListItems.filter((item) => {
+            if(!item.tags) return false
+            if(item.tags == "") return false
+            if(typeof item.tags != "string") return false
+            for(let i = 0; i < filterTextAsArray.length; i++){
+                if(!item.tags.includes(filterTextAsArray[i])) return false
+            }
+            return true
+        })
+        this.filteredPersonalList = new PersonalList(items)
+        this.currentListItem = 1
+        this.currentSlideChangedEvent.notify()
+        // console.log(this.filteredPersonalList)
 
         /*this.sitesManager.performFilter(filterText, function () {
 			_this.view.clearInfoMessage();
@@ -98,11 +115,19 @@ class PersonalListModel{
 
     increaseCurrentSlideNumber()
     {
-        if (this.currentListItem < this.personalList.count())
-        {
-            this.currentListItem++;
-            this.currentSlideChangedEvent.notify();
-            this.restartSlideshowIfOn();
+        if(!this.filtered){
+            if (this.currentListItem < this.personalList.count())
+            {
+                this.currentListItem++;
+                this.currentSlideChangedEvent.notify();
+                this.restartSlideshowIfOn();
+            }
+        }else{
+            if (this.currentListItem < this.filteredPersonalList.count()){
+                this.currentListItem++;
+                this.currentSlideChangedEvent.notify();
+                this.restartSlideshowIfOn();
+            }
         }
     }
 	
@@ -122,31 +147,52 @@ class PersonalListModel{
 	
     increaseCurrentSlideNumberByTen()
     {
-        if (this.currentListItem < this.personalList.count())
-        {
-            this.currentListItem += 10;
+        if(!this.filtered){
+            if (this.currentListItem < this.personalList.count())
+            {
+                this.currentListItem += 10;
 
-            if (this.currentListItem > this.personalList.count())
-                this.currentListItem = this.personalList.count();
+                if (this.currentListItem > this.personalList.count())
+                    this.currentListItem = this.personalList.count();
 
-            this.currentSlideChangedEvent.notify();
-            this.restartSlideshowIfOn();
+                this.currentSlideChangedEvent.notify();
+                this.restartSlideshowIfOn();
+            }
+        }else{
+            if (this.currentListItem < this.filteredPersonalList.count()){
+                this.currentListItem += 10;
+
+                if (this.currentListItem > this.filteredPersonalList.count())
+                    this.currentListItem = this.filteredPersonalList.count();
+
+                this.currentSlideChangedEvent.notify();
+                this.restartSlideshowIfOn();
+            }
         }
     }
 
     setSlideNumberToLast()
     {
-        if (this.currentListItem != this.personalList.count())
-        {
-            this.currentListItem = this.personalList.count();
-            this.currentSlideChangedEvent.notify();
-            this.restartSlideshowIfOn();
+        if(!this.filtered){
+            if (this.currentListItem != this.personalList.count())
+            {
+                this.currentListItem = this.personalList.count();
+                this.currentSlideChangedEvent.notify();
+                this.restartSlideshowIfOn();
+            }
+        }else{
+            if (this.currentListItem != this.filteredPersonalList.count())
+            {
+                this.currentListItem = this.filteredPersonalList.count();
+                this.currentSlideChangedEvent.notify();
+                this.restartSlideshowIfOn();
+            }
         }
     }
 
     moveToSlide(id)
     {
-        var index = this.personalList.getIndexById(id);
+        var index = this.filtered ? this.filteredPersonalList.getIndexById(id) : this.personalList.getIndexById(id);
 
         if (index > -1)
         {
@@ -242,17 +288,17 @@ class PersonalListModel{
 
     getPersonalListItemCount()
     {
-        return this.personalList.count();
+        return this.filtered ? this.filteredPersonalList.count() : this.personalList.count();
     }
 
     hasPersonalListItems()
     {
-        return (this.personalList.count() > 0);
+        return (this.filtered ? this.filteredPersonalList.count() : this.personalList.count() > 0);
     }
 
     hasNextSlide()
     {
-        return (this.personalList.count() > this.getCurrentSlideNumber());
+        return (this.filtered ? this.filteredPersonalList.count() : this.personalList.count() > this.getCurrentSlideNumber());
     }
 
     getCurrentSlide()
@@ -260,7 +306,7 @@ class PersonalListModel{
         if (this.currentListItem == 0)
             return null;
         
-        return this.personalList.get(this.currentListItem - 1);
+        return this.filtered ? this.filteredPersonalList.get(this.currentListItem - 1) : this.personalList.get(this.currentListItem - 1);
     }
 
     getCurrentSlideNumber()
@@ -270,7 +316,7 @@ class PersonalListModel{
 
     getNextListItemsForThumbnails()
     {
-        return this.personalList.getNextItemsForThumbnails();
+        return this.filtered ? this.filteredPersonalList.getNextItemsForThumbnails() : this.personalList.getNextItemsForThumbnails();
     }
 
     areMaxWithAndHeightEnabled()
@@ -289,8 +335,8 @@ class PersonalListModel{
 
         this.dataLoader.savePersonalList();
 
-        if (this.currentListItem > this.personalList.count())
-            this.currentListItem = this.personalList.count();
+        if (this.currentListItem > (this.filtered ? this.filteredPersonalList.count() : this.personalList.count()))
+            this.currentListItem = this.filtered ? this.filteredPersonalList.count() : this.personalList.count();
 
         this.personalListLoadedEvent.notify();
     }

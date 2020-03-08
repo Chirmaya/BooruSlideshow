@@ -50,7 +50,7 @@ class WebRequester
                 }
 			}
 			
-			onAfterAnyResponse();
+			if(onAfterAnyResponse != null) onAfterAnyResponse();
 		};
 		
 		xhr.onerror = function() {

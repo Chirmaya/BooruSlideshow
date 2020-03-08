@@ -27,6 +27,9 @@ class SlideshowView
         this.includeImagesChangedEvent = new Event(this);
         this.includeGifsChangedEvent = new Event(this);
         this.includeWebmsChangedEvent = new Event(this);
+        this.includeExplicitChangedEvent = new Event(this);
+        this.includeQuestionableChangedEvent = new Event(this);
+        this.includeSafeChangedEvent = new Event(this);
         this.hideBlacklistChangedEvent = new Event(this);
         this.blacklistChangedEvent = new Event(this);
         this.derpibooruApiKeyChangedEvent = new Event(this);
@@ -97,6 +100,18 @@ class SlideshowView
         
         this._model.includeWebmsUpdatedEvent.attach(function () {
             _this.updateIncludeWebms();
+        });
+
+        this._model.includeExplicitUpdatedEvent.attach(function () {
+            _this.updateIncludeExplicit();
+        });
+
+        this._model.includeQuestionableUpdatedEvent.attach(function () {
+            _this.updateIncludeQuestionable();
+        });
+
+        this._model.includeSafeUpdatedEvent.attach(function () {
+            _this.updateIncludeSafe();
         });
         
         this._model.hideBlacklistUpdatedEvent.attach(function () {
@@ -305,6 +320,18 @@ class SlideshowView
         this.uiElements.includeWebmsCheckBox.addEventListener('change', function () {
             _this.includeWebmsChangedEvent.notify();
         });
+
+        this.uiElements.includeExplicitCheckBox.addEventListener('change', function () {
+            _this.includeExplicitChangedEvent.notify();
+        });
+
+        this.uiElements.includeQuestionableCheckBox.addEventListener('change', function () {
+            _this.includeQuestionableChangedEvent.notify();
+        });
+
+        this.uiElements.includeSafeCheckBox.addEventListener('change', function () {
+            _this.includeSafeChangedEvent.notify();
+        });
         
         this.uiElements.blacklist.addEventListener('change', function () {
             _this.blacklistChangedEvent.notify();
@@ -408,14 +435,15 @@ class SlideshowView
 		{
 			var message = '';
 		
-			var includingImagesOrGifs = (this._model.includeImages || this._model.includeGifs);
+            var includingImagesOrGifs = (this._model.includeImages || this._model.includeGifs);
+            var {explicit, questionable, safe} = {"explicit":this._model.includeExplicit,"questionable":this._model.includeQuestionable,"safe":this._model.includeSafe}
 			
 			if (includingImagesOrGifs && this._model.includeWebms)
-				message = 'No images or videos were found.';
+				message = `No ${explicit && questionable && safe ? "explicit," : explicit && (questionable || safe) ? "explicit or" : explicit ? "explicit" : ""} ${questionable && safe ? "questionable or" : questionable ? "questionable" : ""} ${safe ? "safe" : ""} images or videos were found.`;
 			else if (includingImagesOrGifs && !this._model.includeWebms)
-				message = 'No images were found.';
+				message = `No ${explicit && questionable && safe ? "explicit," : explicit && (questionable || safe) ? "explicit or" : explicit ? "explicit" : ""} ${questionable && safe ? "questionable or" : questionable ? "questionable" : ""} ${safe ? "safe" : ""} images were found.`;
 			else if (!includingImagesOrGifs && this._model.includeWebms)
-				message = 'No videos were found.';
+				message = `No ${explicit && questionable && safe ? "explicit," : explicit && (questionable || safe) ? "explicit or" : explicit ? "explicit" : ""} ${questionable && safe ? "questionable or" : questionable ? "questionable" : ""} ${safe ? "safe" : ""} videos were found.`;
 			
             this.displayWarningMessage(message);
         }
@@ -849,6 +877,18 @@ class SlideshowView
         return this.uiElements.includeWebmsCheckBox.checked;
     }
 
+    getIncludeExplicit() {
+        return this.uiElements.includeExplicitCheckBox.checked;
+    }
+
+    getIncludeQuestionable() {
+        return this.uiElements.includeQuestionableCheckBox.checked;
+    }
+
+    getIncludeSafe() {
+        return this.uiElements.includeSafeCheckBox.checked;
+    }
+
     getStoreHistory() {
         return this.uiElements.storeHistoryCheckBox.checked;
     }
@@ -871,6 +911,18 @@ class SlideshowView
 	
 	updateIncludeWebms() {
         this.uiElements.includeWebmsCheckBox.checked = this._model.includeWebms;
+    }
+
+    updateIncludeExplicit() {
+        this.uiElements.includeExplicitCheckBox.checked = this._model.includeExplicit;
+    }
+
+    updateIncludeQuestionable() {
+        this.uiElements.includeQuestionableCheckBox.checked = this._model.includeQuestionable;
+    }
+
+    updateIncludeSafe() {
+        this.uiElements.includeSafeCheckBox.checked = this._model.includeSafe;
     }
 
     updateStoreHistory() {

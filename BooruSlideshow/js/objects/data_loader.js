@@ -19,7 +19,10 @@ class DataLoader
 			'autoFitSlide',
 			'includeImages',
 			'includeGifs',
-			'includeWebms',
+            'includeWebms',
+            'includeExplicit',
+            'includeQuestionable',
+            'includeSafe',
 			'hideBlacklist',
 			'blacklist',
             'derpibooruApiKey',
@@ -37,7 +40,10 @@ class DataLoader
 					var autoFitSlide = obj['autoFitSlide'];
 					var includeImages = obj['includeImages'];
 					var includeGifs = obj['includeGifs'];
-					var includeWebms = obj['includeWebms'];
+                    var includeWebms = obj['includeWebms'];
+                    var includeExplicit = obj['includeExplicit'];
+                    var includeQuestionable = obj['includeQuestionable'];
+                    var includeSafe = obj['includeSafe'];
 					var hideBlacklist = obj['hideBlacklist'];
 					var blacklist = obj['blacklist'];
 					var derpibooruApiKey = obj['derpibooruApiKey'];
@@ -144,6 +150,30 @@ class DataLoader
                                 _this._model.setIncludeWebms(includeWebms);
                             }
                         }
+
+                        if (includeExplicit != null)
+                        {
+                            if (_this._model.includeExplicit != includeExplicit)
+                            {
+                                _this._model.setIncludeExplicit(includeExplicit);
+                            }
+                        }
+
+                        if (includeQuestionable != null)
+                        {
+                            if (_this._model.includeQuestionable != includeQuestionable)
+                            {
+                                _this._model.setIncludeQuestionable(includeQuestionable);
+                            }
+                        }
+
+                        if (includeSafe != null)
+                        {
+                            if (_this._model.includeSafe != includeSafe)
+                            {
+                                _this._model.setIncludeSafe(includeSafe);
+                            }
+                        }
                         
                         if (hideBlacklist != null)
                         {
@@ -195,7 +225,7 @@ class DataLoader
 					}
 					else
 					{
-                        var personalList = new PersonalList(personalListItems);
+                        var personalList = new PersonalList(personalListItems, _this);
 
 						if (_this._model.personalList != personalList)
 						{
@@ -265,6 +295,21 @@ class DataLoader
     {
         chrome.storage.sync.set({'includeWebms': this._model.includeWebms});
     }
+
+    saveIncludeExplicit()
+    {
+        chrome.storage.sync.set({'includeExplicit': this._model.includeExplicit});
+    }
+
+    saveIncludeQuestionable()
+    {
+        chrome.storage.sync.set({'includeQuestionable': this._model.includeQuestionable});
+    }
+
+    saveIncludeSafe()
+    {
+        chrome.storage.sync.set({'includeSafe': this._model.includeSafe});
+    }
 	
     saveHideBlacklist()
     {
@@ -291,9 +336,10 @@ class DataLoader
         chrome.storage.sync.set({'searchHistory': this._model.searchHistory});
     }
 
-    savePersonalList()
+    savePersonalList(items)
     {
-        chrome.storage.local.set({'personalListItems': this._model.personalList.personalListItems});
+        // console.log(items)
+        chrome.storage.local.set({'personalListItems': items ? items : this._model.personalList.personalListItems});
         // console.log("Saved", this._model.personalList.personalListItems)
     }
 }
