@@ -72,15 +72,42 @@ class PersonalListModel{
 
         var _this = this;
         var filterTextAsArray = filterText.split(" ")
+        var orTags = filterTextAsArray.filter(tag => tag.startsWith("~"))
+        var orRegex = new RegExp("\\s" + orTags.join("\\s|\\s"))
+        orRegex = new RegExp(orRegex.toString().replace(/~/g, "").slice(1, -1) + "\\s", "gi")
+        var notTags = filterTextAsArray.filter(tag => tag.startsWith("-"))
+        var notRegex = new RegExp("\\s" + notTags.join("\\s|\\s"))
+        notRegex = new RegExp(notRegex.toString().replace(/-/g, "").slice(1, -1) + "\\s", "gi")
         this.filtered = true
         var items = this.personalList.personalListItems.filter((item) => {
+            var passedOr = true
+            var passedWild = true
             if(!item.tags) return false
             if(item.tags == "") return false
             if(typeof item.tags != "string") return false
             for(let i = 0; i < filterTextAsArray.length; i++){
-                if(!item.tags.includes(filterTextAsArray[i])) return false
+                if(filterTextAsArray[i].startsWith("-") && !filterTextAsArray[i].endsWith("*")){
+                    let tags = (" " + item.tags.split(" ").join("  ") + " ")
+                    let matched = tags.match(notRegex)
+                    if(matched) return false
+                }else if(filterTextAsArray[i].startsWith("-") && filterTextAsArray[i].endsWith("*") && item.tags.includes(filterTextAsArray[i].slice(1, -1))){
+                    return false
+                }else if(filterTextAsArray[i].startsWith("~")){
+                    let tags = (" " + item.tags.split(" ").join("  ") + " ")
+                    let matched = tags.match(orRegex)
+                    // console.log(tags, regex, matched)
+                    passedOr = matched && matched.length > 0
+                }else if(filterTextAsArray[i].endsWith("*") && !filterTextAsArray[i].startsWith("-")){
+                    passedWild = item.tags.includes(filterTextAsArray[i].slice(0, -1))
+                }
             }
-            return true
+            let noOrNotWildTags = filterTextAsArray.filter(tag => !tag.startsWith("-") && !tag.startsWith("~") && !tag.endsWith("*"))
+            let regex = new RegExp("\\s" + noOrNotWildTags.join("\\s|\\s"))
+            regex = new RegExp(regex.toString().slice(1, -1) + "\\s", "gi")
+            let tags = (" " + item.tags.split(" ").join("  ") + " ")
+            let matched = tags.match(regex)
+            // console.log(passedOr, passedWild, matched !=  null && matched.length == noOrNotWildTags.length)
+            return (noOrNotWildTags.length == 0 || matched !=  null && matched.length == noOrNotWildTags.length) && passedOr && passedWild
         })
         this.filteredPersonalList = new PersonalList(items)
         this.currentListItem = 1
