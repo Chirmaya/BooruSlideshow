@@ -78,7 +78,7 @@ class SiteManagerE621 extends SiteManager
 		if(!this.isRatingAllowed(jsonPost.rating))
 		return
 			
-		if (this.areSomeTagsAreBlacklisted(jsonPost.tags, true))
+		if (this.areSomeTagsAreBlacklisted(jsonPost.tags))
 			return;
 		
 		var url = this.url + '/post/show/' + jsonPost.id;

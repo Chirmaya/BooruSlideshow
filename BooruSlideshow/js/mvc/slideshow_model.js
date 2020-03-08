@@ -157,42 +157,26 @@ class SlideshowModel{
         this.searchHistoryUpdatedEvent.notify();
     }
 	
-    areSomeTagsAreBlacklisted(tags, e6)
+    areSomeTagsAreBlacklisted(tags)
     {
-        // console.log(e6)
-        if(e6){
-            var blacklistTags = this.blacklist.trim().replace(/(\r\n|\n|\r)/gm," ").split(" ");
-            if (Object.keys(tags).length == 0 || blacklistTags.length == 0)
-                return false;
-            for(let prop in tags){
-                for(let tag of tags[prop]){
-                    if(blacklistTags.includes(tag)){
-                        return true
-                    }
-                }
-            }
-            
+        var postTags = tags.trim().split(" ");
+        var blacklistTags = this.blacklist.trim().replace(/(\r\n|\n|\r)/gm," ").split(" ");
+        
+        if (postTags.length == 0 || blacklistTags.length == 0)
             return false;
-        }else{
-            var postTags = tags.trim().split(" ");
-            var blacklistTags = this.blacklist.trim().replace(/(\r\n|\n|\r)/gm," ").split(" ");
-            
-            if (postTags.length == 0 || blacklistTags.length == 0)
-                return false;
-            
-            for (let blacklistTag of blacklistTags)
+        
+        for (let blacklistTag of blacklistTags)
+        {
+            for (let postTag of postTags)
             {
-                for (let postTag of postTags)
+                if (blacklistTag == postTag)
                 {
-                    if (blacklistTag == postTag)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
-            
-            return false;
         }
+        
+        return false;
 	}
 
     setSlideNumberToFirst()
