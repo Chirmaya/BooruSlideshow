@@ -15,11 +15,19 @@ Firefox Add-on:
 https://addons.mozilla.org/en-US/firefox/addon/booru-slideshow-official/
 
 Electron Apps:
+
 **Coming soon**
+
 https://cdn.is-just-a.dev/booruslideshowelectron-win32-x64.zip
+
 https://cdn.is-just-a.dev/booruslideshowelectron-win32-ia32.zip
+
 https://cdn.is-just-a.dev/booruslideshowelectron-win32-arm64.zip
+
 https://cdn.is-just-a.dev/booruslideshowelectron-linux-x64.zip
+
 https://cdn.is-just-a.dev/booruslideshowelectron-linux-ia32.zip
+
 https://cdn.is-just-a.dev/booruslideshowelectron-linux-armv7l.zip
+
 https://cdn.is-just-a.dev/booruslideshowelectron-linux-arm64.zip
