@@ -13,3 +13,6 @@ This should work:
 
 Firefox Add-on:
 https://addons.mozilla.org/en-US/firefox/addon/booru-slideshow-official/
+
+Electron Apps:
+Coming soon
