@@ -36,6 +36,8 @@ class SlideshowModel{
         this.hideBlacklist = false;
         this.blacklist = '';
         this.derpibooruApiKey = '';
+        this.e621Login = ''
+        this.e621ApiKey = ''
         this.storeHistory = true;
         this.searchHistory = [];
 
@@ -64,6 +66,8 @@ class SlideshowModel{
         this.hideBlacklistUpdatedEvent = new Event(this);
         this.blacklistUpdatedEvent = new Event(this);
         this.derpibooruApiKeyUpdatedEvent = new Event(this);
+        this.e621LoginUpdatedEvent = new Event(this);
+        this.e621ApiKeyUpdatedEvent = new Event(this);
         this.storeHistoryUpdatedEvent = new Event(this);
         this.searchHistoryUpdatedEvent = new Event(this);
         this.favoriteButtonUpdatedEvent = new Event(this);
@@ -581,6 +585,24 @@ class SlideshowModel{
         this.derpibooruApiKeyUpdatedEvent.notify();
     }
 
+    setE621ApiKey(e621ApiKey)
+    {
+        this.e621ApiKey = e621ApiKey;
+
+        this.dataLoader.saveE621ApiKey();
+
+        this.e621ApiKeyUpdatedEvent.notify();
+    }
+
+    setE621Login(e621Login)
+    {
+        this.e621Login = e621Login;
+
+        this.dataLoader.saveE621Login();
+
+        this.e621LoginUpdatedEvent.notify();
+    }
+
     setStoreHistory(onOrOff)
     {
         this.storeHistory = onOrOff;
@@ -636,5 +658,9 @@ class SlideshowModel{
 
         console.log("current slide md5 = " + currentSlide.md5);
         return this.personalList.contains(currentSlide);
+    }
+
+    toggleTags(){
+        this.view.toggleTags()
     }
 }

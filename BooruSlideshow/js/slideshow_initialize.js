@@ -35,9 +35,15 @@ document.addEventListener('DOMContentLoaded', function () {
         'blacklist': document.getElementById('blacklist'),
         'derpibooruApiKey': document.getElementById('derpibooru-api-key'),
         'derpibooruApiKeyContainer': document.getElementById('derpibooru-api-key-container'),
+        'e621LoginContainer': document.getElementById('e621-login-container'),
+        'e621ApiKeyContainer': document.getElementById('e621-api-key-container'),
+        'e621Login': document.getElementById('e621-login'),
+        'e621ApiKey': document.getElementById('e621-api-key'),
         'storeHistoryCheckBox': document.getElementById('store-history'),
 		'clearHistoryButton': document.getElementById('clear-history'),
         'searchHistory': document.getElementById('search-history'),
-        'favoriteButton': document.getElementById('favorite-button')
+        'favoriteButton': document.getElementById('favorite-button'),
+        'tags': document.getElementById('tags'),
+        'slideWrapper': document.getElementById('slide-wrapper')
     });
 });

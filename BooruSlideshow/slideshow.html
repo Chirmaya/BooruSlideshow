@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 	<head>
 		<title>Booru Slideshow</title>
@@ -10,11 +10,12 @@
 		<p id="warning-message"></p>
 		<p id="info-message"></p>
 		<div id="slide-wrapper">
-			<img id="current-image" />
+			<img id="current-image"/>
 			<video id="current-video" autoplay='true' loop='true' volume='0' controls>
 				<source type="video/webm"></source>
 			</video>
 			<img id="loading-animation" src="img/loading.gif" alt="Loading Slide" />
+			<div id="tags" style="display:none;"></div>
 		</div>
 		<div id="indentation">
 			<div id="navigation">
@@ -43,10 +44,16 @@
 						<li><label><input type="checkbox" name="sites-to-search" value="ATFB" />atfbooru.ninja</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="DANB" />danbooru.donmai.us</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="DERP" />derpibooru.org</label></li>
-						<li id="derpibooru-api-key-container"><span><a href="https://derpibooru.org/users/edit" target="_blank">(get API key here)</a></span><br>
+						<li id="derpibooru-api-key-container"><span><a href="https://derpibooru.org/users/edit" target="_blank">(get API key here)</a></span><br />
 							<label><input type="password" id="derpibooru-api-key" /></label>
 						</li>
 						<li><label><input type="checkbox" name="sites-to-search" value="E621" />e621.net</label></li>
+						<li id="e621-login-container">
+							<label><input type="login" id="e621-login" placeholder="E621 username"/></label>
+						</li>
+						<li id="e621-api-key-container"><br /><span><a href="https://e621.net/users/home" target="_blank">(get API key here)</a></span><br />
+							<label><input type="password" id="e621-api-key" placeholder="E621 API key"/></label>
+						</li>
 						<li><label><input type="checkbox" name="sites-to-search" value="GELB" />gelbooru.com<br>
 							<span>(need to be logged in)</span></label></li>
 						<!--<li><label><input type="checkbox" name="sites-to-search" value="IBSE" />ibsearch.xxx</label></li>-->

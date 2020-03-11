@@ -13,7 +13,8 @@ class SiteManagerE621 extends SiteManager
     buildRequestUrl(searchText, pageNumber)
 	{
 		var query = this.buildSiteSpecificQuery(searchText);
-		return this.url + '/posts.json?tags=' + query + '&page=' + pageNumber + '&limit=' + this.pageLimit;
+		let possibleLogin = this.sitesManager.model.e621ApiKey && this.sitesManager.model.e621Login ? '&login=' + this.sitesManager.model.e621Login + '&api_key=' + this.sitesManager.model.e621ApiKey : '';
+		return this.url + '/posts.json?tags=' + query + '&page=' + pageNumber + '&limit=' + this.pageLimit + possibleLogin;
 	}
 
 	doesResponseTextIndicateOnline(responseText)

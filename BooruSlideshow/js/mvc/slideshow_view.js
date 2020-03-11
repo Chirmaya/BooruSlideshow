@@ -33,6 +33,8 @@ class SlideshowView
         this.hideBlacklistChangedEvent = new Event(this);
         this.blacklistChangedEvent = new Event(this);
         this.derpibooruApiKeyChangedEvent = new Event(this);
+        this.e621LoginChangedEvent = new Event(this);
+        this.e621ApiKeyChangedEvent = new Event(this);
         this.storeHistoryChangedEvent = new Event(this);
         this.clearHistoryClickedEvent = new Event(this);
         this.favoriteKeyPressedEvent = new Event(this);
@@ -126,6 +128,14 @@ class SlideshowView
             _this.updateDerpibooruApiKey();
         });
 
+        this._model.e621ApiKeyUpdatedEvent.attach(function () {
+            _this.updateE621ApiKey();
+        });
+
+        this._model.e621LoginUpdatedEvent.attach(function () {
+            _this.updateE621Login();
+        });
+
         this._model.storeHistoryUpdatedEvent.attach(function () {
             _this.updateStoreHistory();
         });
@@ -215,7 +225,8 @@ class SlideshowView
                 key == F_KEY_ID ||
                 key == L_KEY_ID ||
                 key == G_KEY_ID ||
-                key == E_KEY_ID))
+                key == E_KEY_ID ||
+                key == R_KEY_ID))
             {
                 return;
             }
@@ -225,7 +236,9 @@ class SlideshowView
                 document.activeElement !== _this.uiElements.maxWidthTextBox &&
                 document.activeElement !== _this.uiElements.maxHeightTextBox &&
                 document.activeElement !== _this.uiElements.blacklist &&
-                document.activeElement !== _this.uiElements.derpibooruApiKey) {
+                document.activeElement !== _this.uiElements.derpibooruApiKey &&
+                document.activeElement !== _this.uiElements.e621ApiKey &&
+                document.activeElement !== _this.uiElements.e621Login) {
                 
                 if (key == LEFT_ARROW_KEY_ID || key == A_KEY_ID)
                     _this.previousNavButtonClickedEvent.notify();
@@ -259,6 +272,10 @@ class SlideshowView
                 if(key == E_KEY_ID){
                     // console.log("k")
                     _this.openCurrentSlide();
+                }
+                if(key == R_KEY_ID){
+                    // console.log("k")
+                    _this._model.toggleTags();
                 }
             }
         });
@@ -345,6 +362,14 @@ class SlideshowView
             _this.derpibooruApiKeyChangedEvent.notify();
         });
 
+        this.uiElements.e621Login.addEventListener('change', function () {
+            _this.e621LoginChangedEvent.notify();
+        });
+
+        this.uiElements.e621ApiKey.addEventListener('change', function () {
+            _this.e621ApiKeyChangedEvent.notify();
+        });
+
         this.uiElements.storeHistoryCheckBox.addEventListener('change', function () {
             _this.storeHistoryChangedEvent.notify();
         });
@@ -401,6 +426,7 @@ class SlideshowView
     updateSlidesAndNavigation() {
         this.updateSlides();
         this.updateNavigation();
+        this.toggleTags(true)
     }
 
     updateSlides() {
@@ -805,6 +831,12 @@ class SlideshowView
 			if (site == SITE_DERPIBOORU)
 			{
 				this.uiElements.derpibooruApiKeyContainer.style.display = checked ? 'inline' : 'none';
+            }
+            
+            if (site == SITE_E621)
+			{
+                this.uiElements.e621LoginContainer.style.display = checked ? 'inline' : 'none';
+				this.uiElements.e621ApiKeyContainer.style.display = checked ? 'inline' : 'none';
 			}
         }
     }
@@ -983,6 +1015,22 @@ class SlideshowView
         this.uiElements.derpibooruApiKey.value = this._model.derpibooruApiKey;
     }
 
+    getE621ApiKey() {
+        return this.uiElements.e621ApiKey.value.trim();
+    }
+
+    updateE621ApiKey() {
+        this.uiElements.e621ApiKey.value = this._model.e621ApiKey;
+    }
+
+    getE621Login() {
+        return this.uiElements.e621Login.value.trim();
+    }
+
+    updateE621Login() {
+        this.uiElements.e621Login.value = this._model.e621Login;
+    }
+
     openUrlInNewWindow(url) {
         window.open(url, '_blank');
     }
@@ -1015,6 +1063,7 @@ class SlideshowView
             return;
         
         let url = currentSlide.fileUrl;
+        
         let filename = "bs/" + url.substring(url.lastIndexOf('/')+1);
         
         chrome.downloads.download({
@@ -1027,7 +1076,7 @@ class SlideshowView
     openCurrentSlide(){
         let currentSlide = this._model.getCurrentSlide();
         if(currentSlide == null) return
-        window.open(currentSlide.viewableWebsitePostUrl, "_blank")
+        window.open(currentSlide.viewableWebsitePostUrl, '_blank');
     }
 
     updateFavoriteButton() {
@@ -1040,6 +1089,18 @@ class SlideshowView
         {
             console.log("IS NOT FAVE");
             this.uiElements.favoriteButton.classList.remove("faved");
+        }
+    }
+
+    toggleTags(update){
+        if(this.uiElements.tags.style.display == "none" && !update){
+            this.uiElements.tags.style.display = "block"
+            this.uiElements.tags.innerHTML = this._model.getCurrentSlide().tags
+        }else if(this.uiElements.tags.style.display == "block" && update){
+            this.uiElements.tags.innerHTML = this._model.getCurrentSlide().tags
+        }else{
+            this.uiElements.tags.style.display = "none"
+            this.uiElements.tags.innerHTML = ""
         }
     }
 }

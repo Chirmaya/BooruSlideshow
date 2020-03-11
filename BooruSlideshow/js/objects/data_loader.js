@@ -26,6 +26,8 @@ class DataLoader
 			'hideBlacklist',
 			'blacklist',
             'derpibooruApiKey',
+            'e621Login',
+            'e621ApiKey',
             'storeHistory',
             'searchHistory'],
 			function (obj) {
@@ -46,7 +48,9 @@ class DataLoader
                     var includeSafe = obj['includeSafe'];
 					var hideBlacklist = obj['hideBlacklist'];
 					var blacklist = obj['blacklist'];
-					var derpibooruApiKey = obj['derpibooruApiKey'];
+                    var derpibooruApiKey = obj['derpibooruApiKey'];
+                    var e621Login = obj['e621Login'];
+                    var e621ApiKey = obj['e621ApiKey'];
 					var storeHistory = obj['storeHistory'];
 					var searchHistory = obj['searchHistory'];
 					
@@ -192,6 +196,16 @@ class DataLoader
                         {
                             _this._model.setDerpibooruApiKey(derpibooruApiKey);
                         }
+
+                        if (e621Login != null && _this._model.e621Login != e621Login)
+                        {
+                            _this._model.setE621Login(e621Login);
+                        }
+
+                        if (e621ApiKey != null && _this._model.e621ApiKey != e621ApiKey)
+                        {
+                            _this._model.setE621ApiKey(e621ApiKey);
+                        }
                         
                         if (storeHistory != null)
                         {
@@ -324,6 +338,18 @@ class DataLoader
     saveDerpibooruApiKey()
     {
         chrome.storage.sync.set({'derpibooruApiKey': this._model.derpibooruApiKey});
+    }
+
+    saveE621Login()
+    {
+        // console.log("saved")
+        chrome.storage.sync.set({'e621Login': this._model.e621Login});
+    }
+
+    saveE621ApiKey()
+    {
+        // console.log("saved")
+        chrome.storage.sync.set({'e621ApiKey': this._model.e621ApiKey});
     }
 
     saveStoreHistory()

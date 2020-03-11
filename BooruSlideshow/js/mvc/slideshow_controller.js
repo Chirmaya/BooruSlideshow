@@ -128,6 +128,14 @@ class SlideshowController
             _this.derpibooruApiKeyChanged();
         });
 
+        this._view.e621LoginChangedEvent.attach(function () {
+            _this.e621LoginChanged();
+        });
+
+        this._view.e621ApiKeyChangedEvent.attach(function () {
+            _this.e621ApiKeyChanged();
+        });
+
         this._view.storeHistoryChangedEvent.attach(function () {
             _this.storeHistoryChanged();
         });
@@ -379,6 +387,20 @@ class SlideshowController
         var derpibooruApiKey = this._view.getDerpibooruApiKey();
 
         this._model.setDerpibooruApiKey(derpibooruApiKey);
+    }
+
+    e621LoginChanged()
+    {
+        var e621Login = this._view.getE621Login();
+
+        this._model.setE621Login(e621Login);
+    }
+
+    e621ApiKeyChanged()
+    {
+        var e621ApiKey = this._view.getE621ApiKey();
+
+        this._model.setE621ApiKey(e621ApiKey);
     }
 
     storeHistoryChanged()
