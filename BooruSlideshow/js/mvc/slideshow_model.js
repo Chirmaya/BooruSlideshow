@@ -71,6 +71,7 @@ class SlideshowModel{
         this.storeHistoryUpdatedEvent = new Event(this);
         this.searchHistoryUpdatedEvent = new Event(this);
         this.favoriteButtonUpdatedEvent = new Event(this);
+        this.includeDupesUpdatedEvent = new Event(this);
 
         this.dataLoader = new DataLoader(this);
 
@@ -556,6 +557,14 @@ class SlideshowModel{
         this.dataLoader.saveIncludeSafe();
 
         this.includeSafeUpdatedEvent.notify();
+    }
+
+    setIncludeDupes(onOrOff){
+        this.includeDupes = onOrOff;
+
+        this.dataLoader.saveIncludeDupes();
+
+        this.includeDupesUpdatedEvent.notify();
     }
 	
     setHideBlacklist(onOrOff)

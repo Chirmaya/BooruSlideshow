@@ -1,5 +1,11 @@
 Changelog
 
+Version 8.9
+* [Feature] Allow inclusion of duplicate MD5 tags
+
+Version 8.6
+* [Feature] Added E621 login capabilities to see all posts
+
 Version 8.5
 * [Feature] Wildcards, ors and nots added to the favorites filter (end with *, start with ~, start with -, respectively. You can not wildcard as well ex. -male*)
 

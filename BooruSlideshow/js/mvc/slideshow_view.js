@@ -30,6 +30,7 @@ class SlideshowView
         this.includeExplicitChangedEvent = new Event(this);
         this.includeQuestionableChangedEvent = new Event(this);
         this.includeSafeChangedEvent = new Event(this);
+        this.includeDupesChangedEvent = new Event(this);
         this.hideBlacklistChangedEvent = new Event(this);
         this.blacklistChangedEvent = new Event(this);
         this.derpibooruApiKeyChangedEvent = new Event(this);
@@ -114,6 +115,10 @@ class SlideshowView
 
         this._model.includeSafeUpdatedEvent.attach(function () {
             _this.updateIncludeSafe();
+        });
+
+        this._model.includeDupesUpdatedEvent.attach(function () {
+            _this.updateIncludeDupes();
         });
         
         this._model.hideBlacklistUpdatedEvent.attach(function () {
@@ -348,6 +353,10 @@ class SlideshowView
 
         this.uiElements.includeSafeCheckBox.addEventListener('change', function () {
             _this.includeSafeChangedEvent.notify();
+        });
+
+        this.uiElements.includeDupesCheckBox.addEventListener('change', function () {
+            _this.includeDupesChangedEvent.notify();
         });
         
         this.uiElements.blacklist.addEventListener('change', function () {
@@ -921,6 +930,10 @@ class SlideshowView
         return this.uiElements.includeSafeCheckBox.checked;
     }
 
+    getIncludeDupes() {
+        return this.uiElements.includeDupesCheckBox.checked;
+    }
+
     getStoreHistory() {
         return this.uiElements.storeHistoryCheckBox.checked;
     }
@@ -955,6 +968,10 @@ class SlideshowView
 
     updateIncludeSafe() {
         this.uiElements.includeSafeCheckBox.checked = this._model.includeSafe;
+    }
+
+    updateIncludeDupes() {
+        this.uiElements.includeDupesCheckBox.checked = this._model.includeDupes;
     }
 
     updateStoreHistory() {
@@ -1076,7 +1093,7 @@ class SlideshowView
     openCurrentSlide(){
         let currentSlide = this._model.getCurrentSlide();
         if(currentSlide == null) return
-        window.open(currentSlide.viewableWebsitePostUrl, '_blank');
+        window.open(currentSlide.viewableWebsitePostUrl, "_blank")
     }
 
     updateFavoriteButton() {

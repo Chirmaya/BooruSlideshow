@@ -29,7 +29,8 @@ class DataLoader
             'e621Login',
             'e621ApiKey',
             'storeHistory',
-            'searchHistory'],
+            'searchHistory',
+            'includeDupes'],
 			function (obj) {
 				if (obj != null)
 				{
@@ -52,7 +53,8 @@ class DataLoader
                     var e621Login = obj['e621Login'];
                     var e621ApiKey = obj['e621ApiKey'];
 					var storeHistory = obj['storeHistory'];
-					var searchHistory = obj['searchHistory'];
+                    var searchHistory = obj['searchHistory'];
+                    var includeDupes = obj['includeDupes']
 					
 					if (videoVolume == null)
 					{
@@ -176,6 +178,14 @@ class DataLoader
                             if (_this._model.includeSafe != includeSafe)
                             {
                                 _this._model.setIncludeSafe(includeSafe);
+                            }
+                        }
+
+                        if (includeDupes != null)
+                        {
+                            if (_this._model.includeDupes != includeDupes)
+                            {
+                                _this._model.setIncludeDupes(includeDupes);
                             }
                         }
                         
@@ -360,6 +370,12 @@ class DataLoader
     saveSearchHistory()
     {
         chrome.storage.sync.set({'searchHistory': this._model.searchHistory});
+    }
+
+    saveIncludeDupes()
+    {
+        // console.log("saved")
+        chrome.storage.sync.set({'includeDupes': this._model.includeDupes});
     }
 
     savePersonalList(items)

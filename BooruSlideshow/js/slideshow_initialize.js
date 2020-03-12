@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'searchHistory': document.getElementById('search-history'),
         'favoriteButton': document.getElementById('favorite-button'),
         'tags': document.getElementById('tags'),
-        'slideWrapper': document.getElementById('slide-wrapper')
+        'slideWrapper': document.getElementById('slide-wrapper'),
+        'includeDupesCheckBox': document.getElementById('include-dupes')
     });
 });

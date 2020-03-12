@@ -75,12 +75,13 @@ class SitesManager{
 			"blocking",
 			"requestHeaders"
 		];
-		
+
 		chrome.webRequest.onBeforeSendHeaders.addListener(
 			listener,
 			requestFilter,
 			extraInfoSpec
 		);
+		
 	}
 
 	addSite(id, pageLimit)
@@ -247,19 +248,22 @@ class SitesManager{
 			}
 		}
 
+		var _this = this
+
 		slidesFromAllSitesToSort = slidesFromAllSitesToSort.filter(function(slide) {
 			if(slide.md5 === null)
 				return true; //Err on the side of inclusion.
-
-			if(md5Hashes.includes(slide.md5)) {
-				return false;
-			} else {
-				md5Hashes.push(slide.md5);
-				return true;
+			if(!_this.model.view.getIncludeDupes()){
+				if(md5Hashes.includes(slide.md5)) {
+					return false;
+				} else {
+					md5Hashes.push(slide.md5);
+					return true;
+				}
+			}else{
+				return true
 			}
 		});
-
-		var _this = this;
 		
 		slidesFromAllSitesToSort.sort(function(a,b) {
 			var sortingMethod = _this.getSortingMethod();

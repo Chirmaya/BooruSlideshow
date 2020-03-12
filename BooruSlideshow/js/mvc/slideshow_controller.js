@@ -115,6 +115,10 @@ class SlideshowController
         this._view.includeSafeChangedEvent.attach(function () {
             _this.includeSafeChanged();
         });
+
+        this._view.includeDupesChangedEvent.attach(function () {
+            _this.includeDupesChanged();
+        });
         
         this._view.hideBlacklistChangedEvent.attach(function () {
             _this.hideBlacklistChanged();
@@ -366,6 +370,13 @@ class SlideshowController
         var includeSafe = this._view.getIncludeSafe();
 
         this._model.setIncludeSafe(includeSafe);
+    }
+
+    includeDupesChanged()
+    {
+        var includeDupes = this._view.getIncludeDupes();
+
+        this._model.setIncludeDupes(includeDupes);
     }
 	
     hideBlacklistChanged()
