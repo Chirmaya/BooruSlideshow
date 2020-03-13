@@ -790,16 +790,15 @@ class SlideshowView
 
         var newThumbnail = document.createElement("div");
         newThumbnail.classList.add("thumbnail");
-        newThumbnail.setAttribute('title', id);
+        newThumbnail.setAttribute('title', thumbnailSlideId);
 
         var _this = this;
         newThumbnail.onclick = function () {
-
             _this._model.moveToThumbnailSlide(thumbnailSlideId);
         };
 
         var newThumbnailImage = document.createElement("img");
-        newThumbnailImage.id = 'thumbnail-image-' + id;
+        newThumbnailImage.id = 'thumbnail-image-' + thumbnailSlideId;
         newThumbnailImage.classList.add("thumbnail-image");
         newThumbnailImage.src = thumbnailImageUrl;
 
@@ -811,8 +810,8 @@ class SlideshowView
         thumbnailList.appendChild(newThumbnail);
     }
 
-    removeThumbnailGreyness(id) {
-        var thumbnail = document.getElementById('thumbnail-image-' + id);
+    removeThumbnailGreyness(thumbnailSlideId) {
+        var thumbnail = document.getElementById('thumbnail-image-' + thumbnailSlideId);
 
         if (thumbnail != null) {
             this.removeClass(thumbnail, 'thumbnail-image-greyed-out');
@@ -1125,12 +1124,10 @@ class SlideshowView
     updateFavoriteButton() {
         if (this._model.isCurrentSlideFaved())
         {
-            console.log("IS FAVE");
             this.uiElements.favoriteButton.classList.add("faved");
         }
         else
         {
-            console.log("IS NOT FAVE");
             this.uiElements.favoriteButton.classList.remove("faved");
         }
     }

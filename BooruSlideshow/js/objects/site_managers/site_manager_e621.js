@@ -68,12 +68,12 @@ class SiteManagerE621 extends SiteManager
 		
 		if (!this.isPathForSupportedMediaType(jsonPost.file.url))
 			return;
-
+		
 		if (!this.isRatingAllowed(jsonPost.rating))
 			return;
 
 		jsonPost.tags = this.condenseTags(jsonPost.tags);
-			
+		
 		if (this.areSomeTagsAreBlacklisted(jsonPost.tags))
 			return;
 		

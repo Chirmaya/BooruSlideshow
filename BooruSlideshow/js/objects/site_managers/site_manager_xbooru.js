@@ -34,7 +34,6 @@ class SiteManagerXbooru extends SiteManager
 
 	addSlide(xmlPost)
 	{
-		console.log(xmlPost)
 		if (xmlPost.hasAttribute('file_url') &&
 			xmlPost.hasAttribute('preview_url'))
 		{

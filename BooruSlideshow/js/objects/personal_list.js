@@ -26,7 +26,7 @@ class PersonalList
     areAllItemsTagged()
     {
         var items = this.personalListItems.filter(item => !item.tags || typeof item.tags != "string" || item.tags == "");
-
+        
         return items.length == 0;
     }
 
@@ -59,8 +59,8 @@ class PersonalList
                 
                 return;
             }
-
-            if(listItemIndex >= listItems.length){ 
+            
+            if(listItemIndex >= listItems.length - 1){ 
                 clearInterval(interval);
                 console.log("Done tagging personal item list");
                 _this.dataLoader.savePersonalList(listItems);
@@ -69,11 +69,7 @@ class PersonalList
                 return;
             }
 
-            if(listItemIndex % 10 == 0){
-                console.log("Saved personal item list");
-                chrome.storage.sync.set({'savedIndex': listItemIndex});
-                _this.dataLoader.savePersonalList(listItems);
-            }
+            // Will need to handle items that fail. Perhaps the ID is for a deleted image.
 
             if (listItem.siteId == SITE_E621){
                 listItem.tags = await _this.getImageTagsE621(listItem.id, webRequester);
@@ -95,6 +91,14 @@ class PersonalList
                 listItem.tags = await _this.getImageTagsXB(listItem.id, webRequester);
             }else if (listItem.siteId == SITE_YANDERE){
                 listItem.tags = await _this.getImageTagsYand(listItem.id, webRequester);
+            }
+
+            if(listItemIndex % 10 == 0){
+                console.log("Saved personal item list");
+                chrome.storage.sync.set({'savedIndex': listItemIndex});
+                _this.dataLoader.savePersonalList(listItems);
+
+                console.log(listItems);
             }
 
             listItemIndex++;

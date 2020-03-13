@@ -661,7 +661,6 @@ class SlideshowModel{
         if (currentSlide == null)
             return false;
 
-        console.log("current slide md5 = " + currentSlide.md5);
         return this.personalList.contains(currentSlide);
     }
 
