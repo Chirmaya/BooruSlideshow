@@ -54,7 +54,7 @@ class DataLoader
                     var e621ApiKey = obj['e621ApiKey'];
 					var storeHistory = obj['storeHistory'];
                     var searchHistory = obj['searchHistory'];
-                    var includeDupes = obj['includeDupes']
+                    var includeDupes = obj['includeDupes'];
 					
 					if (videoVolume == null)
 					{
@@ -114,7 +114,6 @@ class DataLoader
                             _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_DERPIBOORU);
                             _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_E621);
                             _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_GELBOORU);
-                            //_this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_IBSEARCH);
                             _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_KONACHAN);
                             _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_REALBOORU);
                             _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_RULE34);
@@ -352,13 +351,11 @@ class DataLoader
 
     saveE621Login()
     {
-        // console.log("saved")
         chrome.storage.sync.set({'e621Login': this._model.e621Login});
     }
 
     saveE621ApiKey()
     {
-        // console.log("saved")
         chrome.storage.sync.set({'e621ApiKey': this._model.e621ApiKey});
     }
 
@@ -374,14 +371,11 @@ class DataLoader
 
     saveIncludeDupes()
     {
-        // console.log("saved")
         chrome.storage.sync.set({'includeDupes': this._model.includeDupes});
     }
 
     savePersonalList(items)
     {
-        // console.log(items)
         chrome.storage.local.set({'personalListItems': items ? items : this._model.personalList.personalListItems});
-        // console.log("Saved", this._model.personalList.personalListItems)
     }
 }

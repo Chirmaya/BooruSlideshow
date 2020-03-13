@@ -14,7 +14,6 @@ class SlideshowModel{
             [SITE_DERPIBOORU]: false,
             [SITE_E621]: false,
             [SITE_GELBOORU]: false,
-            //[SITE_IBSEARCH]: false,
             [SITE_KONACHAN]: false,
             [SITE_REALBOORU]: false,
             [SITE_RULE34]: false,
@@ -30,9 +29,9 @@ class SlideshowModel{
         this.includeImages = true;
         this.includeGifs = true;
         this.includeWebms = false;
-        this.includeExplicit = false
-        this.includeQuestionable = false
-        this.includeSafe = true
+        this.includeExplicit = false;
+        this.includeQuestionable = false;
+        this.includeSafe = true;
         this.hideBlacklist = false;
         this.blacklist = '';
         this.derpibooruApiKey = '';
@@ -92,7 +91,6 @@ class SlideshowModel{
         this.sitesManager.addSite(SITE_DERPIBOORU, 10);
         this.sitesManager.addSite(SITE_E621, pageLimit);
         this.sitesManager.addSite(SITE_GELBOORU, pageLimit);
-        //this.sitesManager.addSite(SITE_IBSEARCH, pageLimit);
         this.sitesManager.addSite(SITE_KONACHAN, pageLimit);
         this.sitesManager.addSite(SITE_REALBOORU, pageLimit);
         this.sitesManager.addSite(SITE_RULE34, pageLimit);
@@ -110,7 +108,6 @@ class SlideshowModel{
     {
 		var _this = this;
 		this.sitesManager.pingSites(function(siteManager){
-            // console.log(siteManager)
 			if (!siteManager.isOnline)
 				_this.view.showSiteOffline(siteManager.id);
 		});
@@ -251,9 +248,9 @@ class SlideshowModel{
         this.restartSlideshowIfOn();
     }
 
-    moveToSlide(id)
+    moveToThumbnailSlide(id)
     {
-        if (this.sitesManager.moveToSlide(id))
+        if (this.sitesManager.moveToThumbnailSlide(id))
         {
             this.currentSlideChangedEvent.notify();
             //restartSlideshowIfOn();
@@ -594,15 +591,6 @@ class SlideshowModel{
         this.derpibooruApiKeyUpdatedEvent.notify();
     }
 
-    setE621ApiKey(e621ApiKey)
-    {
-        this.e621ApiKey = e621ApiKey;
-
-        this.dataLoader.saveE621ApiKey();
-
-        this.e621ApiKeyUpdatedEvent.notify();
-    }
-
     setE621Login(e621Login)
     {
         this.e621Login = e621Login;
@@ -610,6 +598,15 @@ class SlideshowModel{
         this.dataLoader.saveE621Login();
 
         this.e621LoginUpdatedEvent.notify();
+    }
+
+    setE621ApiKey(e621ApiKey)
+    {
+        this.e621ApiKey = e621ApiKey;
+
+        this.dataLoader.saveE621ApiKey();
+
+        this.e621ApiKeyUpdatedEvent.notify();
     }
 
     setStoreHistory(onOrOff)
@@ -653,7 +650,6 @@ class SlideshowModel{
             this.personalList.tryToAdd(currentSlide);
         }
 
-        // console.log("Added")
         this.dataLoader.savePersonalList();
         this.favoriteButtonUpdatedEvent.notify();
     }
@@ -669,7 +665,8 @@ class SlideshowModel{
         return this.personalList.contains(currentSlide);
     }
 
-    toggleTags(){
-        this.view.toggleTags()
+    toggleTags()
+    {
+        this.view.toggleTags();
     }
 }

@@ -81,7 +81,6 @@ class SitesManager{
 			requestFilter,
 			extraInfoSpec
 		);
-		
 	}
 
 	addSite(id, pageLimit)
@@ -248,20 +247,27 @@ class SitesManager{
 			}
 		}
 
-		var _this = this
+		var _this = this;
 
-		slidesFromAllSitesToSort = slidesFromAllSitesToSort.filter(function(slide) {
-			if(slide.md5 === null)
+		slidesFromAllSitesToSort = slidesFromAllSitesToSort.filter(function(slide){
+			if (slide.md5 === null)
 				return true; //Err on the side of inclusion.
-			if(!_this.model.view.getIncludeDupes()){
-				if(md5Hashes.includes(slide.md5)) {
+			
+			if (_this.model.view.getIncludeDupes())
+			{
+				return true;
+			}
+			else
+			{
+				if(md5Hashes.includes(slide.md5))
+				{
 					return false;
-				} else {
+				}
+				else
+				{
 					md5Hashes.push(slide.md5);
 					return true;
 				}
-			}else{
-				return true
 			}
 		});
 		
@@ -410,67 +416,18 @@ class SitesManager{
 		}
 	}
 
-	moveToSpecificSlide(specificSlideNumber)
+	moveToThumbnailSlide(thumbnailSlideId)
 	{
-		if (specificSlideNumber > 0 && specificSlideNumber <= this.getTotalSlideNumber())
-		{
-			this.setCurrentSlideNumber(specificSlideNumber);
-		}
-	}
+		var thumbnailSlides = this.getNextSlidesForThumbnails();
 
-	isNextSlidePreloaded(slideId)
-	{
-		var nextSlides = this.getNextSlidesForThumbnails();
+		if (thumbnailSlides == null)
+			return;
 		
-		for (var i = 0; i <= 1; i++)
+		for (var i = 0; i < thumbnailSlides.length; i++)
 		{
-			if(!nextSlides[i]) return
-			var nextSlide = nextSlides[i];
+			var thumbnailSlide = thumbnailSlides[i];
 			
-			if (nextSlide.id == slideId)
-			{
-				return nextSlide.isPreloaded;
-			}
-		}
-		
-		return false;
-	}
-
-	tryToMoveToPreloadedSlide(slideId)
-	{
-		var nextSlides = this.getNextSlidesForThumbnails();
-		
-		for (var i = 0; i< 6; i++)
-		{
-			if(!nextSlides[i]) return
-			var nextSlide = nextSlides[i];
-			
-			if (nextSlide.id == slideId)
-			{
-				if (nextSlide.isPreloaded)
-				{
-					var slideNumber = this.currentSlideNumber + i + 1;
-					
-					this.setCurrentSlideNumber(slideNumber);
-					
-					return true;
-				}
-			}
-		}
-		
-		return false;
-	}
-
-	moveToSlide(slideId)
-	{
-		var nextSlides = this.getNextSlidesForThumbnails();
-		
-		for (var i = 0; i < nextSlides.length; i++)
-		{
-			if(!nextSlides[i]) return
-			var nextSlide = nextSlides[i];
-			
-			if (nextSlide.id == slideId)
+			if (thumbnailSlide.id == thumbnailSlideId)
 			{
 				var slideNumber = this.currentSlideNumber + i + 1;
 				
@@ -496,6 +453,10 @@ class SitesManager{
 		if (this.currentSlideNumber > 0)
 		{
 			var currentSlide = this.getCurrentSlide();
+
+			if (currentSlide == null)
+            	return;
+
 			currentSlide.clearCallback();
 		}
 	}
@@ -525,18 +486,18 @@ class SitesManager{
 
 	getCurrentSlide()
 	{
-		if (this.currentSlideNumber > 0)
-		{
-			return this.allSortedSlides[this.currentSlideNumber - 1];
-		}
+		if (this.currentSlideNumber <= 0)
+			return null;
+		
+		return this.allSortedSlides[this.currentSlideNumber - 1];
 	}
 
 	getNextSlidesForThumbnails()
 	{
-		if (this.currentSlideNumber > 0)
-		{
-			return this.allSortedSlides.slice(this.currentSlideNumber, this.currentSlideNumber + this.maxNumberOfThumbnails);
-		}
+		if (this.currentSlideNumber <= 0)
+			return null;
+		
+		return this.allSortedSlides.slice(this.currentSlideNumber, this.currentSlideNumber + this.maxNumberOfThumbnails);
 	}
 
 	areThereMoreLoadableSlides()
@@ -565,66 +526,77 @@ class SitesManager{
 	{
 		if (this.currentSlideNumber < this.getTotalSlideNumber())
 		{
-			var currentSlide = this.getCurrentSlide();
 			this.preloadNextUnpreloadedSlideIfInRange();
 		}
 	}
 
 	preloadNextUnpreloadedSlideIfInRange()
 	{
-		if (this.currentSlideNumber < this.getTotalSlideNumber())
+		if (this.currentSlideNumber >= this.getTotalSlideNumber())
+			return;
+		
+		var nextSlides = this.getNextSlidesForThumbnails();
+
+		if (nextSlides == null)
+			return;
+		
+		for (var i = 0; i < nextSlides.length; i++)
 		{
-			var nextSlides = this.getNextSlidesForThumbnails();
+			if (!nextSlides[i])
+				return;
 			
-			for (var i = 0; i< 6; i++)
+			var slide = nextSlides[i];
+			
+			if (!slide.isPreloaded)
 			{
-				if(!nextSlides[i]) return
-				var slide = nextSlides[i];
-				
-				if (!slide.isPreloaded)
-				{
-					slide.preload();
-					break;
-				}
+				slide.preload();
+				break;
 			}
 		}
 	}
 
 	preloadNextUnpreloadedSlideAfterThisOneIfInRange(startingSlide)
 	{
-		if (this.currentSlideNumber < this.getTotalSlideNumber())
+		if (this.currentSlideNumber >= this.getTotalSlideNumber())
+			return;
+		
+		var nextSlides = this.getNextSlidesForThumbnails();
+
+		if (nextSlides == null)
+			return;
+		
+		var foundStartingSlide = false;
+		
+		for (var i = 0; i< 6; i++)
 		{
-			var nextSlides = this.getNextSlidesForThumbnails();
-			if(!nextSlides) return
-			var foundStartingSlide = false;
+			var slide = nextSlides[i];
 			
-			for (var i = 0; i< 6; i++)
+			if (foundStartingSlide)
 			{
-				var slide = nextSlides[i];
-				
-				if (foundStartingSlide)
+				if (!slide.isPreloaded)
 				{
-					if (!slide.isPreloaded)
-					{
-						slide.preload();
-						break;
-					}
+					slide.preload();
+					break;
 				}
-				
-				if (startingSlide == slide)
-				{
-					foundStartingSlide = true;
-				}
+			}
+			
+			if (startingSlide == slide)
+			{
+				foundStartingSlide = true;
 			}
 		}
 	}
 
 	isCurrentSlideLoaded()
 	{
-		if (this.currentSlideNumber > 0)
+		let currentSlide = this.getCurrentSlide();
+
+		if (currentSlide == null)
 		{
-			return this.getCurrentSlide().isPreloaded;
+			return false;
 		}
+
+		return currentSlide.isPreloaded;
 	}
 
 	hasAtLeastOneOnlineSiteSelected()

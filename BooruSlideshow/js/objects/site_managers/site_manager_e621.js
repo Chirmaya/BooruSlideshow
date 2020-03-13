@@ -24,7 +24,6 @@ class SiteManagerE621 extends SiteManager
 		try
 		{
 			jsonPosts = JSON.parse(responseText);
-			// console.log(jsonPosts)
 		}
 		catch(e)
 		{
@@ -44,50 +43,46 @@ class SiteManagerE621 extends SiteManager
 		this.addJsonSlides(responseText);
 	}
 
-	condenseTags(jsonPost){
-		// console.log(jsonPost)
-		var arr = []
-		for(var prop in jsonPost.tags){
-			arr = arr.concat(jsonPost.tags[prop])
+	condenseTags(jsonPostTags)
+	{
+		var condensedTagArray = [];
+
+		for(var prop in jsonPostTags)
+		{
+			condensedTagArray = condensedTagArray.concat(jsonPostTags[prop]);
 		}
-		return arr.join(" ")
+
+		return condensedTagArray.join(" ");
 	}
 
 	addSlide(jsonPost)
 	{
-		// console.log(jsonPost)
 		if (!jsonPost.hasOwnProperty('id') ||
 			!jsonPost.hasOwnProperty('file') ||
 			!jsonPost.hasOwnProperty('preview') ||
 			!jsonPost.hasOwnProperty('created_at') ||
 			!jsonPost.hasOwnProperty('score') ||
-			!jsonPost.hasOwnProperty('tags'))
+			!jsonPost.hasOwnProperty('tags') ||
+			!jsonPost.file.hasOwnProperty('url'))
 			return;
-			// console.log("good")
-			jsonPost.file_url = jsonPost.file.url
-			jsonPost.md5 = jsonPost.file.md5
-			if(!jsonPost.file_url) return
-			jsonPost.width = jsonPost.file.width
-			jsonPost.height = jsonPost.file.height
-			jsonPost.preview_url = jsonPost.preview.url
-			jsonPost.tags = this.condenseTags(jsonPost)
-			// console.log(jsonPost.tags)
 		
-		if (!this.isPathForSupportedMediaType(jsonPost.file_url))
+		if (!this.isPathForSupportedMediaType(jsonPost.file.url))
 			return;
 
-		if(!this.isRatingAllowed(jsonPost.rating))
-		return
+		if (!this.isRatingAllowed(jsonPost.rating))
+			return;
+
+		jsonPost.tags = this.condenseTags(jsonPost.tags);
 			
 		if (this.areSomeTagsAreBlacklisted(jsonPost.tags))
 			return;
 		
-		var url = this.url + '/post/show/' + jsonPost.id;
+		var postUrl = this.url + '/post/show/' + jsonPost.id;
 		
-		var prefix = '';
+		var urlPrefix = '';
 		
-		if (url.substring(0, 4) != 'http')
-			prefix = 'https://';
+		if (postUrl.substring(0, 4) != 'http')
+			urlPrefix = 'https://';
 		
 		var date;
 		
@@ -99,18 +94,18 @@ class SiteManagerE621 extends SiteManager
 		var newSlide = new Slide(
 			SITE_E621,
 			jsonPost.id,
-			prefix + jsonPost.file_url,
-			prefix + jsonPost.preview_url,
-			url,
-			jsonPost.width,
-			jsonPost.height,
+			urlPrefix + jsonPost.file.url,
+			urlPrefix + jsonPost.preview.url,
+			postUrl,
+			jsonPost.file.width,
+			jsonPost.file.height,
 			date,
 			jsonPost.score,
-			this.getMediaTypeFromPath(jsonPost.file_url),
-			jsonPost.md5,
+			this.getMediaTypeFromPath(jsonPost.file.url),
+			jsonPost.file.md5,
 			jsonPost.tags
 		);
-		// console.log(newSlide)
+
 		this.allUnsortedSlides.push(newSlide);
 	}
 }

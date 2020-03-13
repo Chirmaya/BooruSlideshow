@@ -53,9 +53,9 @@ class SiteManagerDanbooru extends SiteManager
 			{
 				if (this.areSomeTagsAreBlacklisted(jsonPost.tag_string))
 					return;
-				// console.log(jsonPost)
-				if(!this.isRatingAllowed(jsonPost.rating))
-					return
+				
+				if (!this.isRatingAllowed(jsonPost.rating))
+					return;
 
 				var newSlide = new Slide(
 					SITE_DANBOORU,
@@ -71,6 +71,7 @@ class SiteManagerDanbooru extends SiteManager
 					jsonPost.md5,
 					jsonPost.tag_string
 				);
+				
 				this.allUnsortedSlides.push(newSlide);
 			}
 		}

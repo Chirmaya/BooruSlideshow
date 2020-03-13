@@ -3,7 +3,6 @@ let SITE_DANBOORU = 'DANB';
 let SITE_DERPIBOORU = 'DERP';
 let SITE_E621 = 'E621';
 let SITE_GELBOORU = 'GELB';
-//let SITE_IBSEARCH = 'IBSE';
 let SITE_KONACHAN = 'KONA';
 let SITE_REALBOORU = 'REAL';
 let SITE_RULE34 = 'RULE';
@@ -89,14 +88,6 @@ SITE_QUERY_TERM_ASSOCIATIONS[SITE_GELBOORU] = {
 	"sort:score_desc" : "sort:score",
 	"sort:-upload" : ""
 };
-/*SITE_QUERY_TERM_ASSOCIATIONS[SITE_IBSEARCH] = {
-	"order:id" : "sort:id",
-	"order:id_asc" : "sort:id_asc",
-	"order:id_desc" : "sort:id_desc",
-	"order:score" : "sort:score",
-	"order:score_asc" : "sort:score_asc",
-	"order:score_desc" : "sort:score_desc"
-};*/
 SITE_QUERY_TERM_ASSOCIATIONS[SITE_KONACHAN] = {
 	"sort:id" : "order:id",
 	"sort:id_asc" : "order:id_asc",

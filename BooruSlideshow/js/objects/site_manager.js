@@ -69,18 +69,15 @@ class SiteManager
 			this.webRequester.makeWebsiteRequest(
 				url,
 				function(responseText){
-					// console.log(responseText)
 					if (_this.doesResponseTextIndicateOnline(responseText))
 						_this.isOnline = true;
 				},
 				this.handleErrorFromSiteResponse.bind(_this),
 				function(){
-					// console.log(_this, "THOS")
 					callback(_this);
 				},
 				function(url, hideVisibleWarning = false){
 					_this.handleGeneralError(url, hideVisibleWarning);
-					// console.log(_this, "THIS")
 					callback(_this);
 				},
 				true);
@@ -202,9 +199,10 @@ class SiteManager
 		if (this.id == SITE_DERPIBOORU)
 		{
 			jsonPosts = jsonPosts["search"];
-		}else if(this.id == SITE_E621){
+		}
+		else if (this.id == SITE_E621)
+		{
 			jsonPosts = jsonPosts["posts"]
-			// console.log(jsonPosts)
 		}
 		
 		this.hasExhaustedSearch = (jsonPosts.length < this.pageLimit);
@@ -265,16 +263,19 @@ class SiteManager
 			(mediaType == MEDIA_TYPE_VIDEO && this.sitesManager.model.includeWebms);
 	}
 
-	isRatingAllowed(rating){
-		if(!this.sitesManager.model.includeExplicit && !this.sitesManager.model.includeQuestionable && !this.sitesManager.model.includeSafe) return true
+	isRatingAllowed(rating)
+	{
+		if (!this.sitesManager.model.includeExplicit && !this.sitesManager.model.includeQuestionable && !this.sitesManager.model.includeSafe)
+			return true;
+		
 		return (rating == "e" && this.sitesManager.model.includeExplicit) || 
-		(rating == "q" && this.sitesManager.model.includeQuestionable) ||
-		(rating == "s" && this.sitesManager.model.includeSafe)
+			(rating == "q" && this.sitesManager.model.includeQuestionable) ||
+			(rating == "s" && this.sitesManager.model.includeSafe);
 	}
 
-	areSomeTagsAreBlacklisted(tags, e6)
+	areSomeTagsAreBlacklisted(tags)
 	{
-		return this.sitesManager.model.areSomeTagsAreBlacklisted(tags, e6);
+		return this.sitesManager.model.areSomeTagsAreBlacklisted(tags);
 	}
 
 	reformatFileUrl(url)

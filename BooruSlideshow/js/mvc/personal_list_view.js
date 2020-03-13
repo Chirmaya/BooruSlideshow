@@ -185,7 +185,8 @@ class PersonalListView
                 {
                     _this.removeCurrentImageFromFavesPressedEvent.notify();
                 }
-                if(key == E_KEY_ID){
+                if (key == E_KEY_ID)
+                {
                     _this.openCurrentSlide();
                 }
             }
@@ -224,10 +225,14 @@ class PersonalListView
         });
     }
 
-    openCurrentSlide(){
+    openCurrentSlide()
+    {
         let currentSlide = this._model.getCurrentSlide();
-        if(currentSlide == null) return
-        window.open(currentSlide.viewableWebsitePostUrl, "_blank")
+
+        if (currentSlide == null)
+            return;
+
+        window.open(currentSlide.viewableWebsitePostUrl, "_blank");
     }
 
     clearUI() {
@@ -322,6 +327,9 @@ class PersonalListView
         this.showLoadingAnimation();
 
         var currentSlide = this._model.getCurrentSlide();
+
+        if (currentSlide == null)
+            return;
 		
 		if (currentSlide.isImageOrGif())
 		{
@@ -377,6 +385,9 @@ class PersonalListView
 	
     updateSlideSize() {
         var currentSlide = this._model.getCurrentSlide();
+
+        if (currentSlide == null)
+            return;
 
         var currentImage = this.uiElements.currentImage;
         var currentVideo = this.uiElements.currentVideo;
@@ -603,7 +614,7 @@ class PersonalListView
         var _this = this;
         newThumbnail.onclick = function () {
 
-            _this._model.moveToSlide(id);
+            _this._model.moveToThumbnailSlide(id);
         };
 
         var newThumbnailImage = document.createElement("img");

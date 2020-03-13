@@ -108,10 +108,14 @@ class SiteManagerDerpibooru extends SiteManager
 				
 				if (this.areSomeTagsAreBlacklisted(tags))
 					return;
-				jsonPost.rating = jsonPost.tags.includes("explicit") ? "e" : jsonPost.tags.includes("suggestive") || jsonPost.tags.includes("questionable") ? "q" : "s"
-				if(!this.isRatingAllowed(jsonPost.rating))
-					return
-				// console.log(jsonPost)
+				
+				jsonPost.rating =
+					jsonPost.tags.includes("explicit") ? "e" :
+					jsonPost.tags.includes("suggestive") || jsonPost.tags.includes("questionable") ? "q" :
+					"s";
+				
+				if (!this.isRatingAllowed(jsonPost.rating))
+					return;
 				
 				var newSlide = new Slide(
 					SITE_DERPIBOORU,
@@ -127,6 +131,7 @@ class SiteManagerDerpibooru extends SiteManager
 					jsonPost.sha512_hash,
 					tags
 				);
+				
 				this.allUnsortedSlides.push(newSlide);
 			}
 		}

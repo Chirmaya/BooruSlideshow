@@ -165,6 +165,9 @@ class SlideshowController
     {
         var currentSlide = this._model.getCurrentSlide();
 
+        if (currentSlide == null)
+            return;
+
         this._view.openUrlInNewWindow(currentSlide.viewableWebsitePostUrl);
 
         this._model.pauseSlideshow();

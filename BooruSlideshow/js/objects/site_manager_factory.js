@@ -14,8 +14,6 @@ class SiteManagerFactory
 				return new SiteManagerE621(sitesManager, pageLimit);
 			case SITE_GELBOORU:
 				return new SiteManagerGelbooru(sitesManager, pageLimit);
-			//case SITE_IBSEARCH:
-			//	return new SiteManagerIbSearch(sitesManager, url, pageLimit);
 			case SITE_KONACHAN:
 				return new SiteManagerKonachan(sitesManager, pageLimit);
 			case SITE_REALBOORU:

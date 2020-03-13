@@ -133,12 +133,12 @@ class SlideshowView
             _this.updateDerpibooruApiKey();
         });
 
-        this._model.e621ApiKeyUpdatedEvent.attach(function () {
-            _this.updateE621ApiKey();
-        });
-
         this._model.e621LoginUpdatedEvent.attach(function () {
             _this.updateE621Login();
+        });
+
+        this._model.e621ApiKeyUpdatedEvent.attach(function () {
+            _this.updateE621ApiKey();
         });
 
         this._model.storeHistoryUpdatedEvent.attach(function () {
@@ -274,12 +274,12 @@ class SlideshowView
                 {
                     _this.favoriteKeyPressedEvent.notify();
                 }
-                if(key == E_KEY_ID){
-                    // console.log("k")
+                if (key == E_KEY_ID)
+                {
                     _this.openCurrentSlide();
                 }
-                if(key == R_KEY_ID){
-                    // console.log("k")
+                if (key == R_KEY_ID)
+                {
                     _this._model.toggleTags();
                 }
             }
@@ -435,11 +435,10 @@ class SlideshowView
     updateSlidesAndNavigation() {
         this.updateSlides();
         this.updateNavigation();
-        this.toggleTags(true)
+        this.toggleTags(true);
     }
 
     updateSlides() {
-        // console.log("update")
         this.displayCurrentSlide();
         this.updateFavoriteButton();
         this.showThumbnails();
@@ -471,14 +470,27 @@ class SlideshowView
 			var message = '';
 		
             var includingImagesOrGifs = (this._model.includeImages || this._model.includeGifs);
-            var {explicit, questionable, safe} = {"explicit":this._model.includeExplicit,"questionable":this._model.includeQuestionable,"safe":this._model.includeSafe}
+
+            var {explicit, questionable, safe} = {
+                "explicit": this._model.includeExplicit,
+                "questionable": this._model.includeQuestionable,
+                "safe": this._model.includeSafe
+            };
+
+            let messageStart = `No ${explicit && questionable && safe ? "explicit," :
+                explicit && (questionable || safe) ? "explicit or" :
+                explicit ? "explicit" :
+                ""} ${questionable && safe ? "questionable or" :
+                questionable ? "questionable" :
+                ""} ${safe ? "safe" :
+                ""}`;
 			
 			if (includingImagesOrGifs && this._model.includeWebms)
-				message = `No ${explicit && questionable && safe ? "explicit," : explicit && (questionable || safe) ? "explicit or" : explicit ? "explicit" : ""} ${questionable && safe ? "questionable or" : questionable ? "questionable" : ""} ${safe ? "safe" : ""} images or videos were found.`;
-			else if (includingImagesOrGifs && !this._model.includeWebms)
-				message = `No ${explicit && questionable && safe ? "explicit," : explicit && (questionable || safe) ? "explicit or" : explicit ? "explicit" : ""} ${questionable && safe ? "questionable or" : questionable ? "questionable" : ""} ${safe ? "safe" : ""} images were found.`;
-			else if (!includingImagesOrGifs && this._model.includeWebms)
-				message = `No ${explicit && questionable && safe ? "explicit," : explicit && (questionable || safe) ? "explicit or" : explicit ? "explicit" : ""} ${questionable && safe ? "questionable or" : questionable ? "questionable" : ""} ${safe ? "safe" : ""} videos were found.`;
+                message = messageStart + ' images were found.';
+            else if (includingImagesOrGifs && !this._model.includeWebms)
+                message = messageStart + ' images or videos were found.';
+            else if (!includingImagesOrGifs && this._model.includeWebms)
+                message = messageStart + ' videos were found.';
 			
             this.displayWarningMessage(message);
         }
@@ -488,6 +500,9 @@ class SlideshowView
         this.showLoadingAnimation();
 
         var currentSlide = this._model.getCurrentSlide();
+
+        if (currentSlide == null)
+            return;
 		
 		if (currentSlide.isImageOrGif())
 		{
@@ -506,7 +521,6 @@ class SlideshowView
 	displayImage(currentSlide) {
         var currentImage = this.uiElements.currentImage;
 
-        // console.log(currentSlide)
         currentImage.src = currentSlide.fileUrl;
         currentImage.setAttribute('alt', currentSlide.id);
         currentImage.style.display = 'inline';
@@ -544,6 +558,9 @@ class SlideshowView
 	
     updateSlideSize() {
         var currentSlide = this._model.getCurrentSlide();
+
+        if (currentSlide == null)
+            return;
 
         var currentImage = this.uiElements.currentImage;
         var currentVideo = this.uiElements.currentVideo;
@@ -743,27 +760,32 @@ class SlideshowView
     showThumbnails() {
         this.clearThumbnails();
 
-        if (this._model.getSlideCount() > 1) {
-            var nextSlides = this._model.getNextSlidesForThumbnails();
-            var _this = this;
+        if (this._model.getSlideCount() <= 0)
+            return;
+        
+        var nextSlides = this._model.getNextSlidesForThumbnails();
 
-            for (var i = 0; i < nextSlides.length; i++) {
-                var slide = nextSlides[i];
+        if (nextSlides == null)
+            return;
 
-                var showGreyedOut = !slide.isPreloaded
-                this.displayThumbnail(slide.previewFileUrl, slide.id, showGreyedOut);
+        var _this = this;
 
-                slide.clearCallback();
-                slide.addCallback(function () {
-                    var callbackSlide = this;
-                    _this.removeThumbnailGreyness(callbackSlide.id);
-                    _this._model.preloadNextUnpreloadedSlideAfterThisOneIfInRange(callbackSlide);
-                });
-            }
+        for (var i = 0; i < nextSlides.length; i++) {
+            var slide = nextSlides[i];
+
+            var showGreyedOut = !slide.isPreloaded
+            this.displayThumbnail(slide.previewFileUrl, slide.id, showGreyedOut);
+
+            slide.clearCallback();
+            slide.addCallback(function () {
+                var callbackSlide = this;
+                _this.removeThumbnailGreyness(callbackSlide.id);
+                _this._model.preloadNextUnpreloadedSlideAfterThisOneIfInRange(callbackSlide);
+            });
         }
     }
 
-    displayThumbnail(thumbnailImageUrl, id, showGreyedOut) {
+    displayThumbnail(thumbnailImageUrl, thumbnailSlideId, showGreyedOut) {
         var thumbnailList = this.uiElements.thumbnailList;
 
         var newThumbnail = document.createElement("div");
@@ -773,7 +795,7 @@ class SlideshowView
         var _this = this;
         newThumbnail.onclick = function () {
 
-            _this._model.moveToSlide(id);
+            _this._model.moveToThumbnailSlide(thumbnailSlideId);
         };
 
         var newThumbnailImage = document.createElement("img");
@@ -1032,20 +1054,20 @@ class SlideshowView
         this.uiElements.derpibooruApiKey.value = this._model.derpibooruApiKey;
     }
 
-    getE621ApiKey() {
-        return this.uiElements.e621ApiKey.value.trim();
-    }
-
-    updateE621ApiKey() {
-        this.uiElements.e621ApiKey.value = this._model.e621ApiKey;
-    }
-
     getE621Login() {
         return this.uiElements.e621Login.value.trim();
     }
 
     updateE621Login() {
         this.uiElements.e621Login.value = this._model.e621Login;
+    }
+
+    getE621ApiKey() {
+        return this.uiElements.e621ApiKey.value.trim();
+    }
+
+    updateE621ApiKey() {
+        this.uiElements.e621ApiKey.value = this._model.e621ApiKey;
     }
 
     openUrlInNewWindow(url) {
@@ -1090,10 +1112,14 @@ class SlideshowView
         });
     }
 
-    openCurrentSlide(){
+    openCurrentSlide()
+    {
         let currentSlide = this._model.getCurrentSlide();
-        if(currentSlide == null) return
-        window.open(currentSlide.viewableWebsitePostUrl, "_blank")
+        
+        if (currentSlide == null)
+            return;
+
+        window.open(currentSlide.viewableWebsitePostUrl, "_blank");
     }
 
     updateFavoriteButton() {
@@ -1109,15 +1135,21 @@ class SlideshowView
         }
     }
 
-    toggleTags(update){
-        if(this.uiElements.tags.style.display == "none" && !update){
-            this.uiElements.tags.style.display = "block"
-            this.uiElements.tags.innerHTML = this._model.getCurrentSlide().tags
-        }else if(this.uiElements.tags.style.display == "block" && update){
-            this.uiElements.tags.innerHTML = this._model.getCurrentSlide().tags
-        }else{
-            this.uiElements.tags.style.display = "none"
-            this.uiElements.tags.innerHTML = ""
+    toggleTags(update)
+    {
+        if(this.uiElements.tags.style.display == "none" && !update)
+        {
+            this.uiElements.tags.style.display = "block";
+            this.uiElements.tags.innerHTML = this._model.getCurrentSlide().tags;
+        }
+        else if (this.uiElements.tags.style.display == "block" && update)
+        {
+            this.uiElements.tags.innerHTML = this._model.getCurrentSlide().tags;
+        }
+        else
+        {
+            this.uiElements.tags.style.display = "none";
+            this.uiElements.tags.innerHTML = "";
         }
     }
 }

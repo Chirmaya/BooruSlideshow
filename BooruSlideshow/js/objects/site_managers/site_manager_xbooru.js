@@ -42,8 +42,9 @@ class SiteManagerXbooru extends SiteManager
 			{
 				if (this.areSomeTagsAreBlacklisted(xmlPost.getAttribute('tags')))
 					return;
-				if(!this.isRatingAllowed(xmlPost.getAttribute('rating')))
-					return
+				
+				if (!this.isRatingAllowed(xmlPost.getAttribute('rating')))
+					return;
 
 				var newSlide = new Slide(
 					SITE_XBOORU,

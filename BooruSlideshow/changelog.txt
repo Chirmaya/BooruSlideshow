@@ -1,5 +1,8 @@
 Changelog
 
+Version 9.0
+* Bringing to master branch for release
+
 Version 8.9
 * [Feature] Allow inclusion of duplicate MD5 tags
 

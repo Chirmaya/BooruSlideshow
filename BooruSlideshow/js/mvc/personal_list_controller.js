@@ -112,6 +112,9 @@ class PersonalListController
     {
         var currentSlide = this._model.getCurrentSlide();
 
+        if (currentSlide == null)
+            return;
+
         this._view.openUrlInNewWindow(currentSlide.viewableWebsitePostUrl);
 
         this._model.pauseSlideshow();
@@ -139,7 +142,6 @@ class PersonalListController
     nextNavButtonClicked()
     {
         this._model.increaseCurrentSlideNumber();
-        // console.log(this._model.getCurrentSlide())
     }
 
     lastNavButtonClicked()
@@ -174,12 +176,12 @@ class PersonalListController
 
     filterTextChanged()
     {
-        this._model.filterText = this._view.getFilterText();
+        this._model.filterText = this._view.getFilterText().trim();
     }
 
     enterKeyPressedInFilterTextBox()
     {
-        this._model.filterText = this._view.getFilterText();
+        this._model.filterText = this._view.getFilterText().trim();
 		this._view.removeFocusFromFilterTextBox();
         this.filterButtonClicked();
     }
@@ -191,19 +193,17 @@ class PersonalListController
 
         let filterText = this._model.filterText;
 
-        if(filterText == ""){
-            this._model.filtered = false
-            this._model.filteredPersonalList = null
+        if (filterText == "")
+        {
+            this._model.filtered = false;
+            this._model.filteredPersonalList = null;
             this._view.clearUI();
             this._view.removeFocusFromFilterButton();
-            this._model.currentListItem = 1
-            this._model.currentSlideChangedEvent.notify()
-            return
+            this._model.currentListItem = 1;
+            this._model.currentSlideChangedEvent.notify();
+
+            return;
         }
-		
-		//var message = '';
-		
-		//this._view.displayInfoMessage(message);
 		
         this._model.performFilter(filterText);
     }
@@ -257,5 +257,4 @@ class PersonalListController
     {
         this._model.removeCurrentImageFromFaves();
     }
-
 }

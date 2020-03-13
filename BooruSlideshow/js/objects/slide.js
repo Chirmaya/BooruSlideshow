@@ -13,17 +13,16 @@ class Slide
 		this.score = score;
 		this.mediaType = mediaType;
 		this.md5 = md5;
+		this.tags = tags;
 		this.isPreloaded = false;
 		this.isPreloading = false;
 		this.preloadingImage = null;
 		this.preloadingVideo = null;
 		this.callbackToRunAfterPreloadingFinishes = null;
-		this.tags = tags;
 	}
 
 	clone()
 	{
-		// console.log(this.tags)
 		return new Slide(
 			this.siteId,
 			this.id,

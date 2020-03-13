@@ -62,15 +62,15 @@ class SiteManagerKonachan extends SiteManager
 		if (this.areSomeTagsAreBlacklisted(jsonPost.tags))
 			return;
 
-		if(!this.isRatingAllowed(jsonPost.rating))
-			return
+		if (!this.isRatingAllowed(jsonPost.rating))
+			return;
 		
-		var url = this.url + '/post/show/' + jsonPost.id;
+		var postUrl = this.url + '/post/show/' + jsonPost.id;
 		
-		var prefix = '';
+		var urlPrefix = '';
 		
-		if (url.substring(0, 4) != 'http')
-			prefix = 'https://';
+		if (postUrl.substring(0, 4) != 'http')
+			urlPrefix = 'https://';
 		
 		var date;
 		
@@ -82,9 +82,9 @@ class SiteManagerKonachan extends SiteManager
 		var newSlide = new Slide(
 			SITE_KONACHAN,
 			jsonPost.id,
-			prefix + jsonPost.file_url,
-			prefix + jsonPost.preview_url,
-			url,
+			urlPrefix + jsonPost.file_url,
+			urlPrefix + jsonPost.preview_url,
+			postUrl,
 			jsonPost.width,
 			jsonPost.height,
 			date,
@@ -93,6 +93,7 @@ class SiteManagerKonachan extends SiteManager
 			jsonPost.md5,
 			jsonPost.tags
 		);
+
 		this.allUnsortedSlides.push(newSlide);
 	}
 }

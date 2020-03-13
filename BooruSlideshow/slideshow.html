@@ -10,7 +10,7 @@
 		<p id="warning-message"></p>
 		<p id="info-message"></p>
 		<div id="slide-wrapper">
-			<img id="current-image"/>
+			<img id="current-image" />
 			<video id="current-video" autoplay='true' loop='true' volume='0' controls>
 				<source type="video/webm"></source>
 			</video>
@@ -20,7 +20,7 @@
 		<div id="indentation">
 			<div id="navigation">
 				<button id="favorite-button">♥</button>
-				<span id="current-slide-number"></span> of <span id="total-slide-number"></span><br>
+				<span id="current-slide-number"></span> of <span id="total-slide-number"></span><br />
 				<button class="nav-button" id="first-button">&lt;&lt;</button>
 				<button class="nav-button" id="previous-button">&lt;</button>
 				<button class="nav-button" id="play-button">&#9658;</button>
@@ -33,7 +33,7 @@
 				</div>
 			</div>
 			<div id="search">
-				<input id="search-text" type="search" list="search-history" /><br>
+				<input id="search-text" type="search" list="search-history" /><br />
 				<button id="search-button">Search</button>
 				<datalist id="search-history"></datalist>
 			</div>
@@ -49,14 +49,13 @@
 						</li>
 						<li><label><input type="checkbox" name="sites-to-search" value="E621" />e621.net</label></li>
 						<li id="e621-login-container">
-							<label><input type="login" id="e621-login" placeholder="E621 username"/></label>
+							<label><input type="login" id="e621-login" placeholder="e621 username"/></label>
 						</li>
 						<li id="e621-api-key-container"><br /><span><a href="https://e621.net/users/home" target="_blank">(get API key here)</a></span><br />
-							<label><input type="password" id="e621-api-key" placeholder="E621 API key"/></label>
+							<label><input type="password" id="e621-api-key" placeholder="e621 API key"/></label>
 						</li>
-						<li><label><input type="checkbox" name="sites-to-search" value="GELB" />gelbooru.com<br>
+						<li><label><input type="checkbox" name="sites-to-search" value="GELB" />gelbooru.com<br />
 							<span>(need to be logged in)</span></label></li>
-						<!--<li><label><input type="checkbox" name="sites-to-search" value="IBSE" />ibsearch.xxx</label></li>-->
 						<li><label><input type="checkbox" name="sites-to-search" value="KONA" />konachan.com</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="REAL" />realbooru.com</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="RULE" />rule34.xxx</label></li>
@@ -71,7 +70,7 @@
 					<ul>
 						<li>
 							Seconds per Slide
-							<br>
+							<br />
 							<input id="seconds-per-slide" type="number" min="1" />
 						</li>
 						<!--<li>
@@ -79,12 +78,12 @@
 						</li>-->
 						<li>
 							Max. Width
-							<br>
-							<input id="max-width" type="number" min="1" /><br>
+							<br />
+							<input id="max-width" type="number" min="1" /><br />
 						</li>
 						<li>
 							Max. Height
-							<br>
+							<br />
 							<input id="max-height" type="number" min="1" />
 						</li>
 						<li>
@@ -174,7 +173,6 @@
 		<script src="js/objects/site_managers/site_manager_derpibooru.js"></script>
 		<script src="js/objects/site_managers/site_manager_e621.js"></script>
 		<script src="js/objects/site_managers/site_manager_gelbooru.js"></script>
-		<!--<script src="js/objects/site_managers/site_manager_ibsearch.js"></script>-->
 		<script src="js/objects/site_managers/site_manager_konachan.js"></script>
 		<script src="js/objects/site_managers/site_manager_realbooru.js"></script>
 		<script src="js/objects/site_managers/site_manager_rule34.js"></script>

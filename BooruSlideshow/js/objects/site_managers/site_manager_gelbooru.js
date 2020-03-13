@@ -54,7 +54,7 @@ class SiteManagerGelbooru extends SiteManager
 					xmlPost.getAttribute('score'),
 					this.getMediaTypeFromPath(xmlPost.getAttribute('file_url')),
 					xmlPost.getAttribute('md5'),
-					xmpPost.getAttribute('tags')
+					xmlPost.getAttribute('tags')
 				);
 				
 				this.allUnsortedSlides.push(newSlide);

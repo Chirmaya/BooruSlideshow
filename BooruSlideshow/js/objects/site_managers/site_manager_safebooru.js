@@ -42,8 +42,6 @@ class SiteManagerSafebooru extends SiteManager
 				if (this.areSomeTagsAreBlacklisted(xmlPost.getAttribute('tags')))
 					return;
 
-					// console.log(xmlPost.getAttribute('preview_url'))
-
 				var newSlide = new Slide(
 					SITE_SAFEBOORU,
 					xmlPost.getAttribute('id'),

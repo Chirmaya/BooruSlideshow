@@ -20,8 +20,8 @@ class PersonalListModel{
         this.sitesManager = null;
 
         this.personalList = new PersonalList();
-        this.filtered = false
-        this.filteredPersonalList = null
+        this.filtered = false;
+        this.filteredPersonalList = null;
 
         this.currentSlideChangedEvent = new Event(this);
         this.playingChangedEvent = new Event(this);
@@ -35,30 +35,6 @@ class PersonalListModel{
         this.dataLoader = new DataLoader(this);
 
         this.currentListItem = 0;
-
-        this.initialize();
-    }
-
-    initialize()
-    {
-        var numberOfSlidesToAlwaysHaveReadyToDisplay = 20;
-        var maxNumberOfThumbnails = 10;
-
-        /*this.sitesManager = new SitesManager(this, numberOfSlidesToAlwaysHaveReadyToDisplay, maxNumberOfThumbnails);
-		
-		var pageLimit = 100;
-		
-        this.sitesManager.addSite(SITE_ATFBOORU, pageLimit);
-        this.sitesManager.addSite(SITE_DANBOORU, pageLimit);
-        this.sitesManager.addSite(SITE_DERPIBOORU, 10);
-        this.sitesManager.addSite(SITE_E621, pageLimit);
-        this.sitesManager.addSite(SITE_GELBOORU, pageLimit);
-        this.sitesManager.addSite(SITE_KONACHAN, pageLimit);
-        this.sitesManager.addSite(SITE_REALBOORU, pageLimit);
-        this.sitesManager.addSite(SITE_RULE34, pageLimit);
-        this.sitesManager.addSite(SITE_SAFEBOORU, pageLimit);
-        this.sitesManager.addSite(SITE_XBOORU, pageLimit);
-        this.sitesManager.addSite(SITE_YANDERE, pageLimit);*/
     }
 
     loadUserSettings()
@@ -68,56 +44,68 @@ class PersonalListModel{
 
     performFilter(filterText)
     {
-        //this.sitesManager.resetConnections();
+        var filterWordsAsArray = filterText.split(" ");
 
-        var _this = this;
-        var filterTextAsArray = filterText.split(" ")
-        var orTags = filterTextAsArray.filter(tag => tag.startsWith("~"))
-        var orRegex = new RegExp("\\s" + orTags.join("\\s|\\s"))
-        orRegex = new RegExp(orRegex.toString().replace(/~/g, "").slice(1, -1) + "\\s", "gi")
-        var notTags = filterTextAsArray.filter(tag => tag.startsWith("-"))
-        var notRegex = new RegExp("\\s" + notTags.join("\\s|\\s"))
-        notRegex = new RegExp(notRegex.toString().replace(/-/g, "").slice(1, -1) + "\\s", "gi")
-        this.filtered = true
+        var orTags = filterWordsAsArray.filter(tag => tag.startsWith("~"));
+        var orRegex = new RegExp("\\s" + orTags.join("\\s|\\s"));
+        orRegex = new RegExp(orRegex.toString().replace(/~/g, "").slice(1, -1) + "\\s", "gi");
+        
+        var notTags = filterWordsAsArray.filter(tag => tag.startsWith("-"));
+        var notRegex = new RegExp("\\s" + notTags.join("\\s|\\s"));
+        notRegex = new RegExp(notRegex.toString().replace(/-/g, "").slice(1, -1) + "\\s", "gi");
+        
+        this.filtered = true;
+
         var items = this.personalList.personalListItems.filter((item) => {
-            var passedOr = true
-            var passedWild = true
-            if(!item.tags) return false
-            if(item.tags == "") return false
-            if(typeof item.tags != "string") return false
-            for(let i = 0; i < filterTextAsArray.length; i++){
-                if(filterTextAsArray[i].startsWith("-") && !filterTextAsArray[i].endsWith("*")){
-                    let tags = (" " + item.tags.split(" ").join("  ") + " ")
-                    let matched = tags.match(notRegex)
-                    if(matched) return false
-                }else if(filterTextAsArray[i].startsWith("-") && filterTextAsArray[i].endsWith("*") && item.tags.includes(" " + filterTextAsArray[i].slice(1, -1))){
-                    return false
-                }else if(filterTextAsArray[i].startsWith("~")){
-                    let tags = (" " + item.tags.split(" ").join("  ") + " ")
-                    let matched = tags.match(orRegex)
-                    // console.log(tags, regex, matched)
-                    passedOr = matched && matched.length > 0
-                }else if(filterTextAsArray[i].endsWith("*") && !filterTextAsArray[i].startsWith("-")){
-                    passedWild = item.tags.includes(filterTextAsArray[i].slice(0, -1))
+            var passedOr = true;
+            var passedWild = true;
+
+            if (!item.tags ||
+                typeof item.tags != "string" ||
+                item.tags == "")
+                return false;
+            
+            let tags = " " + item.tags.split(" ").join("  ") + " ";
+            
+            for(let i = 0; i < filterWordsAsArray.length; i++){
+                let filterWord = filterWordsAsArray[i];
+
+                if (filterWord.startsWith("-") && !filterWord.endsWith("*"))
+                {
+                    let matched = tags.match(notRegex);
+                    if (matched)
+                        return false;
+                }
+                else if (filterWord.startsWith("-") && filterWord.endsWith("*") && item.tags.includes(" " + filterWord.slice(1, -1)))
+                {
+                    return false;
+                }
+                else if (filterWord.startsWith("~"))
+                {
+                    let matched = tags.match(orRegex);
+                    
+                    passedOr = matched && matched.length > 0;
+                }
+                else if (filterWord.endsWith("*") && !filterWord.startsWith("-"))
+                {
+                    passedWild = item.tags.includes(filterWord.slice(0, -1));
                 }
             }
-            let noOrNotWildTags = filterTextAsArray.filter(tag => !tag.startsWith("-") && !tag.startsWith("~") && !tag.endsWith("*"))
-            let regex = new RegExp("\\s" + noOrNotWildTags.join("\\s|\\s"))
-            regex = new RegExp(regex.toString().slice(1, -1) + "\\s", "gi")
-            let tags = (" " + item.tags.split(" ").join("  ") + " ")
-            let matched = tags.match(regex)
-            // console.log(passedOr, passedWild, matched !=  null && matched.length == noOrNotWildTags.length)
-            return (noOrNotWildTags.length == 0 || matched !=  null && matched.length == noOrNotWildTags.length) && passedOr && passedWild
-        })
+
+            let noOrNotWildTags = filterWordsAsArray.filter(tag => !tag.startsWith("-") && !tag.startsWith("~") && !tag.endsWith("*"));
+            let noOrNotWildRegex = new RegExp("\\s" + noOrNotWildTags.join("\\s|\\s"));
+            noOrNotWildRegex = new RegExp(noOrNotWildRegex.toString().slice(1, -1) + "\\s", "gi");
+            
+            let matched = tags.match(noOrNotWildRegex);
+            
+            return (noOrNotWildTags.length == 0 || (matched != null && matched.length == noOrNotWildTags.length)) &&
+                passedOr &&
+                passedWild;
+        });
+
         this.filteredPersonalList = new PersonalList(items)
         this.currentListItem = 1
         this.currentSlideChangedEvent.notify()
-        // console.log(this.filteredPersonalList)
-
-        /*this.sitesManager.performFilter(filterText, function () {
-			_this.view.clearInfoMessage();
-            _this.currentSlideChangedEvent.notify();
-        });*/
     }
 
     setSlideNumberToFirst()
@@ -142,19 +130,13 @@ class PersonalListModel{
 
     increaseCurrentSlideNumber()
     {
-        if(!this.filtered){
-            if (this.currentListItem < this.personalList.count())
-            {
-                this.currentListItem++;
-                this.currentSlideChangedEvent.notify();
-                this.restartSlideshowIfOn();
-            }
-        }else{
-            if (this.currentListItem < this.filteredPersonalList.count()){
-                this.currentListItem++;
-                this.currentSlideChangedEvent.notify();
-                this.restartSlideshowIfOn();
-            }
+        let listItemCount = this.filtered ? this.filteredPersonalList.count() : this.personalList.count();
+
+        if (this.currentListItem < listItemCount)
+        {
+            this.currentListItem++;
+            this.currentSlideChangedEvent.notify();
+            this.restartSlideshowIfOn();
         }
     }
 	
@@ -174,50 +156,33 @@ class PersonalListModel{
 	
     increaseCurrentSlideNumberByTen()
     {
-        if(!this.filtered){
-            if (this.currentListItem < this.personalList.count())
-            {
-                this.currentListItem += 10;
+        let listItemCount = this.filtered ? this.filteredPersonalList.count() : this.personalList.count();
+        
+        if (this.currentListItem < listItemCount)
+        {
+            this.currentListItem += 10;
 
-                if (this.currentListItem > this.personalList.count())
-                    this.currentListItem = this.personalList.count();
+            if (this.currentListItem > listItemCount)
+                this.currentListItem = listItemCount;
 
-                this.currentSlideChangedEvent.notify();
-                this.restartSlideshowIfOn();
-            }
-        }else{
-            if (this.currentListItem < this.filteredPersonalList.count()){
-                this.currentListItem += 10;
-
-                if (this.currentListItem > this.filteredPersonalList.count())
-                    this.currentListItem = this.filteredPersonalList.count();
-
-                this.currentSlideChangedEvent.notify();
-                this.restartSlideshowIfOn();
-            }
+            this.currentSlideChangedEvent.notify();
+            this.restartSlideshowIfOn();
         }
     }
 
     setSlideNumberToLast()
     {
-        if(!this.filtered){
-            if (this.currentListItem != this.personalList.count())
-            {
-                this.currentListItem = this.personalList.count();
-                this.currentSlideChangedEvent.notify();
-                this.restartSlideshowIfOn();
-            }
-        }else{
-            if (this.currentListItem != this.filteredPersonalList.count())
-            {
-                this.currentListItem = this.filteredPersonalList.count();
-                this.currentSlideChangedEvent.notify();
-                this.restartSlideshowIfOn();
-            }
+        let listItemCount = this.filtered ? this.filteredPersonalList.count() : this.personalList.count();
+
+        if (this.currentListItem != listItemCount)
+        {
+            this.currentListItem = listItemCount;
+            this.currentSlideChangedEvent.notify();
+            this.restartSlideshowIfOn();
         }
     }
 
-    moveToSlide(id)
+    moveToThumbnailSlide(id)
     {
         var index = this.filtered ? this.filteredPersonalList.getIndexById(id) : this.personalList.getIndexById(id);
 
@@ -320,12 +285,12 @@ class PersonalListModel{
 
     hasPersonalListItems()
     {
-        return (this.filtered ? this.filteredPersonalList.count() : this.personalList.count() > 0);
+        return (this.filtered ? this.filteredPersonalList.count() : this.personalList.count()) > 0;
     }
 
     hasNextSlide()
     {
-        return (this.filtered ? this.filteredPersonalList.count() : this.personalList.count() > this.getCurrentSlideNumber());
+        return (this.filtered ? this.filteredPersonalList.count() : this.personalList.count()) > this.getCurrentSlideNumber();
     }
 
     getCurrentSlide()
