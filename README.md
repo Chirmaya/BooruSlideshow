@@ -15,6 +15,8 @@ https://addons.mozilla.org/en-US/firefox/addon/booru-slideshow-official/
 
 Electron Apps:
 
+The repo for the electron app can now be found [here](https://github.com/DontTalkToMeThx/BooruSlideshowElectron) This will all migrate next commit.
+
 [Windows, 64 bit](https://cdn.is-just-a.dev/booruslideshowelectron-win32-x64.zip)
 
 [Windows, 32 bit](https://cdn.is-just-a.dev/booruslideshowelectron-win32-ia32.zip)
