@@ -227,6 +227,7 @@ class SiteManager
 
 	convertSDateToDate(sDate)
 	{
+		console.log('passed in ' + sDate);
 		return new Date(sDate * 1000);
 	}
 

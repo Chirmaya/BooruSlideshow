@@ -84,13 +84,6 @@ class SiteManagerE621 extends SiteManager
 		if (postUrl.substring(0, 4) != 'http')
 			urlPrefix = 'https://';
 		
-		var date;
-		
-		if (jsonPost.created_at.s != null)
-			date = this.convertSDateToDate(jsonPost.created_at.s)
-		else
-			date = this.convertSDateToDate(jsonPost.created_at)
-		
 		var newSlide = new Slide(
 			SITE_E621,
 			jsonPost.id,
@@ -99,7 +92,7 @@ class SiteManagerE621 extends SiteManager
 			postUrl,
 			jsonPost.file.width,
 			jsonPost.file.height,
-			date,
+			new Date(jsonPost.created_at),
 			jsonPost.score,
 			this.getMediaTypeFromPath(jsonPost.file.url),
 			jsonPost.file.md5,

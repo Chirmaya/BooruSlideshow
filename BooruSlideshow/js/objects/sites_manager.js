@@ -270,7 +270,7 @@ class SitesManager{
 				}
 			}
 		});
-		
+
 		slidesFromAllSitesToSort.sort(function(a,b) {
 			var sortingMethod = _this.getSortingMethod();
 			
@@ -567,7 +567,7 @@ class SitesManager{
 		
 		var foundStartingSlide = false;
 		
-		for (var i = 0; i< 6; i++)
+		for (var i = 0; i < nextSlides.length; i++)
 		{
 			var slide = nextSlides[i];
 			

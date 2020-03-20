@@ -1,5 +1,9 @@
 Changelog
 
+Version 9.1
+* Fixed bug with dates for posts from e621
+* Fixed preloading only working on up to 6 items rather than all 10
+
 Version 9.0
 * Bringing to master branch for release
 
