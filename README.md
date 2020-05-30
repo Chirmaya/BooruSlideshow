@@ -13,20 +13,6 @@ This should work:
 Firefox Add-on:
 https://addons.mozilla.org/en-US/firefox/addon/booru-slideshow-official/
 
-Electron Apps:
+Electron App:
 
-The repo for the electron app can now be found [here](https://github.com/DontTalkToMeThx/BooruSlideshowElectron) This will all migrate next commit.
-
-[Windows, 64 bit](https://cdn.is-just-a.dev/booruslideshowelectron-win32-x64.zip)
-
-[Windows, 32 bit](https://cdn.is-just-a.dev/booruslideshowelectron-win32-ia32.zip)
-
-[Windows, ARM64](https://cdn.is-just-a.dev/booruslideshowelectron-win32-arm64.zip)
-
-[Linux, 64 bit (Untested)](https://cdn.is-just-a.dev/booruslideshowelectron-linux-x64.zip)
-
-[Linux, 32 bit (Untested)](https://cdn.is-just-a.dev/booruslideshowelectron-linux-ia32.zip)
-
-[Linux, ARM64 (Untested)](https://cdn.is-just-a.dev/booruslideshowelectron-linux-arm64.zip)
-
-[Linux, ARMv7l (Untested)](https://cdn.is-just-a.dev/booruslideshowelectron-linux-armv7l.zip)
+The repo for the electron app can now be found [here](https://github.com/DontTalkToMeThx/BooruSlideshowElectron).
