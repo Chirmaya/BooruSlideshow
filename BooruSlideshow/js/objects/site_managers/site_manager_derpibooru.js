@@ -7,7 +7,7 @@ class SiteManagerDerpibooru extends SiteManager
     
     buildPingRequestUrl()
 	{
-		return this.url + '/images.json';
+		return this.url + '/api/v1/json/images/1';
     }
     
     buildRequestUrl(searchText, pageNumber)
@@ -16,7 +16,7 @@ class SiteManagerDerpibooru extends SiteManager
 		
 		var possibleAddedKey = this.sitesManager.model.derpibooruApiKey ? '&key=' + this.sitesManager.model.derpibooruApiKey : '';
 		
-		return this.url + '/search.json?q=' + this.prepareQueryForDerpibooru(query) + '&page=' + pageNumber + '&limit=' + this.pageLimit + possibleAddedKey;
+		return this.url + '/api/v1/json/search/images?q=' + this.prepareQueryForDerpibooru(query) + '&page=' + pageNumber + '&limit=' + this.pageLimit + possibleAddedKey;
 	}
 
 	prepareQueryForDerpibooru(searchQuery)
@@ -80,12 +80,12 @@ class SiteManagerDerpibooru extends SiteManager
 		}
 		
 		// Derpibooru-only line
-		jsonPosts = jsonPosts["images"];
+		jsonPosts = jsonPosts["image"];
 		
 		if (jsonPosts == null)
 			return false;
 		
-		return (jsonPosts.length > 0);
+		return true;
 	}
 
 	addSlides(responseText)
@@ -95,12 +95,11 @@ class SiteManagerDerpibooru extends SiteManager
 
 	addSlide(jsonPost)
 	{
-		if (jsonPost.hasOwnProperty('image') &&
-			jsonPost.hasOwnProperty('representations'))
+		if (jsonPost.hasOwnProperty('representations'))
 		{
-			if (this.isPathForSupportedMediaType(jsonPost.image))
+			if (this.isPathForSupportedMediaType(jsonPost.representations["medium"]))
 			{
-				var tags = jsonPost.tags;
+				var tags = jsonPost.tags.join(",");
 				
 				tags = tags.replace(/,\s/gm,",");
 				tags = tags.replace(/\s/gm,"_");
@@ -116,14 +115,14 @@ class SiteManagerDerpibooru extends SiteManager
 				var newSlide = new Slide(
 					SITE_DERPIBOORU,
 					jsonPost.id,
-					"https://" + jsonPost.image,
-					"https://" + jsonPost.representations["thumb"],
+					jsonPost.representations["medium"],
+					jsonPost.representations["thumb"],
 					this.url + '/' + jsonPost.id,
 					jsonPost.width,
 					jsonPost.height,
 					new Date(jsonPost.created_at),
 					jsonPost.score,
-					this.getMediaTypeFromPath(jsonPost.image),
+					this.getMediaTypeFromPath(jsonPost.representations["medium"]),
 					jsonPost.sha512_hash,
 					tags
 				);
