@@ -201,7 +201,7 @@ class SiteManager
 		
 		if (this.id == SITE_DERPIBOORU)
 		{
-			jsonPosts = jsonPosts["search"];
+			jsonPosts = jsonPosts["images"];
 		}else if(this.id == SITE_E621){
 			jsonPosts = jsonPosts["posts"]
 			// console.log(jsonPosts)
