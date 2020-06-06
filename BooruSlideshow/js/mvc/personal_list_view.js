@@ -24,6 +24,7 @@ class PersonalListView
         this.maxHeightChangedEvent = new Event(this);
         this.autoFitSlideChangedEvent = new Event(this);
         this.removeCurrentImageFromFavesPressedEvent = new Event(this);
+        this.reverseOrderClickEvent = new Event(this)
 
         this.isSettingVolume = false;
         this.isSettingMute = false;
@@ -194,6 +195,10 @@ class PersonalListView
         this.uiElements.filterTextBox.addEventListener('change', function () {
             _this.filterTextChangedEvent.notify();
         });
+
+        this.uiElements.reverseOrderButton.addEventListener('click', function(){
+            _this.reverseOrderClickEvent.notify()
+        })
     
         this.uiElements.filterTextBox.addEventListener('keypress', function (e) {
             var key = e.which || e.keyCode;
@@ -276,6 +281,8 @@ class PersonalListView
     }
 
     updateSlides() {
+        this._model.clearCallbacksForPreloadingSlides()
+        this._model.preloadCurrentSlideIfNeeded()
         this.displayCurrentSlide();
         this.showThumbnails();
     }
@@ -571,12 +578,15 @@ class PersonalListView
     }
 
     showThumbnails() {
+        // console.log("show")
         this.clearThumbnails();
 
         if (this._model.getPersonalListItemCount() > 1) {
+            // console.log(">")
             var nextSlides = this._model.getNextListItemsForThumbnails();
             var _this = this;
 
+            // console.log(nextSlides)
             for (var i = 0; i < nextSlides.length; i++) {
                 var slide = nextSlides[i];
 
@@ -589,11 +599,13 @@ class PersonalListView
                     _this.removeThumbnailGreyness(callbackSlide.id);
                     _this._model.preloadNextUnpreloadedSlideAfterThisOneIfInRange(callbackSlide);
                 });
+                slide.preload()
             }
         }
     }
 
     displayThumbnail(thumbnailImageUrl, id, showGreyedOut) {
+        // console.log("display")
         var thumbnailList = this.uiElements.thumbnailList;
 
         var newThumbnail = document.createElement("div");
@@ -721,7 +733,7 @@ class PersonalListView
     }
 
     openUrlInNewWindow(url) {
-        window.open(url, '_blank');
+        window.open(url, "blank")
     }
 
     downloadCurrentSlide()
@@ -732,12 +744,12 @@ class PersonalListView
             return;
         
         let url = currentSlide.fileUrl;
-        let filename = "bs/" + url.substring(url.lastIndexOf('/')+1);
+        let filename = "bs/" + url.substring(url.lastIndexOf("/") + 1)
         
         chrome.downloads.download({
             url: currentSlide.fileUrl,
             filename: filename,
             conflictAction: "overwrite"
-        });
+        })
     }
 }

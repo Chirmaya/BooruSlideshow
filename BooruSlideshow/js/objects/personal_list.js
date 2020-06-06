@@ -1,11 +1,25 @@
 class PersonalList
 {
-    constructor(personalListItems = [], dataLoader)
+    constructor(personalListItems = [], dataLoader, model)
     {
         this.personalListItems = personalListItems;
-        this.currentListItemIndex = null;
         this.dataLoader = dataLoader
         this.indexed = false
+        this.model = model
+        // this.loadedSlides = []
+        let _this = this
+        if(personalListItems.length >= 1){
+            let li = personalListItems[0]
+            let slide = new Slide(li.siteId, li.id, li.fileUrl, li.previewFileUrl, li.viewableWebsitePostUrl, li.width, li.height, li.date, li.score, li.mediaType, li.md5, li.tags)
+            
+            slide.addCallback(function () {
+                let callbackSlide = this
+                _this.model.view.removeThumbnailGreyness(callbackSlide.id)
+                _this.model.preloadNextUnpreloadedSlideAfterThisOneIfInRange(callbackSlide)
+            })
+            slide.preload()
+            if(this.model.loadedSlides) this.model.loadedSlides.push(slide)
+        }
         if(personalListItems.length > 0){ 
             if(this.allTagged()){ 
                 this.indexed = true
@@ -46,14 +60,14 @@ class PersonalList
             }
             if(i >= items.length){ 
                 clearInterval(getInterval)
-                console.log("Cleared")
-                console.log(items)
+                // console.log("Cleared")
+                // console.log(items)
                 _this.dataLoader.savePersonalList(items)
                 _this.indexed = true
                 return
             }
             if(i % 10 == 0){
-                console.log("Saved")
+                // console.log("Saved")
                 chrome.storage.sync.set({'savedIndex': i});
                 _this.dataLoader.savePersonalList(items)
             }
@@ -269,6 +283,7 @@ class PersonalList
         let newItem = slide.clone();
         // console.log(newItem)
         this.personalListItems.push(newItem);
+        // console.log("Test")
     }
 
     tryToRemove(slide)
@@ -303,12 +318,21 @@ class PersonalList
 
     getNextItemsForThumbnails()
     {
-        if (this.currentListItem == null)
+        // console.log(this.model.currentListItem)
+        if (this.personalListItems.length == 0)
         {
             return [];
         }
+        let items = this.personalListItems.slice(this.model.currentListItem, this.model.currentListItem + 9)
+        let slides = []
+        for(let i = 0; i < items.length; i++){
+            let li = items[i]
+            let slide = new Slide(li.siteId, li.id, li.fileUrl, li.previewFileUrl, li.viewableWebsitePostUrl, li.width, li.height, li.date, li.score, li.mediaType, li.md5, li.tags)
+            slides.push(slide)
+            // this.loadedSlides.push(slide)
+        }
 
-        return personalListItems.slice(this.currentListItemIndex+1, this.currentListItemIndex + 10);
+        return slides;
     }
 
     contains(slide)

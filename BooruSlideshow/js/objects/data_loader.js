@@ -249,7 +249,7 @@ class DataLoader
 					}
 					else
 					{
-                        var personalList = new PersonalList(personalListItems, _this);
+                        var personalList = new PersonalList(personalListItems, _this, _this._model);
 
 						if (_this._model.personalList != personalList)
 						{

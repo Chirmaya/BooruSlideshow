@@ -2,6 +2,8 @@ class PersonalListModel{
     constructor()
     {
         this.view = null;
+
+        this.loadedSlides = []
         
         this.videoVolume = 0;
         this.videoMuted = false;
@@ -19,7 +21,9 @@ class PersonalListModel{
 
         this.sitesManager = null;
 
-        this.personalList = new PersonalList();
+        this.dataLoader = new DataLoader(this);
+
+        this.personalList = new PersonalList([], this.dataLoader, this);
         this.filtered = false
         this.filteredPersonalList = null
 
@@ -32,7 +36,6 @@ class PersonalListModel{
         this.autoFitSlideUpdatedEvent = new Event(this);
         this.personalListLoadedEvent = new Event(this);
 
-        this.dataLoader = new DataLoader(this);
 
         this.currentListItem = 0;
 
@@ -109,7 +112,7 @@ class PersonalListModel{
             // console.log(passedOr, passedWild, matched !=  null && matched.length == noOrNotWildTags.length)
             return (noOrNotWildTags.length == 0 || matched !=  null && matched.length == noOrNotWildTags.length) && passedOr && passedWild
         })
-        this.filteredPersonalList = new PersonalList(items)
+        this.filteredPersonalList = new PersonalList(items, this.dataLoader, this)
         this.currentListItem = 1
         this.currentSlideChangedEvent.notify()
         // console.log(this.filteredPersonalList)
@@ -228,11 +231,6 @@ class PersonalListModel{
         }
     }
 
-    preloadNextUnpreloadedSlideAfterThisOneIfInRange(slide)
-    {
-        //this.sitesManager.preloadNextUnpreloadedSlideAfterThisOneIfInRange(slide);
-    }
-
     tryToPlayOrPause()
     {
         if (this.hasPersonalListItems())
@@ -255,6 +253,7 @@ class PersonalListModel{
 
     tryToStartCountdown()
     {
+        this.startCountdown()
         /*if (this.sitesManager.isCurrentSlideLoaded())
         {
             this.startCountdown();
@@ -269,7 +268,7 @@ class PersonalListModel{
         }*/
     }
 
-    /*startCountdown()
+    startCountdown()
     {
         var millisecondsPerSlide = this.secondsPerSlide * 1000;
 	    
@@ -288,7 +287,7 @@ class PersonalListModel{
             }
 		
         }, millisecondsPerSlide);
-    }*/
+    }
 
     restartSlideshowIfOn()
     {
@@ -296,17 +295,23 @@ class PersonalListModel{
         if (this.isPlaying)
         {
             clearTimeout(this.timer);
-            //this.sitesManager.clearCallbacksForPreloadingSlides();
+            this.clearCallbacksForPreloadingSlides();
 		
             this.tryToStartCountdown();
         }
     }
 
+    clearCallbacksForPreloadingSlides() {
+		if (this.currentListItem > 0) {
+			var currentSlide = this.getCurrentSlide();
+			currentSlide.clearCallback();
+		}
+	}
+
     pauseSlideshow()
     {
         clearTimeout(this.timer);
-        //this.sitesManager.clearCallbacksForPreloadingSlides();
-        //this.sitesManager.clearCallbacksForLoadingSlides();
+        this.clearCallbacksForPreloadingSlides();
 
         this.isPlaying = false;
 
@@ -332,13 +337,20 @@ class PersonalListModel{
     {
         if (this.currentListItem == 0)
             return null;
-        
+        let loadedSlide = this.loadedSlides.find(t => t.id == this.getCurrentSlideID())
+        if(loadedSlide){ 
+            return loadedSlide
+        }
         return this.filtered ? this.filteredPersonalList.get(this.currentListItem - 1) : this.personalList.get(this.currentListItem - 1);
     }
 
     getCurrentSlideNumber()
     {
         return this.currentListItem;
+    }
+
+    getCurrentSlideID(){
+        return this.filtered ? this.filteredPersonalList.personalListItems[this.currentListItem - 1].id : this.personalList.personalListItems[this.currentListItem - 1].id;
     }
 
     getNextListItemsForThumbnails()
@@ -510,4 +522,73 @@ class PersonalListModel{
 
         this.personalListLoadedEvent.notify();
     }
+
+    preloadCurrentSlideIfNeeded() {
+        var currentSlide = this.getCurrentSlide()
+        if(!currentSlide) return
+        let _this = this
+        currentSlide.preload();
+        this.addLoadedSlide(currentSlide)
+    }
+    
+    addLoadedSlide(slide){
+        if(this.loadedSlides.find(t => t.id == slide.id)) return
+        this.loadedSlides.push(slide)
+    }
+
+	preloadNextSlideIfNeeded() {
+		if (this.currentListItem < this.getPersonalListItemCount()) {
+			var currentSlide = this.getCurrentSlide();
+			this.preloadNextUnpreloadedSlideIfInRange();
+		}
+	}
+
+	preloadNextUnpreloadedSlideIfInRange() {
+		if (this.currentListItem < this.getPersonalListItemCount()) {
+			var nextSlides = this.getNextListItemsForThumbnails();
+
+			for (var i = 0; i < nextSlides.length; i++) {
+				if (!nextSlides[i]) return
+				var slide = nextSlides[i];
+
+				if (!slide.isPreloaded) {
+                    slide.preload();
+                    this.addLoadedSlide(slide)
+					break;
+				}
+			}
+		}
+	}
+
+	preloadNextUnpreloadedSlideAfterThisOneIfInRange(startingSlide) {
+		if (this.currentListItem < this.getPersonalListItemCount()) {
+            var nextSlides = this.getNextListItemsForThumbnails();
+			if (!nextSlides) return
+			var foundStartingSlide = false;
+
+			for (var i = 0; i < nextSlides.length; i++) {
+                var slide = nextSlides[i];
+
+				if (foundStartingSlide || (this.currentListItem == 1 && startingSlide.id == this.getCurrentSlide(1).id)) {
+                    foundStartingSlide = true;
+                    var _this = this
+					if (!slide.isPreloaded) {
+                        slide.preload();
+                        this.addLoadedSlide(slide)
+						break;
+					}
+				}
+
+				if (startingSlide.id == slide.id) {
+					foundStartingSlide = true;
+				}
+			}
+		}
+	}
+
+	isCurrentSlideLoaded() {
+		if (this.currentListItem > 0) {
+			return this.getCurrentSlide().isPreloaded;
+		}
+	}
 }

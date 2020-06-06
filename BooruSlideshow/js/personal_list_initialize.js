@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'secondsPerSlideTextBox': document.getElementById('seconds-per-slide'),
         'maxWidthTextBox': document.getElementById('max-width'),
         'maxHeightTextBox': document.getElementById('max-height'),
-        'autoFitSlideCheckBox': document.getElementById('auto-fit-slide')
+        'autoFitSlideCheckBox': document.getElementById('auto-fit-slide'),
+        'reverseOrderButton': document.getElementById('reverse-button')
     });
 });
