@@ -12,7 +12,7 @@
 		"default_popup": "popup.html"
 	},
 
-	"incognito": "split",
+	"incognito": "spanning",
 	
 	"icons":
 	{
