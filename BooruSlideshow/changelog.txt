@@ -1,5 +1,8 @@
 Changelog
 
+Version 9.1
+* [Fix] Gelbooru posts
+
 Version 9.0
 * [Fix] Now preloads more than 6 slideshow
 * [Feature] Favorites list slideshow
