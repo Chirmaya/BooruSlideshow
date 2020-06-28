@@ -1,46 +1,40 @@
-class SiteManagerGelbooru extends SiteManager
-{
-    constructor(sitesManager, pageLimit)
-    {
+class SiteManagerGelbooru extends SiteManager {
+	constructor(sitesManager, pageLimit) {
 		super(sitesManager, SITE_GELBOORU, 'https://gelbooru.com', pageLimit);
-    }
-    
-    buildPingRequestUrl()
-	{
+	}
+
+	buildPingRequestUrl() {
 		return this.url + '/index.php?page=dapi&s=post&q=index&limit=1';
-    }
-    
-    buildRequestUrl(searchText, pageNumber)
-	{
+	}
+
+	buildRequestUrl(searchText, pageNumber) {
 		var query = this.buildSiteSpecificQuery(searchText);
-		
+
 		return this.url + '/index.php?page=dapi&s=post&q=index&tags=' + query + '&pid=' + (pageNumber - 1) + '&limit=' + this.pageLimit;
 	}
 
-	doesResponseTextIndicateOnline(responseText)
-	{
+	doesResponseTextIndicateOnline(responseText) {
 		var parser = new DOMParser();
 		var xml = parser.parseFromString(responseText, "text/xml");
-		
+
 		var xmlPosts = xml.getElementsByTagName("post");
-		
+
 		return (xmlPosts.length > 0);
 	}
 
-	addSlides(responseText)
-	{
+	addSlides(responseText) {
 		this.addXmlSlides(responseText);
 	}
 
-	addSlide(xmlPost)
-	{
+	addSlide(xmlPost) {
 		if (xmlPost.hasAttribute('file_url') &&
-			xmlPost.hasAttribute('preview_url'))
-		{
-			if (this.isPathForSupportedMediaType(xmlPost.getAttribute('file_url')))
-			{
+			xmlPost.hasAttribute('preview_url')) {
+			if (this.isPathForSupportedMediaType(xmlPost.getAttribute('file_url'))) {
 				if (this.areSomeTagsAreBlacklisted(xmlPost.getAttribute('tags')))
 					return;
+
+				if (!this.isRatingAllowed(xmlPost.getAttribute("rating")))
+					return
 
 				var newSlide = new Slide(
 					SITE_GELBOORU,
@@ -56,7 +50,7 @@ class SiteManagerGelbooru extends SiteManager
 					xmlPost.getAttribute('md5'),
 					xmlPost.getAttribute('tags')
 				);
-				
+
 				this.allUnsortedSlides.push(newSlide);
 			}
 		}

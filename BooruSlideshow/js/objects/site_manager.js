@@ -266,10 +266,11 @@ class SiteManager
 	}
 
 	isRatingAllowed(rating){
+		console.log(rating)
 		if(!this.sitesManager.model.includeExplicit && !this.sitesManager.model.includeQuestionable && !this.sitesManager.model.includeSafe) return true
-		return (rating == "e" && this.sitesManager.model.includeExplicit) || 
-		(rating == "q" && this.sitesManager.model.includeQuestionable) ||
-		(rating == "s" && this.sitesManager.model.includeSafe)
+		return ((rating == "e" || rating == "explicit") && this.sitesManager.model.includeExplicit) || 
+		((rating == "q" || rating == "questionable") && this.sitesManager.model.includeQuestionable) ||
+		((rating == "s" || rating == "safe") && this.sitesManager.model.includeSafe)
 	}
 
 	areSomeTagsAreBlacklisted(tags, e6)
