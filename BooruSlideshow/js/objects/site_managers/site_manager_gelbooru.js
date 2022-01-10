@@ -34,29 +34,30 @@ class SiteManagerGelbooru extends SiteManager
 
 	addSlide(xmlPost)
 	{
-		if (xmlPost.hasAttribute('file_url') &&
-			xmlPost.hasAttribute('preview_url'))
+
+		if (xmlPost.getElementsByTagName("file_url").length > 0 &&
+			xmlPost.getElementsByTagName('preview_url').length > 0)
 		{
-			if (this.isPathForSupportedMediaType(xmlPost.getAttribute('file_url')))
+			if (this.isPathForSupportedMediaType(xmlPost.getElementsByTagName("file_url")[0].innerHTML))
 			{
-				if (this.areSomeTagsAreBlacklisted(xmlPost.getAttribute('tags')))
+				if (this.areSomeTagsAreBlacklisted(xmlPost.getElementsByTagName('tags')[0].innerHTML))
 					return;
 
 				var newSlide = new Slide(
 					SITE_GELBOORU,
-					xmlPost.getAttribute('id'),
-					this.reformatFileUrl(xmlPost.getAttribute('file_url')),
-					this.reformatFileUrl(xmlPost.getAttribute('preview_url')),
-					this.url + '/index.php?page=post&s=view&id=' + xmlPost.getAttribute('id'),
-					xmlPost.getAttribute('width'),
-					xmlPost.getAttribute('height'),
-					new Date(xmlPost.getAttribute('created_at')),
-					xmlPost.getAttribute('score'),
-					this.getMediaTypeFromPath(xmlPost.getAttribute('file_url')),
-					xmlPost.getAttribute('md5'),
-					xmlPost.getAttribute('tags')
+					xmlPost.getElementsByTagName("id")[0].innerHTML,
+					this.reformatFileUrl(xmlPost.getElementsByTagName("file_url")[0].innerHTML),
+					this.reformatFileUrl(xmlPost.getElementsByTagName("preview_url")[0].innerHTML),
+					this.url + '/index.php?page=post&s=view&id=' + xmlPost.getElementsByTagName("id")[0].innerHTML,
+					xmlPost.getElementsByTagName("width")[0].innerHTML,
+					xmlPost.getElementsByTagName("height")[0].innerHTML,
+					new Date(xmlPost.getElementsByTagName("created_at")[0].innerHTML),
+					xmlPost.getElementsByTagName("score")[0].innerHTML,
+					this.getMediaTypeFromPath(xmlPost.getElementsByTagName("file_url")[0].innerHTML),
+					xmlPost.getElementsByTagName("md5")[0].innerHTML,
+					xmlPost.getElementsByTagName("tags")[0].innerHTML
 				);
-				
+
 				this.allUnsortedSlides.push(newSlide);
 			}
 		}
