@@ -4,7 +4,7 @@
 	"name": "Booru Slideshow",
 	"short_name": "Booru SS",
 	"description": "View a slideshow from a Booru site based on your search.",
-	"version": "9.1",
+	"version": "10.0",
 
 	"browser_action":
 	{
@@ -34,7 +34,6 @@
 		"https://e621.net/*",
 		"https://*.gelbooru.com/*",
 		"https://konachan.com/*",
-		"https://realbooru.com/*",
 		"https://rule34.xxx/*",
 		"https://safebooru.org/*",
 		"https://xbooru.com/*",

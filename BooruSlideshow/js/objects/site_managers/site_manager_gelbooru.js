@@ -22,43 +22,45 @@ class SiteManagerGelbooru extends SiteManager
 		var parser = new DOMParser();
 		var xml = parser.parseFromString(responseText, "text/xml");
 		
-		var xmlPosts = xml.getElementsByTagName("post");
+		var xmlPosts = xml.getElementsByTagName("posts");
 		
 		return (xmlPosts.length > 0);
 	}
 
 	addSlides(responseText)
 	{
+		// https://gelbooru.com/index.php?page=dapi&s=post&q=index&tags=cat&pid=16&limit=100
+		//logInDev(responseText);
 		this.addXmlSlides(responseText);
 	}
 
 	addSlide(xmlPost)
 	{
-		if (xmlPost.hasAttribute('file_url') &&
-			xmlPost.hasAttribute('preview_url'))
-		{
-			if (this.isPathForSupportedMediaType(xmlPost.getAttribute('file_url')))
-			{
-				if (this.areSomeTagsAreBlacklisted(xmlPost.getAttribute('tags')))
-					return;
+		//logInDev(xmlPost);
 
-				var newSlide = new Slide(
-					SITE_GELBOORU,
-					xmlPost.getAttribute('id'),
-					this.reformatFileUrl(xmlPost.getAttribute('file_url')),
-					this.reformatFileUrl(xmlPost.getAttribute('preview_url')),
-					this.url + '/index.php?page=post&s=view&id=' + xmlPost.getAttribute('id'),
-					xmlPost.getAttribute('width'),
-					xmlPost.getAttribute('height'),
-					new Date(xmlPost.getAttribute('created_at')),
-					xmlPost.getAttribute('score'),
-					this.getMediaTypeFromPath(xmlPost.getAttribute('file_url')),
-					xmlPost.getAttribute('md5'),
-					xmlPost.getAttribute('tags')
-				);
-				
-				this.allUnsortedSlides.push(newSlide);
-			}
+		if (doesXmlContainElement(xmlPost, 'file_url') &&
+			doesXmlContainElement(xmlPost, 'preview_url') &&
+			this.isPathForSupportedMediaType(getXmlElementStringValueSafe(xmlPost, 'file_url')))
+		{
+			if (this.areSomeTagsAreBlacklisted(getXmlElementStringValueSafe(xmlPost, 'tags')))
+				return;
+			
+			var newSlide = new Slide(
+				SITE_GELBOORU,
+				getXmlElementStringValueSafe(xmlPost, 'id'),
+				this.reformatFileUrl(getXmlElementStringValueSafe(xmlPost, 'file_url')),
+				this.reformatFileUrl(getXmlElementStringValueSafe(xmlPost, 'preview_url')),
+				this.url + '/index.php?page=post&s=view&id=' + getXmlElementStringValueSafe(xmlPost, 'id'),
+				getXmlElementStringValueSafe(xmlPost, 'width'),
+				getXmlElementStringValueSafe(xmlPost, 'height'),
+				new Date(getXmlElementStringValueSafe(xmlPost, 'created_at')),
+				getXmlElementStringValueSafe(xmlPost, 'score'),
+				this.getMediaTypeFromPath(getXmlElementStringValueSafe(xmlPost, 'file_url')),
+				getXmlElementStringValueSafe(xmlPost, 'md5'),
+				getXmlElementStringValueSafe(xmlPost, 'tags')
+			);
+			
+			this.allUnsortedSlides.push(newSlide);
 		}
 	}
 }

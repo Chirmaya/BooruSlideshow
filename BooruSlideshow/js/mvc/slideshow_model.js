@@ -15,7 +15,6 @@ class SlideshowModel{
             [SITE_E621]: false,
             [SITE_GELBOORU]: false,
             [SITE_KONACHAN]: false,
-            [SITE_REALBOORU]: false,
             [SITE_RULE34]: false,
             [SITE_SAFEBOORU]: true,
             [SITE_XBOORU]: false,
@@ -92,7 +91,6 @@ class SlideshowModel{
         this.sitesManager.addSite(SITE_E621, pageLimit);
         this.sitesManager.addSite(SITE_GELBOORU, pageLimit);
         this.sitesManager.addSite(SITE_KONACHAN, pageLimit);
-        this.sitesManager.addSite(SITE_REALBOORU, pageLimit);
         this.sitesManager.addSite(SITE_RULE34, pageLimit);
         this.sitesManager.addSite(SITE_SAFEBOORU, pageLimit);
         this.sitesManager.addSite(SITE_XBOORU, pageLimit);

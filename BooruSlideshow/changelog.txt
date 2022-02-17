@@ -1,5 +1,10 @@
 Changelog
 
+Version 10.0
+* License changed to stop people from uploading this in my name
+* Removed support for Realbooru since it doesn't contain the content this is intended for
+* Fixed the Gelbooru searches
+
 Version 9.1
 * Fixed bug with dates for posts from e621
 * Fixed preloading only working on up to 6 items rather than all 10

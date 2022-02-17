@@ -83,8 +83,6 @@ class PersonalList
                 listItem.tags = await _this.getImageTagsDerp(listItem.id, webRequester);
             }else if (listItem.siteId == SITE_KONACHAN){
                 listItem.tags = await _this.getImageTagsKona(listItem.id, webRequester);
-            }else if (listItem.siteId == SITE_REALBOORU){
-                listItem.tags = await _this.getImageTagsReal(listItem.id, webRequester);
             }else if (listItem.siteId == SITE_SAFEBOORU){
                 listItem.tags = await _this.getImageTagsSafe(listItem.id, webRequester);
             }else if (listItem.siteId == SITE_XBOORU){
@@ -171,21 +169,6 @@ class PersonalList
                     return
                 }
                 resolve(data.tags)
-            })
-        })
-    }
-
-    getImageTagsReal(id, webRequester)
-    {
-        return new Promise((resolve) => {
-            webRequester.makeWebsiteRequest(`https://realbooru.com/index.php?page=dapi&s=post&q=index&tags=id%3A${id}`, () => {
-                var parser = new DOMParser()
-                var data = parser.parseFromString(arguments[1].xhr.responseText, "text/xml")
-                if(!data){ 
-                    resolve("")
-                    return
-                }
-                resolve(data.getElementsByTagName("post")[0].getAttribute("tags"))
             })
         })
     }

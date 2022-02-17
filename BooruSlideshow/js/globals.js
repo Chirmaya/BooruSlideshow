@@ -1,10 +1,13 @@
+let LOGGING_MODE_DEV = 'DEV';
+let LOGGING_MODE_PROD = 'PROD';
+let LOGGING_MODE = LOGGING_MODE_PROD;
+
 let SITE_ATFBOORU = 'ATFB';
 let SITE_DANBOORU = 'DANB';
 let SITE_DERPIBOORU = 'DERP';
 let SITE_E621 = 'E621';
 let SITE_GELBOORU = 'GELB';
 let SITE_KONACHAN = 'KONA';
-let SITE_REALBOORU = 'REAL';
 let SITE_RULE34 = 'RULE';
 let SITE_SAFEBOORU = 'SAFE';
 let SITE_XBOORU = 'XBOO';
@@ -95,18 +98,6 @@ SITE_QUERY_TERM_ASSOCIATIONS[SITE_KONACHAN] = {
 	"sort:score" : "order:score",
 	"sort:score_asc" : "order:score_asc",
 	"sort:score_desc" : "order:score_desc",
-	"sort:-upload" : ""
-};
-SITE_QUERY_TERM_ASSOCIATIONS[SITE_REALBOORU] = {
-	"rating:s\\S*" : "rating:safe",
-	"rating:q\\S*" : "rating:questionable",
-	"rating:e\\S*" : "rating:explicit",
-	"order:id" : "sort:id",
-	"order:id_asc" : "sort:id_asc",
-	"order:id_desc" : "sort:id_desc",
-	"order:score" : "sort:score",
-	"order:score_asc" : "sort:score_asc",
-	"order:score_desc" : "sort:score_desc",
 	"sort:-upload" : ""
 };
 SITE_QUERY_TERM_ASSOCIATIONS[SITE_RULE34] = {
