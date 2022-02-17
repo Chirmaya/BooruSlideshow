@@ -1,4 +1,6 @@
 # BooruSlideshow
+## WARNING: This has been re-released by someone else on the Google Chrome Web Store directly against my wishes. It is unknown if there are malicious changes included, so be wary. I will no longer continue developing this so that they can't keep stealing it. I will use this as impetus to work on new projects.
+
 An Chrome and Firefox extension for a slideshow of boorus.
 
 Chrome Extension:
