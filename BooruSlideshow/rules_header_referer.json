@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "priority": 1,
+        "action":
+        {
+            "type": "modifyHeaders",
+            "requestHeaders":
+            [
+                {
+                    "header": "Referer",
+                    "operation": "set",
+                    "value": "https://gelbooru.com"
+                }
+            ]
+        },
+        "condition":
+        {
+            "urlFilter": "https://*.gelbooru.com/*",
+            "resourceTypes": ["main_frame"]
+        }
+    }
+]

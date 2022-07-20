@@ -2,7 +2,7 @@ class SiteManagerAtfBooru extends SiteManager
 {
     constructor(sitesManager, pageLimit)
     {
-		super(sitesManager, SITE_ATFBOORU, 'https://atfbooru.ninja', pageLimit);
+		super(sitesManager, SITE_ATFBOORU, 'https://booru.allthefallen.moe', pageLimit);
     }
     
     buildPingRequestUrl()

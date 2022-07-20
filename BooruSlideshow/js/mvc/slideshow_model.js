@@ -83,18 +83,18 @@ class SlideshowModel{
 
         this.sitesManager = new SitesManager(this, numberOfSlidesToAlwaysHaveReadyToDisplay, maxNumberOfThumbnails);
 		
-		var pageLimit = 100;
+		var standardPageLimit = 100;
 		
-        this.sitesManager.addSite(SITE_ATFBOORU, pageLimit);
-        this.sitesManager.addSite(SITE_DANBOORU, pageLimit);
-        this.sitesManager.addSite(SITE_DERPIBOORU, 10);
-        this.sitesManager.addSite(SITE_E621, pageLimit);
-        this.sitesManager.addSite(SITE_GELBOORU, pageLimit);
-        this.sitesManager.addSite(SITE_KONACHAN, pageLimit);
-        this.sitesManager.addSite(SITE_RULE34, pageLimit);
-        this.sitesManager.addSite(SITE_SAFEBOORU, pageLimit);
-        this.sitesManager.addSite(SITE_XBOORU, pageLimit);
-        this.sitesManager.addSite(SITE_YANDERE, pageLimit);
+        this.sitesManager.addSite(SITE_ATFBOORU, standardPageLimit);
+        this.sitesManager.addSite(SITE_DANBOORU, standardPageLimit);
+        this.sitesManager.addSite(SITE_DERPIBOORU, 50);
+        this.sitesManager.addSite(SITE_E621, standardPageLimit);
+        this.sitesManager.addSite(SITE_GELBOORU, standardPageLimit);
+        this.sitesManager.addSite(SITE_KONACHAN, standardPageLimit);
+        this.sitesManager.addSite(SITE_RULE34, standardPageLimit);
+        this.sitesManager.addSite(SITE_SAFEBOORU, standardPageLimit);
+        this.sitesManager.addSite(SITE_XBOORU, standardPageLimit);
+        this.sitesManager.addSite(SITE_YANDERE, standardPageLimit);
     }
 
     loadUserSettings()

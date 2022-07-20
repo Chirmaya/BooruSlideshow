@@ -25,7 +25,7 @@ class SitesManager{
 		
 		// Doesn't seem that this is needed right now.
 		// Investigate later.
-		this.setupRequestHeaders();
+		//this.setupRequestHeaders();
 	}
 
 	displayWarningMessage(message)
@@ -56,6 +56,7 @@ class SitesManager{
 	setupRequestHeaders()
 	{
 		// Only needed for Gelbooru at the moment
+		/* From manifest v2 (blocking)
 		var listener = function(details) {
 			details.requestHeaders.push({
 				'name': 'Referer',
@@ -80,7 +81,7 @@ class SitesManager{
 			listener,
 			requestFilter,
 			extraInfoSpec
-		);
+		);*/
 	}
 
 	addSite(id, pageLimit)

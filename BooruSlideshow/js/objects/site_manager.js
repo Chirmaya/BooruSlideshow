@@ -135,7 +135,12 @@ class SiteManager
 		catch (e)
 		{
 			console.log('status code = ' + statusCode);
-			console.log(responseText);
+
+			if (statusCode != 400)
+			{
+				console.log(responseText);
+			}
+			
 			possibleJson = null;
 		}
 		
@@ -198,7 +203,7 @@ class SiteManager
 		
 		if (this.id == SITE_DERPIBOORU)
 		{
-			jsonPosts = jsonPosts["search"];
+			jsonPosts = jsonPosts["images"];
 		}
 		else if (this.id == SITE_E621)
 		{

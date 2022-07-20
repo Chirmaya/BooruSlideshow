@@ -1,5 +1,12 @@
 Changelog
 
+Version 10.1
+* Updated manifest to version 3
+* Updated ATFBooru URL
+* Commented out some blocking requests used to modify headers since they don't seem to be needed right now.
+* Hid console logs of the response text for HTTP 400 errors
+* Quick fix for Derpibooru's new data format
+
 Version 10.0
 * License changed to stop people from uploading this in my name
 * Removed support for Realbooru since it doesn't contain the content this is intended for
