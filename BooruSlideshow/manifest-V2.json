@@ -1,0 +1,43 @@
+{
+  "manifest_version": 2,
+  "name": "Booru Slideshow",
+  "short_name": "Booru SS",
+  "description": "View a slideshow from a Booru site based on your search.",
+  "version": "10.1",
+  "browser_action": {
+    "default_icon": "img/bs_icon_19.png",
+    "default_popup": "popup.html"
+  },
+  "incognito": "spanning",
+  "icons": {
+    "16": "img/bs_icon_16.png",
+    "48": "img/bs_icon_48.png",
+    "128": "img/bs_icon_128.png"
+  },
+  "permissions": [
+    "unlimitedStorage",
+    "storage",
+    "webRequest",
+    "declarativeNetRequestWithHostAccess",
+    "downloads",
+    "https://booru.allthefallen.moe/",
+    "https://danbooru.donmai.us/*",
+    "https://derpibooru.org/*",
+    "https://e621.net/*",
+    "https://*.gelbooru.com/*",
+    "https://konachan.com/*",
+    "https://rule34.xxx/*",
+    "https://safebooru.org/*",
+    "https://xbooru.com/*",
+    "https://yande.re/*"
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ruleset_header_referer",
+        "enabled": false,
+        "path": "rules_header_referer.json"
+      }
+    ]
+  }
+}
