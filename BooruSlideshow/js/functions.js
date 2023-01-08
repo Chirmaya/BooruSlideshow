@@ -1,4 +1,14 @@
-function logInDev(text)
+function enableDevMode()
+{
+	LOGGING_MODE = LOGGING_MODE_DEV;
+}
+
+function disableProdMode()
+{
+	LOGGING_MODE = LOGGING_MODE_PROD;
+}
+
+function logForDev(text)
 {
 	if (LOGGING_MODE != LOGGING_MODE_DEV)
 	{

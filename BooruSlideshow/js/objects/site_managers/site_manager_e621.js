@@ -65,6 +65,23 @@ class SiteManagerE621 extends SiteManager
 			!jsonPost.hasOwnProperty('tags') ||
 			!jsonPost.file.hasOwnProperty('url'))
 			return;
+
+		if (jsonPost.file.url == null)
+		{
+			// TODO: Make this into an option (though will need to figure out all the cases in which it happens to get a proper name for it)
+			console.log("The file.url was null for post " + jsonPost.id + ". (This is caused by a global blacklist perhaps from not being logged in. Trying to recreate from md5.");
+			
+			jsonPost.file.url = this.RecreateUrlFromMd5(jsonPost.file);
+
+			if (jsonPost.file.url == null)
+			{
+				return;
+			}
+			else
+			{
+				console.log("New URL is: " + jsonPost.file.url);
+			}
+		}
 		
 		if (!this.isPathForSupportedMediaType(jsonPost.file.url))
 			return;
@@ -100,5 +117,25 @@ class SiteManagerE621 extends SiteManager
 		);
 
 		this.allUnsortedSlides.push(newSlide);
+	}
+
+	RecreateUrlFromMd5(file)
+	{
+		// Ref: Discord > e621.net > Donovan DMC
+		// Take the file.md5 (as an example: AABBCCCCCCCCCCCCCCCCCCCCCCCCCCCC)
+		// and convert it to
+		// https://static1.e621.net/data/AA/BB/AABBCCCCCCCCCCCCCCCCCCCCCCCCCCCC.{file.ext}
+		
+		const BASE_PATH = 'https://static1.e621.net/data/';
+
+		if (file.md5 == null || file.md5.length < 4 || file.ext == null)
+		{
+			return null;
+		}
+
+		let firstTwoCharacters = file.md5.substring(0, 2);
+		let secondTwoCharacters = file.md5.substring(2, 4);
+
+		return `${BASE_PATH}/${firstTwoCharacters}/${secondTwoCharacters}/${file.md5}.${file.ext}`
 	}
 }

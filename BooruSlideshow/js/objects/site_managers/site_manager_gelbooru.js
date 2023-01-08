@@ -30,14 +30,11 @@ class SiteManagerGelbooru extends SiteManager
 	addSlides(responseText)
 	{
 		// https://gelbooru.com/index.php?page=dapi&s=post&q=index&tags=cat&pid=16&limit=100
-		//logInDev(responseText);
 		this.addXmlSlides(responseText);
 	}
 
 	addSlide(xmlPost)
 	{
-		//logInDev(xmlPost);
-
 		if (doesXmlContainElement(xmlPost, 'file_url') &&
 			doesXmlContainElement(xmlPost, 'preview_url') &&
 			this.isPathForSupportedMediaType(getXmlElementStringValueSafe(xmlPost, 'file_url')))

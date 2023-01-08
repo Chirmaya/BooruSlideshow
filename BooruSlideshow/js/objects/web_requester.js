@@ -25,7 +25,7 @@ class WebRequester
     
     makeWebsiteRequest(url, onSuccessResponse, onErrorResponse, onAfterAnyResponse, onError, useSecondaryXhr = false)
 	{
-        logInDev(url);
+        logForDev(url);
         
         this.resetConnection(useSecondaryXhr);
         
