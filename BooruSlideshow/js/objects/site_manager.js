@@ -109,6 +109,9 @@ class SiteManager
 				url,
 				function(responseText){
 					siteManager.lastPageLoaded++;
+
+					logForDev(responseText);
+
 					siteManager.addSlides(responseText);
 				},
 				this.handleErrorFromSiteResponse.bind(siteManager),
@@ -182,6 +185,8 @@ class SiteManager
 		{
 			var xmlPost = xmlPosts[i];
 			
+			logForDev(xmlPost);
+
 			this.addSlide(xmlPost);
 		}
 	}
@@ -216,6 +221,8 @@ class SiteManager
 		{
 			var jsonPost = jsonPosts[i];
 			
+			logForDev(jsonPost);
+
 			this.addSlide(jsonPost);
 		}
 	}
@@ -232,12 +239,18 @@ class SiteManager
 
 	convertSDateToDate(sDate)
 	{
-		console.log('passed in ' + sDate);
+		//console.log('passed in ' + sDate);
 		return new Date(sDate * 1000);
 	}
 
 	isPathForSupportedMediaType(filePath)
 	{
+		if (filePath == null)
+		{
+			console.log("Trying to figure out the media type of a null file path.");
+			return;
+		}
+
 		var mediaType = this.getMediaTypeFromPath(filePath)
 		
 		return this.isMediaTypeSupported(mediaType);
