@@ -30,6 +30,18 @@ class PersonalListController
         this._view.currentVideoClickedEvent.attach(function() {
             _this.currentSlideClicked();
         });
+
+        this._view.currentImageStartedEvent.attach(function(){
+            _this.currentImageStarted();
+        })
+
+        this._view.currentVideoStartedEvent.attach(function(){
+            _this.currentVideoStarted();
+        })
+
+        this._view.currentVideoLoopedEvent.attach(function(){
+            _this.currentVideoLooped();
+        })
         
         this._view.currentVideoVolumeChangedEvent.attach(function() {
             _this.videoVolumeChanged();
@@ -127,6 +139,18 @@ class PersonalListController
 		
         this._model.setVideoVolume(videoVolume);
         this._model.setVideoMuted(videoMuted);
+    }
+
+    currentImageStarted(){
+        this._model.unlockSlideshow();
+    }
+
+    currentVideoStarted(){
+        this._model.lockSlideshow();
+    }
+
+    currentVideoLooped(){
+        this._model.unlockSlideshow();
     }
 
     firstNavButtonClicked()

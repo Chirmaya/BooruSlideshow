@@ -7,6 +7,9 @@ class PersonalListView
         this.currentImageClickedEvent = new Event(this);
         this.currentVideoClickedEvent = new Event(this);
         this.currentVideoVolumeChangedEvent = new Event(this);
+        this.currentVideoStartedEvent = new Event(this);
+        this.currentImageStartedEvent = new Event(this);
+        this.currentVideoLoopedEvent = new Event(this);
         this.filterButtonClickedEvent = new Event(this);
         this.firstNavButtonClickedEvent = new Event(this);
         this.previousNavButtonClickedEvent = new Event(this);
@@ -73,6 +76,7 @@ class PersonalListView
             _this.updateAutoFitSlide();
         });
 
+
         this._model.personalListLoadedEvent.attach(function () {
             _this.clearWarningMessage();
             _this.clearInfoMessage();
@@ -103,6 +107,13 @@ class PersonalListView
             }
             
             _this.currentVideoVolumeChangedEvent.notify();
+        });
+
+        this.uiElements.currentVideo.addEventListener('timeupdate', () => {
+            if (this.uiElements.currentVideo.currentTime >= this.uiElements.currentVideo.duration - 0.5) {
+                this.videoLoopedOnce = true;
+                _this.currentVideoLoopedEvent.notify();
+            }
         });
         
         this.uiElements.firstNavButton.addEventListener('click', function() {
@@ -223,6 +234,7 @@ class PersonalListView
         this.uiElements.autoFitSlideCheckBox.addEventListener('change', function () {
             _this.autoFitSlideChangedEvent.notify();
         });
+
     }
 
     openCurrentSlide()
@@ -354,9 +366,12 @@ class PersonalListView
 		
 		this.clearVideo();
         this.updateSlideSize();
+
+        this.currentImageStartedEvent.notify();
     }
 	
 	displayVideo(currentSlide) {
+
         var currentVideo = this.uiElements.currentVideo;
 
         currentVideo.src = currentSlide.fileUrl;
@@ -366,6 +381,8 @@ class PersonalListView
         this.updateSlideSize();
 		this.updateVideoVolume();
 		this.updateVideoMuted();
+
+        this.currentVideoStartedEvent.notify();
     }
 	
 	getVideoVolume() {
