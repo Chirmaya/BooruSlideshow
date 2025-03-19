@@ -2,7 +2,7 @@ Changelog
 
 Version 10.4
 * Auto-fit is now enabled by default for new installs.
-* Include WEBMs is now enabled by default for new installs. (Excluding rating:e via checkbox, but including only rating:e results via text webms will still get it stuck eternally trying to load. Will need to rework that system later.
+* Include WEBMs is now enabled by default for new installs. (Excluding rating:e via checkbox, but including only rating:e results via text webms will still get it stuck eternally trying to load. Will need to rework that system later.)
 * Removed support for ATFBooru
 * Included additional URL permissions for Danbooru content. You'll need to manually enable this permission under the Firefox extension permission settings.
 
