@@ -109,7 +109,6 @@ class DataLoader
                         {
                             let cleanSitesToSearch = Object.assign({}, _this.sitesToSearch);
     
-                            _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_ATFBOORU);
                             _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_DANBOORU);
                             _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_DERPIBOORU);
                             _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_E621);

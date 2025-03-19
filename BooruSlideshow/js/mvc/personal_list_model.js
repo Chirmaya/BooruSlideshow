@@ -11,7 +11,7 @@ class PersonalListModel{
         this.secondsPerSlide = 6;
         this.maxWidth = null;
         this.maxHeight = null;
-        this.autoFitSlide = false;
+        this.autoFitSlide = true;
 
         this.isPlaying = false;
         this.timer = null;

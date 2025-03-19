@@ -75,8 +75,6 @@ class PersonalList
                 listItem.tags = await _this.getImageTagsE621(listItem.id, webRequester);
             }else if (listItem.siteId == SITE_RULE34){
                 listItem.tags = await _this.getImageTagsRule34(listItem.id, webRequester);
-            }else if (listItem.siteId == SITE_ATFBOORU){
-                listItem.tags = await _this.getImageTagsATF(listItem.id, webRequester);
             }else if (listItem.siteId == SITE_DANBOORU){
                 listItem.tags = await _this.getImageTagsDB(listItem.id, webRequester);
             }else if (listItem.siteId == SITE_DERPIBOORU){

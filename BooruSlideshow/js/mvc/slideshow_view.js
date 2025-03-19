@@ -276,7 +276,7 @@ class SlideshowView
                 }
                 if (key == E_KEY_ID)
                 {
-                    _this.openCurrentSlide();
+                    _this.openCurrentSlideSource();
                 }
                 if (key == R_KEY_ID)
                 {
@@ -1124,14 +1124,14 @@ class SlideshowView
         });
     }
 
-    openCurrentSlide()
+    openCurrentSlideSource()
     {
         let currentSlide = this._model.getCurrentSlide();
         
         if (currentSlide == null)
             return;
 
-        window.open(currentSlide.viewableWebsitePostUrl, "_blank");
+        this.openUrlInNewWindow(currentSlide.viewableWebsitePostUrl);
     }
 
     updateFavoriteButton() {

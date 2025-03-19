@@ -163,14 +163,10 @@ class SlideshowController
 
     currentSlideClicked()
     {
-        var currentSlide = this._model.getCurrentSlide();
+        /* temp disable. may be moving down to its own section instead of messing with the clicking
+        this._view.openCurrentSlideSource();
 
-        if (currentSlide == null)
-            return;
-
-        this._view.openUrlInNewWindow(currentSlide.viewableWebsitePostUrl);
-
-        this._model.pauseSlideshow();
+        this._model.pauseSlideshow();*/
     }
 	
     videoVolumeChanged()

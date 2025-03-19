@@ -2,7 +2,6 @@ let LOGGING_MODE_DEV = 'DEV';
 let LOGGING_MODE_PROD = 'PROD';
 let LOGGING_MODE = LOGGING_MODE_PROD;
 
-let SITE_ATFBOORU = 'ATFB';
 let SITE_DANBOORU = 'DANB';
 let SITE_DERPIBOORU = 'DERP';
 let SITE_E621 = 'E621';
@@ -34,6 +33,7 @@ let R_KEY_ID = 82;
 
 let SITE_QUERY_TERM_ASSOCIATIONS = {};
 
+/* Leaving in for reference till this stuff is reworked.
 SITE_QUERY_TERM_ASSOCIATIONS[SITE_ATFBOORU] = {
 	"sort:id" : "order:id",
 	"sort:id_asc" : "order:id_asc",
@@ -42,7 +42,7 @@ SITE_QUERY_TERM_ASSOCIATIONS[SITE_ATFBOORU] = {
 	"sort:score_asc" : "order:score_asc",
 	"sort:score_desc" : "order:score_desc",
 	"sort:-upload" : ""
-};
+};*/
 SITE_QUERY_TERM_ASSOCIATIONS[SITE_DANBOORU] = {
 	"sort:id" : "order:id",
 	"sort:id_asc" : "order:id_asc",

@@ -41,7 +41,6 @@
 				<div id="sites-to-search">
 					<h4>Sites</h4>
 					<ul>
-						<li><label><input type="checkbox" name="sites-to-search" value="ATFB" />booru.allthefallen.moe</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="DANB" />danbooru.donmai.us</label></li>
 						<li><label><input type="checkbox" name="sites-to-search" value="DERP" />derpibooru.org</label></li>
 						<li id="derpibooru-api-key-container"><span><a href="https://derpibooru.org/users/edit" target="_blank">(get API key here)</a></span><br />
@@ -142,22 +141,22 @@
 							(Up to 100 queries are saved. Let me know if there is an issue.)
 						</li>
 						<li><button id="clear-history">Clear Search History</button></li>
-						<li class="new"><a href="personal_list.html">View All Favorites</a></li>
+						<li><a href="personal_list.html">View All Favorites</a></li>
 					</ul>
 				</div>
 				<div id="tips">
 					<h4>Hotkeys</h4>
 					<ul>
-						<li>Full-screen (F11)</li>
-						<li>Previous (&larr; or A)</li>
-						<li>Next (&rarr; or D)</li>
-						<li>Back 10 (W)</li>
-						<li>Forward 10 (S)</li>
-						<li>Play/pause (Enter or space)</li>
-						<li>Auto-Fit (F)</li>
-						<li class="new">Open current image in new tab (E)</li>
-						<li>Download Current Image (L)</li>
-						<li>Fave/Unfave Image (G)</li>
+						<li>[<b>F11</b>] Full-screen</li>
+						<li>[<b>&larr; or A</b>] Previous</li>
+						<li>[<b>&rarr; or D</b>] Next</li>
+						<li>[<b>W</b>] Back 10</li>
+						<li>[<b>S</b>] Forward 10</li>
+						<li>[<b>Enter or Space</b>] Play/pause</li>
+						<li>[<b>F</b>] Auto-fit</li>
+						<li>[<b>E</b>] Open image source</li>
+						<li>[<b>L</b>] Download image to <i>/Downloads/bs/</i></li>
+						<li>[<b>G</b>] Fave/Unfave image</li>
 						<li><i>Issues or suggestions: <a href="https://github.com/Chirmaya/BooruSlideshow/issues" target="_blank">GitHub</a></i></li>
 					</ul>
 				</div>
@@ -168,7 +167,6 @@
 		<script src="js/functions.js"></script>
 		<script src="js/objects/web_requester.js"></script>
 		<script src="js/objects/site_manager.js"></script>
-		<script src="js/objects/site_managers/site_manager_atfbooru.js"></script>
 		<script src="js/objects/site_managers/site_manager_danbooru.js"></script>
 		<script src="js/objects/site_managers/site_manager_derpibooru.js"></script>
 		<script src="js/objects/site_managers/site_manager_e621.js"></script>

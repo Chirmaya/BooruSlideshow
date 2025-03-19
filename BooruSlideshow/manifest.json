@@ -4,7 +4,7 @@
 	"name": "Booru Slideshow",
 	"short_name": "Booru SS",
 	"description": "View a slideshow from a Booru site based on your search.",
-	"version": "10.3",
+	"version": "10.4",
 
 	"action":
 	{
@@ -39,8 +39,8 @@
 	],
 	"host_permissions":
 	[
-		"https://booru.allthefallen.moe/", 
 		"https://danbooru.donmai.us/*",
+		"https://cdn.donmai.us/*",
 		"https://derpibooru.org/*",
 		"https://e621.net/*",
 		"https://*.gelbooru.com/*",

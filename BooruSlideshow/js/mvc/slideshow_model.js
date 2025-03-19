@@ -9,7 +9,6 @@ class SlideshowModel{
         this.searchText = "";
         
         this.sitesToSearch = {
-            [SITE_ATFBOORU]: false,
             [SITE_DANBOORU]: false,
             [SITE_DERPIBOORU]: false,
             [SITE_E621]: false,
@@ -24,10 +23,10 @@ class SlideshowModel{
         this.secondsPerSlide = 6;
         this.maxWidth = null;
         this.maxHeight = null;
-        this.autoFitSlide = false;
+        this.autoFitSlide = true;
         this.includeImages = true;
         this.includeGifs = true;
-        this.includeWebms = false;
+        this.includeWebms = true;
         this.includeExplicit = false;
         this.includeQuestionable = false;
         this.includeSafe = true;
@@ -85,7 +84,6 @@ class SlideshowModel{
 		
 		var standardPageLimit = 100;
 		
-        this.sitesManager.addSite(SITE_ATFBOORU, standardPageLimit);
         this.sitesManager.addSite(SITE_DANBOORU, standardPageLimit);
         this.sitesManager.addSite(SITE_DERPIBOORU, 50);
         this.sitesManager.addSite(SITE_E621, standardPageLimit);

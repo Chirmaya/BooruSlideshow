@@ -187,7 +187,7 @@ class PersonalListView
                 }
                 if (key == E_KEY_ID)
                 {
-                    _this.openCurrentSlide();
+                    _this.openCurrentSlideSource();
                 }
             }
         });
@@ -225,7 +225,7 @@ class PersonalListView
         });
     }
 
-    openCurrentSlide()
+    openCurrentSlideSource()
     {
         let currentSlide = this._model.getCurrentSlide();
 

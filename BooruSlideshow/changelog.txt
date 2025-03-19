@@ -1,11 +1,17 @@
 Changelog
 
-Version 10.3
-* Might have forgot the 10.2 changelog? Seems to have been: "Fixed some errors that popped up when global blacklists were applied. Now it will try to fix it if possible, and skip if not."
+Version 10.4
+* Auto-fit is now enabled by default for new installs.
+* Include WEBMs is now enabled by default for new installs. (Excluding rating:e via checkbox, but including only rating:e results via text webms will still get it stuck eternally trying to load. Will need to rework that system later.
+* Removed support for ATFBooru
+* Included additional URL permissions for Danbooru content. You'll need to manually enable this permission under the Firefox extension permission settings.
 
-Version 10.2
+Version 10.3
 * Major fix: Firefox no longer stops loading/preloading videos. Causes a lot of warnings in the console, but it seems way faster right now. May need to work on this more later.
 * Fixed auto-populating text not updating the internal model's search text value.
+
+Version 10.2
+* Fixed some errors that popped up when global blacklists were applied. Now it will try to fix it if possible, and skip if not.
 
 Version 10.1
 * Updated manifest to version 3
