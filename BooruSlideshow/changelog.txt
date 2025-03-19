@@ -1,5 +1,8 @@
 Changelog
 
+Version 10.3
+* Might have forgot the 10.2 changelog? Seems to have been: "Fixed some errors that popped up when global blacklists were applied. Now it will try to fix it if possible, and skip if not."
+
 Version 10.2
 * Major fix: Firefox no longer stops loading/preloading videos. Causes a lot of warnings in the console, but it seems way faster right now. May need to work on this more later.
 * Fixed auto-populating text not updating the internal model's search text value.
