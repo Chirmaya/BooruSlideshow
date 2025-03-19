@@ -521,6 +521,8 @@ class SlideshowView
 	displayImage(currentSlide) {
         var currentImage = this.uiElements.currentImage;
 
+        logForDev('image = ' + currentSlide.fileUrl);
+
         currentImage.src = currentSlide.fileUrl;
         currentImage.setAttribute('alt', currentSlide.id);
         currentImage.style.display = 'inline';
@@ -531,9 +533,14 @@ class SlideshowView
 	
 	displayVideo(currentSlide) {
         var currentVideo = this.uiElements.currentVideo;
+        //var currentVideoSource = this.uiElements.currentVideoSourceWebm;
 
+        logForDev('video = ' + currentSlide.fileUrl);
+
+        //currentVideoSource.src = currentSlide.fileUrl;
         currentVideo.src = currentSlide.fileUrl;
         currentVideo.style.display = 'inline';
+        //currentVideo.load(); // Firefox workaround to it sometimes not loading videos
 
 		this.clearImage();
         this.updateSlideSize();
@@ -657,6 +664,8 @@ class SlideshowView
     clearImage() {
         var currentImage = this.uiElements.currentImage;
 
+        logForDev('image cleared');
+
         currentImage.src = '';
         currentImage.removeAttribute('alt');
         currentImage.style.display = 'none';
@@ -664,7 +673,11 @@ class SlideshowView
 	
 	clearVideo() {
         var currentVideo = this.uiElements.currentVideo;
+        //var currentVideoSource = this.uiElements.currentVideoSourceWebm;
 
+        //logForDev('video cleared');
+
+        //currentVideoSource.src = '';
         currentVideo.src = '';
         currentVideo.style.display = 'none';
     }

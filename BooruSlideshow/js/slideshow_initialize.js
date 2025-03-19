@@ -1,11 +1,12 @@
-//let slideshowController = null;
+let slideshowController = null;
 
 document.addEventListener('DOMContentLoaded', function () {
-    new SlideshowController({
+    slideshowController = new SlideshowController({
         'warningMessage': document.getElementById('warning-message'),
         'infoMessage': document.getElementById('info-message'),
         'currentImage': document.getElementById('current-image'),
         'currentVideo': document.getElementById('current-video'),
+        'currentVideoSourceWebm': document.getElementById('current-video-source-webm'),
         'loadingAnimation': document.getElementById('loading-animation'),
         'navigation': document.getElementById('navigation'),
         'currentSlideNumber': document.getElementById('current-slide-number'),
@@ -40,11 +41,13 @@ document.addEventListener('DOMContentLoaded', function () {
         'e621Login': document.getElementById('e621-login'),
         'e621ApiKey': document.getElementById('e621-api-key'),
         'storeHistoryCheckBox': document.getElementById('store-history'),
-		'clearHistoryButton': document.getElementById('clear-history'),
+        'clearHistoryButton': document.getElementById('clear-history'),
         'searchHistory': document.getElementById('search-history'),
         'favoriteButton': document.getElementById('favorite-button'),
         'tags': document.getElementById('tags'),
         'slideWrapper': document.getElementById('slide-wrapper'),
         'includeDupesCheckBox': document.getElementById('include-dupes')
     });
+    
+    slideshowController.searchTextChanged();
 });

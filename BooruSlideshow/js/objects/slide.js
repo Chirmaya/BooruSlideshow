@@ -83,22 +83,60 @@ class Slide
 	preloadVideo()
 	{
 		this.preloadingVideo = document.createElement('video');
+		// are these being made and not garbage collected maybe? could be why the limit seems consistent.
 		
 		var slide = this;
-		
-		this.preloadingVideo.addEventListener('loadeddata', function() {
+
+		logForDev('this.preloadingVideo = ' + slide.fileUrl);
+
+		let preloaded = function() {
+			logForDev('this.preloadingVideo:loadeddata = ' + slide.fileUrl);
+
 			slide.isPreloaded = true;
 			slide.isPreloading = false;
+			slide.preloadingVideo.removeEventListener('loadeddata', preloaded);
+			slide.preloadingVideo.removeEventListener('error', errored);
 			
 			if (slide.callbackToRunAfterPreloadingFinishes != null)
 			{
+				logForDev('slide.callbackToRunAfterPreloadingFinishes');
 				slide.callbackToRunAfterPreloadingFinishes.call(slide);
 			}
-		}, false);
+
+			// Unload resources
+			if (slide.preloadingVideo.src.length > 0)
+			{
+				slide.preloadingVideo.pause();
+				slide.preloadingVideo.src = '';
+			}
+			//slide.preloadingVideo.load();
+			//slide.preloadingVideo.remove();
+		}
+
+		let errored = function() {
+			logForDev('this.preloadingVideo:errored = ' + slide.fileUrl);
+
+			slide.isPreloading = false;
+			/*slide.preloadingVideo.removeEventListener('loadeddata', preloaded, false);
+			slide.preloadingVideo.removeEventListener('error', errored), true;
+
+			console.log("errored");
+			console.log(slide.preloadingVideo);
+
+			// Unload resources
+			if (slide.preloadingVideo.src.length > 0)
+			{
+				console.log('aaaa');
+				slide.preloadingVideo.pause();
+				slide.preloadingVideo.src = '';
+			}
+			
+			//slide.preloadingVideo.load();
+			//slide.preloadingVideo.remove();*/
+		};
 		
-		this.preloadingVideo.addEventListener('error', function() {
-			this.isPreloading = false;
-		}, true);
+		this.preloadingVideo.addEventListener('loadeddata', preloaded, false);
+		this.preloadingVideo.addEventListener('error', errored, true);
 		
 		this.preloadingVideo.src = this.fileUrl;
 		this.preloadingVideo.load();

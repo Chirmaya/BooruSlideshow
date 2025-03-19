@@ -1,5 +1,9 @@
 Changelog
 
+Version 10.2
+* Major fix: Firefox no longer stops loading/preloading videos. Causes a lot of warnings in the console, but it seems way faster right now. May need to work on this more later.
+* Fixed auto-populating text not updating the internal model's search text value.
+
 Version 10.1
 * Updated manifest to version 3
 * Updated ATFBooru URL

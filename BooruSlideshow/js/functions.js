@@ -3,7 +3,7 @@ function enableDevMode()
 	LOGGING_MODE = LOGGING_MODE_DEV;
 }
 
-function disableProdMode()
+function disableDevMode()
 {
 	LOGGING_MODE = LOGGING_MODE_PROD;
 }

@@ -100,6 +100,8 @@ class SiteManagerE621 extends SiteManager
 		
 		if (postUrl.substring(0, 4) != 'http')
 			urlPrefix = 'https://';
+
+		logForDev(urlPrefix + jsonPost.file.url + " ; " + urlPrefix + jsonPost.preview.url + " ; " + postUrl)
 		
 		var newSlide = new Slide(
 			SITE_E621,
