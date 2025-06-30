@@ -7,14 +7,15 @@ class SiteManagerGelbooru extends SiteManager
     
     buildPingRequestUrl()
 	{
-		return this.url + '/index.php?page=dapi&s=post&q=index&limit=1';
+		let possibleLogin = this.sitesManager.model.gelbApiKey && this.sitesManager.model.gelbUserId ? '&user_id=' + this.sitesManager.model.gelbUserId + '&api_key=' + this.sitesManager.model.gelbApiKey : '';
+		return this.url + '/index.php?page=dapi&s=post&q=index&limit=1' + possibleLogin;
     }
     
     buildRequestUrl(searchText, pageNumber)
 	{
 		var query = this.buildSiteSpecificQuery(searchText);
-		
-		return this.url + '/index.php?page=dapi&s=post&q=index&tags=' + query + '&pid=' + (pageNumber - 1) + '&limit=' + this.pageLimit;
+		let possibleLogin = this.sitesManager.model.gelbApiKey && this.sitesManager.model.gelbUserId ? '&user_id=' + this.sitesManager.model.gelbUserId + '&api_key=' + this.sitesManager.model.gelbApiKey : '';
+		return this.url + '/index.php?page=dapi&s=post&q=index&tags=' + query + '&pid=' + (pageNumber - 1) + '&limit=' + this.pageLimit + possibleLogin;
 	}
 
 	doesResponseTextIndicateOnline(responseText)

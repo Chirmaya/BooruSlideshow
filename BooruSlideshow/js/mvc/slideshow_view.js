@@ -36,6 +36,8 @@ class SlideshowView
         this.derpibooruApiKeyChangedEvent = new Event(this);
         this.e621LoginChangedEvent = new Event(this);
         this.e621ApiKeyChangedEvent = new Event(this);
+        this.gelbUserIdChangedEvent = new Event(this);
+        this.gelbApiKeyChangedEvent = new Event(this);
         this.storeHistoryChangedEvent = new Event(this);
         this.clearHistoryClickedEvent = new Event(this);
         this.favoriteKeyPressedEvent = new Event(this);
@@ -141,6 +143,14 @@ class SlideshowView
             _this.updateE621ApiKey();
         });
 
+        this._model.gelbUserIdUpdatedEvent.attach(function () {
+            _this.updateGelbUserId();
+        });
+
+        this._model.gelbApiKeyUpdatedEvent.attach(function () {
+            _this.updateGelbApiKey();
+        });
+
         this._model.storeHistoryUpdatedEvent.attach(function () {
             _this.updateStoreHistory();
         });
@@ -242,8 +252,11 @@ class SlideshowView
                 document.activeElement !== _this.uiElements.maxHeightTextBox &&
                 document.activeElement !== _this.uiElements.blacklist &&
                 document.activeElement !== _this.uiElements.derpibooruApiKey &&
+                document.activeElement !== _this.uiElements.e621Login &&
                 document.activeElement !== _this.uiElements.e621ApiKey &&
-                document.activeElement !== _this.uiElements.e621Login) {
+                document.activeElement !== _this.uiElements.gelbUserId &&
+                document.activeElement !== _this.uiElements.gelbApiKey
+                ) {
                 
                 if (key == LEFT_ARROW_KEY_ID || key == A_KEY_ID)
                     _this.previousNavButtonClickedEvent.notify();
@@ -377,6 +390,14 @@ class SlideshowView
 
         this.uiElements.e621ApiKey.addEventListener('change', function () {
             _this.e621ApiKeyChangedEvent.notify();
+        });
+
+        this.uiElements.gelbUserId.addEventListener('change', function () {
+            _this.gelbUserIdChangedEvent.notify();
+        });
+
+        this.uiElements.gelbApiKey.addEventListener('change', function () {
+            _this.gelbApiKeyChangedEvent.notify();
         });
 
         this.uiElements.storeHistoryCheckBox.addEventListener('change', function () {
@@ -881,6 +902,12 @@ class SlideshowView
                 this.uiElements.e621LoginContainer.style.display = checked ? 'inline' : 'none';
 				this.uiElements.e621ApiKeyContainer.style.display = checked ? 'inline' : 'none';
 			}
+
+            if (site == SITE_GELBOORU)
+            {
+                this.uiElements.gelbUserIdContainer.style.display = checked ? 'inline' : 'none';
+                this.uiElements.gelbApiKeyContainer.style.display = checked ? 'inline' : 'none';
+            }
         }
     }
 
@@ -1080,6 +1107,22 @@ class SlideshowView
 
     updateE621ApiKey() {
         this.uiElements.e621ApiKey.value = this._model.e621ApiKey;
+    }
+
+    getGelbUserId() {
+        return this.uiElements.gelbUserId.value.trim();
+    }
+
+    updateGelbUserId() {
+        this.uiElements.gelbUserId.value = this._model.gelbUserId;
+    }
+
+    getGelbApiKey() {
+        return this.uiElements.gelbApiKey.value.trim();
+    }
+
+    updateGelbApiKey() {
+        this.uiElements.gelbApiKey.value = this._model.gelbApiKey;
     }
 
     openUrlInNewWindow(url) {

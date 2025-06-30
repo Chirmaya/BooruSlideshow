@@ -1,5 +1,10 @@
 Changelog
 
+Version 10.5
+* Fixed messed-up webm setting toggle.
+* Added API key feature to support Gelbooru.
+* Loading of settings should happen prior to any pinging of the sites now.
+
 Version 10.4
 * Auto-fit is now enabled by default for new installs.
 * Include WEBMs is now enabled by default for new installs. (Excluding rating:e via checkbox, but including only rating:e results via text webms will still get it stuck eternally trying to load. Will need to rework that system later.)

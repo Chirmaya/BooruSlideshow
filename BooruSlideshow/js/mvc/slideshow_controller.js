@@ -140,6 +140,14 @@ class SlideshowController
             _this.e621ApiKeyChanged();
         });
 
+        this._view.gelbUserIdChangedEvent.attach(function () {
+            _this.gelbUserIdChanged();
+        });
+
+        this._view.gelbApiKeyChangedEvent.attach(function () {
+            _this.gelbApiKeyChanged();
+        });
+
         this._view.storeHistoryChangedEvent.attach(function () {
             _this.storeHistoryChanged();
         });
@@ -155,9 +163,12 @@ class SlideshowController
         this._view.favoriteButtonClickedEvent.attach(function () {
             _this.favoriteButtonClicked();
         });
+    }
 
-        this._model.loadUserSettings();
-        
+    async initialize()
+    {
+        //console.log("SlideshowController.initialize");
+        await this._model.loadUserSettings();
         this._model.pingSites();
     }
 
@@ -411,6 +422,20 @@ class SlideshowController
         var e621ApiKey = this._view.getE621ApiKey();
 
         this._model.setE621ApiKey(e621ApiKey);
+    }
+
+    gelbUserIdChanged()
+    {
+        var gelbUserId = this._view.getGelbUserId();
+
+        this._model.setGelbUserId(gelbUserId);
+    }
+
+    gelbApiKeyChanged()
+    {
+        var gelbApiKey = this._view.getGelbApiKey();
+
+        this._model.setGelbApiKey(gelbApiKey);
     }
 
     storeHistoryChanged()

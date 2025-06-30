@@ -35,6 +35,8 @@ class SlideshowModel{
         this.derpibooruApiKey = '';
         this.e621Login = ''
         this.e621ApiKey = ''
+        this.gelbLoginId = ''
+        this.gelbApiKey = ''
         this.storeHistory = true;
         this.searchHistory = [];
 
@@ -65,6 +67,8 @@ class SlideshowModel{
         this.derpibooruApiKeyUpdatedEvent = new Event(this);
         this.e621LoginUpdatedEvent = new Event(this);
         this.e621ApiKeyUpdatedEvent = new Event(this);
+        this.gelbUserIdUpdatedEvent = new Event(this);
+        this.gelbApiKeyUpdatedEvent = new Event(this);
         this.storeHistoryUpdatedEvent = new Event(this);
         this.searchHistoryUpdatedEvent = new Event(this);
         this.favoriteButtonUpdatedEvent = new Event(this);
@@ -95,13 +99,16 @@ class SlideshowModel{
         this.sitesManager.addSite(SITE_YANDERE, standardPageLimit);
     }
 
-    loadUserSettings()
+    async loadUserSettings()
     {
-        this.dataLoader.loadUserSettings();
+        //console.log("SlideshowModel.loadUserSettings")
+        let result = await this.dataLoader.loadUserSettings();
     }
 	
     pingSites()
     {
+        console.log("Checking status of sites...");
+
 		var _this = this;
 		this.sitesManager.pingSites(function(siteManager){
 			if (!siteManager.isOnline)
@@ -603,6 +610,24 @@ class SlideshowModel{
         this.dataLoader.saveE621ApiKey();
 
         this.e621ApiKeyUpdatedEvent.notify();
+    }
+
+    setGelbUserId(gelbUserId)
+    {
+        this.gelbUserId = gelbUserId;
+
+        this.dataLoader.saveGelbUserId();
+
+        this.gelbUserIdUpdatedEvent.notify();
+    }
+
+    setGelbApiKey(gelbApiKey)
+    {
+        this.gelbApiKey = gelbApiKey;
+
+        this.dataLoader.saveGelbApiKey();
+
+        this.gelbApiKeyUpdatedEvent.notify();
     }
 
     setStoreHistory(onOrOff)

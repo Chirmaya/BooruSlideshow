@@ -40,6 +40,10 @@ document.addEventListener('DOMContentLoaded', function () {
         'e621ApiKeyContainer': document.getElementById('e621-api-key-container'),
         'e621Login': document.getElementById('e621-login'),
         'e621ApiKey': document.getElementById('e621-api-key'),
+        'gelbUserIdContainer': document.getElementById('gelb-userid-container'),
+        'gelbApiKeyContainer': document.getElementById('gelb-api-key-container'),
+        'gelbUserId': document.getElementById('gelb-userid'),
+        'gelbApiKey': document.getElementById('gelb-api-key'),
         'storeHistoryCheckBox': document.getElementById('store-history'),
         'clearHistoryButton': document.getElementById('clear-history'),
         'searchHistory': document.getElementById('search-history'),
@@ -48,6 +52,9 @@ document.addEventListener('DOMContentLoaded', function () {
         'slideWrapper': document.getElementById('slide-wrapper'),
         'includeDupesCheckBox': document.getElementById('include-dupes')
     });
-    
-    slideshowController.searchTextChanged();
+
+    (async () => {
+        let result = await slideshowController.initialize();
+        slideshowController.searchTextChanged();
+    })();
 });
