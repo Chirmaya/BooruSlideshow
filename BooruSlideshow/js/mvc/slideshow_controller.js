@@ -24,6 +24,18 @@ class SlideshowController
             _this.videoVolumeChanged();
         });
 
+        this._view.currentImageLoadedEvent.attach(function(){
+            _this.currentImageStarted();
+        })
+
+        this._view.currentVideoLoadedEvent.attach(function(){
+            _this.currentVideoStarted();
+        })
+
+        this._view.currentVideoLoopedEvent.attach(function(){
+            _this.currentVideoLooped();
+        })
+
         this._view.firstNavButtonClickedEvent.attach(function () {
             _this.firstNavButtonClicked();
         });
@@ -187,6 +199,18 @@ class SlideshowController
 		
         this._model.setVideoVolume(videoVolume);
         this._model.setVideoMuted(videoMuted);
+    }
+
+    currentImageStarted(){
+        this._model.unlockSlideshow();
+    }
+
+    currentVideoStarted(){
+        this._model.lockSlideshow();
+    }
+
+    currentVideoLooped(){
+        this._model.unlockSlideshow();
     }
 
     firstNavButtonClicked()

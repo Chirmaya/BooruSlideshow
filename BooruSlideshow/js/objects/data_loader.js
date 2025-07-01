@@ -305,6 +305,7 @@ class DataLoader
     {
         chrome.storage.sync.set({'autoFitSlide': this._model.autoFitSlide});
     }
+
 	
     saveIncludeImages()
     {

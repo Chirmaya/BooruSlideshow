@@ -43,6 +43,7 @@ class SlideshowModel{
         this.isPlaying = false;
         this.timer = null;
         this.timerMs = 0;
+        this.slideshowLocked = false;
 
         this.sitesManager = null;
 
@@ -306,27 +307,32 @@ class SlideshowModel{
         var millisecondsPerSlide = this.secondsPerSlide * 1000;
 	    
         var _this = this;
+        var intervalMs = 100;
+        var acumMs = 0;
 
-        this.timer = setTimeout(function() {
-            if (_this.hasNextSlide())
-            {
-                // Continue slideshow
-                _this.increaseCurrentSlideNumber();
+        this.timer = setInterval(function() {
+            if (!_this.slideshowLocked && acumMs >= millisecondsPerSlide){
+                clearInterval(this.timer);
+                if (_this.hasNextSlide())
+                {
+                    // Continue slideshow
+                    _this.increaseCurrentSlideNumber();
+                }
+                else if (_this.isTryingToLoadMoreSlides())
+                    {
+                        // Wait for loading images/videos to finish
+                        _this.sitesManager.runCodeWhenFinishGettingMoreSlides(function(){
+                            _this.tryToStartCountdown();
+                        });
+                }
+                else
+                {
+                    // Loop when out of images/videos
+                    _this.setSlideNumberToFirst();
+                }
             }
-            else if (_this.isTryingToLoadMoreSlides())
-            {
-                // Wait for loading images/videos to finish
-                _this.sitesManager.runCodeWhenFinishGettingMoreSlides(function(){
-                    _this.tryToStartCountdown();
-                });
-            }
-            else
-            {
-                // Loop when out of images/videos
-                _this.setSlideNumberToFirst();
-            }
-		
-        }, millisecondsPerSlide);
+            acumMs += intervalMs;
+        }, intervalMs);
     }
 
     restartSlideshowIfOn()
@@ -350,6 +356,14 @@ class SlideshowModel{
         this.isPlaying = false;
 
         this.playingChangedEvent.notify();
+    }
+
+    lockSlideshow(){
+        this.slideshowLocked = true;
+    }
+
+    unlockSlideshow(){
+        this.slideshowLocked = false;
     }
 
     hasAtLeastOneOnlineSiteSelected()
