@@ -34,6 +34,7 @@ class SlideshowView
         this.hideBlacklistChangedEvent = new Event(this);
         this.blacklistChangedEvent = new Event(this);
         this.derpibooruApiKeyChangedEvent = new Event(this);
+        this.tantabusApiKeyChangedEvent = new Event(this);
         this.e621LoginChangedEvent = new Event(this);
         this.e621ApiKeyChangedEvent = new Event(this);
         this.gelbUserIdChangedEvent = new Event(this);
@@ -133,6 +134,10 @@ class SlideshowView
         
         this._model.derpibooruApiKeyUpdatedEvent.attach(function () {
             _this.updateDerpibooruApiKey();
+        });
+
+        this._model.tantabusApiKeyUpdatedEvent.attach(function () {
+            _this.updateTantabusApiKey();
         });
 
         this._model.e621LoginUpdatedEvent.attach(function () {
@@ -252,6 +257,7 @@ class SlideshowView
                 document.activeElement !== _this.uiElements.maxHeightTextBox &&
                 document.activeElement !== _this.uiElements.blacklist &&
                 document.activeElement !== _this.uiElements.derpibooruApiKey &&
+                document.activeElement !== _this.uiElements.tantabusApiKey &&
                 document.activeElement !== _this.uiElements.e621Login &&
                 document.activeElement !== _this.uiElements.e621ApiKey &&
                 document.activeElement !== _this.uiElements.gelbUserId &&
@@ -382,6 +388,10 @@ class SlideshowView
         
         this.uiElements.derpibooruApiKey.addEventListener('change', function () {
             _this.derpibooruApiKeyChangedEvent.notify();
+        });
+
+        this.uiElements.tantabusApiKey.addEventListener('change', function () {
+            _this.tantabusApiKeyChangedEvent.notify();
         });
 
         this.uiElements.e621Login.addEventListener('change', function () {
@@ -897,6 +907,11 @@ class SlideshowView
 				this.uiElements.derpibooruApiKeyContainer.style.display = checked ? 'inline' : 'none';
             }
             
+            if (site == SITE_TANTABUS)
+			{
+				this.uiElements.tantabusApiKeyContainer.style.display = checked ? 'inline' : 'none';
+            }
+
             if (site == SITE_E621)
 			{
                 this.uiElements.e621LoginContainer.style.display = checked ? 'inline' : 'none';
@@ -1091,6 +1106,14 @@ class SlideshowView
 
     updateDerpibooruApiKey() {
         this.uiElements.derpibooruApiKey.value = this._model.derpibooruApiKey;
+    }
+
+    getTantabusApiKey() {
+        return this.uiElements.tantabusApiKey.value.trim();
+    }
+
+    updateTantabusApiKey() {
+        this.uiElements.tantabusApiKey.value = this._model.tantabusApiKey;
     }
 
     getE621Login() {

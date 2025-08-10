@@ -79,6 +79,8 @@ class PersonalList
                 listItem.tags = await _this.getImageTagsDB(listItem.id, webRequester);
             }else if (listItem.siteId == SITE_DERPIBOORU){
                 listItem.tags = await _this.getImageTagsDerp(listItem.id, webRequester);
+            }else if (listItem.siteId == SITE_TANTABUS){
+            listItem.tags = await _this.getImageTagsTan(listItem.id, webRequester);
             }else if (listItem.siteId == SITE_KONACHAN){
                 listItem.tags = await _this.getImageTagsKona(listItem.id, webRequester);
             }else if (listItem.siteId == SITE_SAFEBOORU){
@@ -222,6 +224,29 @@ class PersonalList
             })
         })
     }
+
+    getImageTagsTan(id, webRequester)
+    {
+        return new Promise((resolve) => {
+            var possibleAddedKey
+            chrome.storage.sync.get(["tantabusApiKey"], (obj) => {possibleAddedKey = obj.tantabusApiKey ? '&key=' + obj.tantabusApiKey : ''})
+            
+            webRequester.makeWebsiteRequest(`https://tantabus.ai/search.json?q=id%3A${id}${possibleAddedKey}`, () => {
+                var data = JSON.parse(arguments[1].xhr.responseText).search[0]
+                var tags = data.tags
+				tags = tags.replace(/,\s/gm,",")
+				tags = tags.replace(/\s/gm,"_")
+                tags = tags.replace(/,/gm," ")
+                
+                if(!data){ 
+                    resolve("")
+                    return
+                }
+                resolve(tags)
+            })
+        })
+    }
+
 
     getImageTagsDB(id, webRequester)
     {

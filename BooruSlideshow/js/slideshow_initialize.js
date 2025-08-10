@@ -36,6 +36,8 @@ document.addEventListener('DOMContentLoaded', function () {
         'blacklist': document.getElementById('blacklist'),
         'derpibooruApiKey': document.getElementById('derpibooru-api-key'),
         'derpibooruApiKeyContainer': document.getElementById('derpibooru-api-key-container'),
+        'tantabusApiKey': document.getElementById('tantabus-api-key'),
+        'tantabusApiKeyContainer': document.getElementById('tantabus-api-key-container'),
         'e621LoginContainer': document.getElementById('e621-login-container'),
         'e621ApiKeyContainer': document.getElementById('e621-api-key-container'),
         'e621Login': document.getElementById('e621-login'),

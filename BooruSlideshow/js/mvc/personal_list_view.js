@@ -154,7 +154,8 @@ class PersonalListView
                 document.activeElement !== _this.uiElements.maxWidthTextBox &&
                 document.activeElement !== _this.uiElements.maxHeightTextBox &&
                 document.activeElement !== _this.uiElements.blacklist &&
-                document.activeElement !== _this.uiElements.derpibooruApiKey) {
+                document.activeElement !== _this.uiElements.derpibooruApiKey &&
+                document.activeElement !== _this.uiElements.tantabusApiKey) {
                 
                 if (key == LEFT_ARROW_KEY_ID || key == A_KEY_ID)
                     _this.previousNavButtonClickedEvent.notify();
@@ -189,7 +190,10 @@ class PersonalListView
                 {
                     _this.openCurrentSlideSource();
                 }
-            }
+                }
+                
+            
+            
         });
     
         this.uiElements.filterTextBox.addEventListener('change', function () {

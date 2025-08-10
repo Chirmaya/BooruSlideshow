@@ -464,6 +464,15 @@ class PersonalListModel{
         this.derpibooruApiKeyUpdatedEvent.notify();
     }
 
+    setTantabusApiKey(TantabusApiKey)
+    {
+        this.tantabusApiKey = tantabusApiKey;
+
+        this.dataLoader.savTantabusApiKey();
+
+        this.tantabusApiKeyUpdatedEvent.notify();
+    }
+
     setPersonalList(personalList)
     {
         this.personalList = personalList;

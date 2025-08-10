@@ -46,6 +46,10 @@
 						<li id="derpibooru-api-key-container"><span><a href="https://derpibooru.org/users/edit" target="_blank">(get API key here)</a></span><br />
 							<label><input type="password" id="derpibooru-api-key" /></label>
 						</li>
+						<li><label><input type="checkbox" name="sites-to-search" value="TAN" />tantabus.ai</label></li>
+						<li id="tantabus-api-key-container"><span><a href="https://tantabus.ai/registrations/edit" target="_blank">(get API key here)</a></span><br />
+							<label><input type="password" id="tantabus-api-key" /></label>
+						</li>
 						<li><label><input type="checkbox" name="sites-to-search" value="E621" />e621.net</label></li>
 						<li id="e621-login-container">
 							<label><input type="login" id="e621-login" placeholder="e621 username"/></label>
@@ -182,6 +186,7 @@
 		<script src="js/objects/site_manager.js"></script>
 		<script src="js/objects/site_managers/site_manager_danbooru.js"></script>
 		<script src="js/objects/site_managers/site_manager_derpibooru.js"></script>
+		<script src="js/objects/site_managers/site_manager_tantabus.js"></script>
 		<script src="js/objects/site_managers/site_manager_e621.js"></script>
 		<script src="js/objects/site_managers/site_manager_gelbooru.js"></script>
 		<script src="js/objects/site_managers/site_manager_konachan.js"></script>

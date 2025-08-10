@@ -35,6 +35,7 @@ class DataLoader
         var hideBlacklist = obj['hideBlacklist'];
         var blacklist = obj['blacklist'];
         var derpibooruApiKey = obj['derpibooruApiKey'];
+        var tantabusApiKey = obj['tantabusApiKey'];
         var e621Login = obj['e621Login'];
         var e621ApiKey = obj['e621ApiKey'];
         var gelbUserId = obj['gelbUserId'];
@@ -99,6 +100,7 @@ class DataLoader
 
                 _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_DANBOORU);
                 _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_DERPIBOORU);
+                _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_TANTABUS);
                 _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_E621);
                 _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_GELBOORU);
                 _this.addPropertyIfExists(sitesToSearch, cleanSitesToSearch, SITE_KONACHAN);
@@ -168,6 +170,11 @@ class DataLoader
                 _this._model.setDerpibooruApiKey(derpibooruApiKey);
             }
 
+            if (tantabusApiKey != null && _this._model.tantabusApiKey != tantabusApiKey)
+            {
+                _this._model.setTantabusApiKey(tantabusApiKey);
+            }
+
             if (e621Login != null && _this._model.e621Login != e621Login)
             {
                 _this._model.setE621Login(e621Login);
@@ -234,6 +241,7 @@ class DataLoader
 			'hideBlacklist',
 			'blacklist',
             'derpibooruApiKey',
+            'tantabusApiKey',
             'e621Login',
             'e621ApiKey',
             'gelbUserId',
@@ -349,6 +357,11 @@ class DataLoader
     saveDerpibooruApiKey()
     {
         chrome.storage.sync.set({'derpibooruApiKey': this._model.derpibooruApiKey});
+    }
+
+    saveTantabusApiKey()
+    {
+        chrome.storage.sync.set({'tantabusApiKey': this._model.tantabusApiKey});
     }
 
     saveE621Login()

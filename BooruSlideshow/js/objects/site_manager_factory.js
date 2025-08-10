@@ -8,6 +8,8 @@ class SiteManagerFactory
 				return new SiteManagerDanbooru(sitesManager, pageLimit);
 			case SITE_DERPIBOORU:
 				return new SiteManagerDerpibooru(sitesManager, pageLimit);
+			case SITE_TANTABUS:
+				return new SiteManagerTantabus(sitesManager, pageLimit);
 			case SITE_E621:
 				return new SiteManagerE621(sitesManager, pageLimit);
 			case SITE_GELBOORU:

@@ -132,6 +132,10 @@ class SlideshowController
             _this.derpibooruApiKeyChanged();
         });
 
+        this._view.tantabusApiKeyChangedEvent.attach(function () {
+            _this.tantabusApiKeyChanged();
+        });
+
         this._view.e621LoginChangedEvent.attach(function () {
             _this.e621LoginChanged();
         });
@@ -408,6 +412,20 @@ class SlideshowController
         var derpibooruApiKey = this._view.getDerpibooruApiKey();
 
         this._model.setDerpibooruApiKey(derpibooruApiKey);
+    }
+
+    tantabusApiKeyChanged()
+    {
+        var tantabusApiKey = this._view.getTantabusApiKey();
+
+        this._model.setTantabusApiKey(tantabusApiKey);
+    }
+
+    tantabusApiKeyChanged()
+    {
+        var tantabusApiKey = this._view.getTantabusApiKey();
+
+        this._model.setTantabusApiKey(tantabusApiKey);
     }
 
     e621LoginChanged()

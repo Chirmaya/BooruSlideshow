@@ -11,6 +11,7 @@ class SlideshowModel{
         this.sitesToSearch = {
             [SITE_DANBOORU]: false,
             [SITE_DERPIBOORU]: false,
+            [SITE_TANTABUS]: false,
             [SITE_E621]: false,
             [SITE_GELBOORU]: false,
             [SITE_KONACHAN]: false,
@@ -33,6 +34,7 @@ class SlideshowModel{
         this.hideBlacklist = false;
         this.blacklist = '';
         this.derpibooruApiKey = '';
+        this.tantabusApiKey = '';
         this.e621Login = ''
         this.e621ApiKey = ''
         this.gelbLoginId = ''
@@ -65,6 +67,7 @@ class SlideshowModel{
         this.hideBlacklistUpdatedEvent = new Event(this);
         this.blacklistUpdatedEvent = new Event(this);
         this.derpibooruApiKeyUpdatedEvent = new Event(this);
+        this.tantabusApiKeyUpdatedEvent = new Event(this);
         this.e621LoginUpdatedEvent = new Event(this);
         this.e621ApiKeyUpdatedEvent = new Event(this);
         this.gelbUserIdUpdatedEvent = new Event(this);
@@ -90,6 +93,7 @@ class SlideshowModel{
 		
         this.sitesManager.addSite(SITE_DANBOORU, standardPageLimit);
         this.sitesManager.addSite(SITE_DERPIBOORU, 50);
+        this.sitesManager.addSite(SITE_TANTABUS, 50);
         this.sitesManager.addSite(SITE_E621, standardPageLimit);
         this.sitesManager.addSite(SITE_GELBOORU, standardPageLimit);
         this.sitesManager.addSite(SITE_KONACHAN, standardPageLimit);
@@ -592,6 +596,15 @@ class SlideshowModel{
         this.dataLoader.saveDerpibooruApiKey();
 
         this.derpibooruApiKeyUpdatedEvent.notify();
+    }
+
+    setTantabusApiKey(tantabusApiKey)
+    {
+        this.tantabusApiKey = tantabusApiKey;
+
+        this.dataLoader.saveTantabusApiKey();
+
+        this.tantabusApiKeyUpdatedEvent.notify();
     }
 
     setE621Login(e621Login)
