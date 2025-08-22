@@ -38,6 +38,8 @@ class SlideshowView
         this.e621ApiKeyChangedEvent = new Event(this);
         this.gelbUserIdChangedEvent = new Event(this);
         this.gelbApiKeyChangedEvent = new Event(this);
+        this.r34UserIdChangedEvent = new Event(this);
+        this.r34ApiKeyChangedEvent = new Event(this);
         this.storeHistoryChangedEvent = new Event(this);
         this.clearHistoryClickedEvent = new Event(this);
         this.favoriteKeyPressedEvent = new Event(this);
@@ -151,6 +153,14 @@ class SlideshowView
             _this.updateGelbApiKey();
         });
 
+		this._model.r34UserIdUpdatedEvent.attach(function () {
+            _this.updateR34UserId();
+        });
+
+        this._model.r34ApiKeyUpdatedEvent.attach(function () {
+            _this.updateR34ApiKey();
+        });
+
         this._model.storeHistoryUpdatedEvent.attach(function () {
             _this.updateStoreHistory();
         });
@@ -255,7 +265,9 @@ class SlideshowView
                 document.activeElement !== _this.uiElements.e621Login &&
                 document.activeElement !== _this.uiElements.e621ApiKey &&
                 document.activeElement !== _this.uiElements.gelbUserId &&
-                document.activeElement !== _this.uiElements.gelbApiKey
+                document.activeElement !== _this.uiElements.gelbApiKey &&
+                document.activeElement !== _this.uiElements.r34UserId &&
+                document.activeElement !== _this.uiElements.r34ApiKey
                 ) {
                 
                 if (key == LEFT_ARROW_KEY_ID || key == A_KEY_ID)
@@ -398,6 +410,14 @@ class SlideshowView
 
         this.uiElements.gelbApiKey.addEventListener('change', function () {
             _this.gelbApiKeyChangedEvent.notify();
+        });
+
+        this.uiElements.r34UserId.addEventListener('change', function () {
+            _this.r34UserIdChangedEvent.notify();
+        });
+
+        this.uiElements.r34ApiKey.addEventListener('change', function () {
+            _this.r34ApiKeyChangedEvent.notify();
         });
 
         this.uiElements.storeHistoryCheckBox.addEventListener('change', function () {
@@ -908,6 +928,12 @@ class SlideshowView
                 this.uiElements.gelbUserIdContainer.style.display = checked ? 'inline' : 'none';
                 this.uiElements.gelbApiKeyContainer.style.display = checked ? 'inline' : 'none';
             }
+			
+            if (site == SITE_RULE34)
+            {
+                this.uiElements.r34UserIdContainer.style.display = checked ? 'inline' : 'none';
+                this.uiElements.r34ApiKeyContainer.style.display = checked ? 'inline' : 'none';
+            }
         }
     }
 
@@ -1123,6 +1149,22 @@ class SlideshowView
 
     updateGelbApiKey() {
         this.uiElements.gelbApiKey.value = this._model.gelbApiKey;
+    }
+
+    getR34UserId() {
+        return this.uiElements.r34UserId.value.trim();
+    }
+
+    updateR34UserId() {
+        this.uiElements.r34UserId.value = this._model.r34UserId;
+    }
+
+    getR34ApiKey() {
+        return this.uiElements.r34ApiKey.value.trim();
+    }
+
+    updateR34ApiKey() {
+        this.uiElements.r34ApiKey.value = this._model.r34ApiKey;
     }
 
     openUrlInNewWindow(url) {

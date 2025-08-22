@@ -7,14 +7,16 @@ class SiteManagerRule34 extends SiteManager
     
     buildPingRequestUrl()
 	{
-		return this.url + '/index.php?page=dapi&s=post&q=index&limit=1';
+			let possibleLogin = this.sitesManager.model.r34ApiKey && this.sitesManager.model.r34UserId ? '&user_id=' + this.sitesManager.model.r34UserId + '&api_key=' + this.sitesManager.model.r34ApiKey : '';
+		return this.url + '/index.php?page=dapi&s=post&q=index&limit=1' + possibleLogin;
     }
     
     buildRequestUrl(searchText, pageNumber)
 	{
 		var query = this.buildSiteSpecificQuery(searchText);
 		
-		return this.url + '/index.php?page=dapi&s=post&q=index&tags=' + query + '&pid=' + (pageNumber - 1) + '&limit=' + this.pageLimit;
+				let possibleLogin = this.sitesManager.model.r34ApiKey && this.sitesManager.model.r34UserId ? '&user_id=' + this.sitesManager.model.r34UserId + '&api_key=' + this.sitesManager.model.r34ApiKey : '';
+		return this.url + '/index.php?page=dapi&s=post&q=index&tags=' + query + '&pid=' + (pageNumber - 1) + '&limit=' + this.pageLimit + possibleLogin;
 	}
 
 	doesResponseTextIndicateOnline(responseText)

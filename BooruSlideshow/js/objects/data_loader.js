@@ -39,6 +39,8 @@ class DataLoader
         var e621ApiKey = obj['e621ApiKey'];
         var gelbUserId = obj['gelbUserId'];
         var gelbApiKey = obj['gelbApiKey'];
+        var r34UserId = obj['r34UserId'];
+        var r34ApiKey = obj['r34ApiKey'];
         var storeHistory = obj['storeHistory'];
         var searchHistory = obj['searchHistory'];
         var includeDupes = obj['includeDupes'];
@@ -187,6 +189,16 @@ class DataLoader
             {
                 _this._model.setGelbApiKey(gelbApiKey);
             }
+			
+			if (r34UserId != null && _this._model.r34UserId != r34UserId)
+            {
+                _this._model.setR34UserId(r34UserId);
+            }
+
+            if (r34ApiKey != null && _this._model.r34ApiKey != r34ApiKey)
+            {
+                _this._model.setR34ApiKey(r34ApiKey);
+            }
             
             if (storeHistory != null)
             {
@@ -238,6 +250,8 @@ class DataLoader
             'e621ApiKey',
             'gelbUserId',
             'gelbApiKey',
+            'r34UserId',
+            'r34ApiKey',
             'storeHistory',
             'searchHistory',
             'includeDupes',
@@ -369,6 +383,16 @@ class DataLoader
     saveGelbApiKey()
     {
         chrome.storage.sync.set({'gelbApiKey': this._model.gelbApiKey});
+    }
+	
+	saveR34UserId()
+    {
+        chrome.storage.sync.set({'r34UserId': this._model.r34UserId});
+    }
+
+    saveR34ApiKey()
+    {
+        chrome.storage.sync.set({'r34ApiKey': this._model.r34ApiKey});
     }
 
     saveStoreHistory()
