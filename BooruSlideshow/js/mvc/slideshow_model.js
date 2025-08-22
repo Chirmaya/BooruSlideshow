@@ -37,6 +37,8 @@ class SlideshowModel{
         this.e621ApiKey = ''
         this.gelbLoginId = ''
         this.gelbApiKey = ''
+		this.r34LoginId = ''
+        this.r34ApiKey = ''
         this.storeHistory = true;
         this.searchHistory = [];
 
@@ -69,6 +71,8 @@ class SlideshowModel{
         this.e621ApiKeyUpdatedEvent = new Event(this);
         this.gelbUserIdUpdatedEvent = new Event(this);
         this.gelbApiKeyUpdatedEvent = new Event(this);
+		this.r34UserIdUpdatedEvent = new Event(this);
+        this.r34ApiKeyUpdatedEvent = new Event(this);
         this.storeHistoryUpdatedEvent = new Event(this);
         this.searchHistoryUpdatedEvent = new Event(this);
         this.favoriteButtonUpdatedEvent = new Event(this);
@@ -628,6 +632,24 @@ class SlideshowModel{
         this.dataLoader.saveGelbApiKey();
 
         this.gelbApiKeyUpdatedEvent.notify();
+    }
+	
+	setR34UserId(r34UserId)
+    {
+        this.r34UserId = r34UserId;
+
+        this.dataLoader.saveR34UserId();
+
+        this.r34UserIdUpdatedEvent.notify();
+    }
+
+    setR34ApiKey(r34ApiKey)
+    {
+        this.r34ApiKey = r34ApiKey;
+
+        this.dataLoader.saveR34ApiKey();
+
+        this.r34ApiKeyUpdatedEvent.notify();
     }
 
     setStoreHistory(onOrOff)

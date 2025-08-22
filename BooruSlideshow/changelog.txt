@@ -1,5 +1,8 @@
 Changelog
 
+Version 10.6
+* Added API key feature to support Rule34
+
 Version 10.5
 * Fixed messed-up webm setting toggle.
 * Added API key feature to support Gelbooru.

@@ -148,6 +148,14 @@ class SlideshowController
             _this.gelbApiKeyChanged();
         });
 
+        this._view.r34UserIdChangedEvent.attach(function () {
+            _this.r34UserIdChanged();
+        });
+
+        this._view.r34ApiKeyChangedEvent.attach(function () {
+            _this.r34ApiKeyChanged();
+        });
+
         this._view.storeHistoryChangedEvent.attach(function () {
             _this.storeHistoryChanged();
         });
@@ -436,6 +444,20 @@ class SlideshowController
         var gelbApiKey = this._view.getGelbApiKey();
 
         this._model.setGelbApiKey(gelbApiKey);
+    }
+	
+	r34UserIdChanged()
+    {
+        var r34UserId = this._view.getR34UserId();
+
+        this._model.setR34UserId(r34UserId);
+    }
+
+    r34ApiKeyChanged()
+    {
+        var r34ApiKey = this._view.getR34ApiKey();
+
+        this._model.setR34ApiKey(r34ApiKey);
     }
 
     storeHistoryChanged()
