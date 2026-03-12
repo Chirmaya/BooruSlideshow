@@ -4,18 +4,21 @@ class SiteManagerGelbooru extends SiteManager
     {
 		super(sitesManager, SITE_GELBOORU, 'https://gelbooru.com', pageLimit);
     }
+
+	buildUserIdAndApiKeyString()
+	{
+		return this.sitesManager.model.gelbApiKey && this.sitesManager.model.gelbUserId ? '&user_id=' + this.sitesManager.model.gelbUserId + '&api_key=' + this.sitesManager.model.gelbApiKey : '';
+	}
     
     buildPingRequestUrl()
 	{
-		let possibleLogin = this.sitesManager.model.gelbApiKey && this.sitesManager.model.gelbUserId ? '&user_id=' + this.sitesManager.model.gelbUserId + '&api_key=' + this.sitesManager.model.gelbApiKey : '';
-		return this.url + '/index.php?page=dapi&s=post&q=index&limit=1' + possibleLogin;
+		return this.url + '/index.php?page=dapi&s=post&q=index&limit=1' + this.buildUserIdAndApiKeyString();
     }
     
     buildRequestUrl(searchText, pageNumber)
 	{
 		var query = this.buildSiteSpecificQuery(searchText);
-		let possibleLogin = this.sitesManager.model.gelbApiKey && this.sitesManager.model.gelbUserId ? '&user_id=' + this.sitesManager.model.gelbUserId + '&api_key=' + this.sitesManager.model.gelbApiKey : '';
-		return this.url + '/index.php?page=dapi&s=post&q=index&tags=' + query + '&pid=' + (pageNumber - 1) + '&limit=' + this.pageLimit + possibleLogin;
+		return this.url + '/index.php?page=dapi&s=post&q=index&tags=' + query + '&pid=' + (pageNumber - 1) + '&limit=' + this.pageLimit + this.buildUserIdAndApiKeyString();
 	}
 
 	doesResponseTextIndicateOnline(responseText)
@@ -36,6 +39,7 @@ class SiteManagerGelbooru extends SiteManager
 
 	addSlide(xmlPost)
 	{
+		
 		if (doesXmlContainElement(xmlPost, 'file_url') &&
 			doesXmlContainElement(xmlPost, 'preview_url') &&
 			this.isPathForSupportedMediaType(getXmlElementStringValueSafe(xmlPost, 'file_url')))
@@ -58,6 +62,9 @@ class SiteManagerGelbooru extends SiteManager
 				getXmlElementStringValueSafe(xmlPost, 'tags')
 			);
 			
+			console.log(this.reformatFileUrl(getXmlElementStringValueSafe(xmlPost, 'file_url')));
+			console.log(this.reformatFileUrl(getXmlElementStringValueSafe(xmlPost, 'preview_url')));
+
 			this.allUnsortedSlides.push(newSlide);
 		}
 	}

@@ -17,7 +17,7 @@
         "condition":
         {
             "urlFilter": "https://*.gelbooru.com/*",
-            "resourceTypes": ["main_frame"]
+            "resourceTypes": ["main_frame", "image", "media"]
         }
     }
 ]

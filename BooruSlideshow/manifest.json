@@ -4,7 +4,7 @@
 	"name": "Booru Slideshow",
 	"short_name": "Booru SS",
 	"description": "View a slideshow from a Booru site based on your search.",
-	"version": "10.5",
+	"version": "10.6",
 
 	"action":
 	{
@@ -56,7 +56,7 @@
 		[
 			{
 				"id": "ruleset_header_referer",
-				"enabled": false,
+				"enabled": true,
 				"path": "rules_header_referer.json"
 			}
 		]
