@@ -16,12 +16,14 @@ class PersonalListModel{
         this.isPlaying = false;
         this.timer = null;
         this.timerMs = 0;
+        this.slideshowLocked = false;
 
         this.sitesManager = null;
 
         this.personalList = new PersonalList();
         this.filtered = false;
         this.filteredPersonalList = null;
+        this.sortRandom = false;
 
         this.currentSlideChangedEvent = new Event(this);
         this.playingChangedEvent = new Event(this);
@@ -30,6 +32,7 @@ class PersonalListModel{
         this.maxWidthUpdatedEvent = new Event(this);
         this.maxHeightUpdatedEvent = new Event(this);
         this.autoFitSlideUpdatedEvent = new Event(this);
+        this.randomSortUpdatedEvent = new Event(this);
         this.personalListLoadedEvent = new Event(this);
 
         this.dataLoader = new DataLoader(this);
@@ -53,7 +56,17 @@ class PersonalListModel{
         var notTags = filterWordsAsArray.filter(tag => tag.startsWith("-"));
         var notRegex = new RegExp("\\s" + notTags.join("\\s|\\s"));
         notRegex = new RegExp(notRegex.toString().replace(/-/g, "").slice(1, -1) + "\\s", "gi");
-        
+
+        filterWordsAsArray = filterWordsAsArray.filter((sortTag) => {
+            if (sortTag.startsWith("sort:")){
+                if (sortTag.startsWith("sort:random")){
+                    this.sortRandom = true;
+                }
+                return false;
+            } 
+            return true;
+        })
+
         this.filtered = true;
 
         var items = this.personalList.personalListItems.filter((item) => {
@@ -103,7 +116,7 @@ class PersonalListModel{
                 passedWild;
         });
 
-        this.filteredPersonalList = new PersonalList(items)
+        this.filteredPersonalList = !this.sortRandom? new PersonalList(items) : new PersonalList(items.sort(() => Math.random() - 0.5));
         this.currentListItem = 1
         this.currentSlideChangedEvent.notify()
     }
@@ -120,12 +133,14 @@ class PersonalListModel{
 
     decreaseCurrentSlideNumber()
     {
+
         if (this.currentListItem > 1)
-        {
-            this.currentListItem--;
-            this.currentSlideChangedEvent.notify();
-            this.restartSlideshowIfOn();
-        }
+                {
+                    this.currentListItem--;
+                    this.currentSlideChangedEvent.notify();
+                    this.restartSlideshowIfOn();
+                }
+        
     }
 
     increaseCurrentSlideNumber()
@@ -133,11 +148,12 @@ class PersonalListModel{
         let listItemCount = this.filtered ? this.filteredPersonalList.count() : this.personalList.count();
 
         if (this.currentListItem < listItemCount)
-        {
-            this.currentListItem++;
-            this.currentSlideChangedEvent.notify();
-            this.restartSlideshowIfOn();
-        }
+                {
+                    this.currentListItem++;
+                    this.currentSlideChangedEvent.notify();
+                    this.restartSlideshowIfOn();
+                }
+        
     }
 	
     decreaseCurrentSlideNumberByTen()
@@ -211,71 +227,67 @@ class PersonalListModel{
 
     startSlideshow()
     {
-        this.tryToStartCountdown();
+        this.startCountdown();
 
         this.isPlaying = true;
 
         this.playingChangedEvent.notify();
     }
 
-    tryToStartCountdown()
-    {
-        /*if (this.sitesManager.isCurrentSlideLoaded())
-        {
-            this.startCountdown();
-        }
-        else
-        {
-            var _this = this;
-
-            this.sitesManager.runCodeWhenCurrentSlideFinishesLoading(function(){
-                _this.startCountdown();
-            });
-        }*/
-    }
-
-    /*startCountdown()
+    startCountdown()
     {
         var millisecondsPerSlide = this.secondsPerSlide * 1000;
-	    
         var _this = this;
+        var intervalMs = 100;
+        var acumMs = 0;
 
-        this.timer = setTimeout(function() {
-            if (_this.hasNextSlide())
-            {
-                // Continue slideshow
-                _this.increaseCurrentSlideNumber();
+        this.timer = setInterval(function() {
+            if (!_this.slideshowLocked && acumMs >= millisecondsPerSlide){
+                clearInterval(this.timer);
+                if (_this.hasNextSlide())
+                {
+                    // Continue slideshow
+                    _this.increaseCurrentSlideNumber();
+                }
+                else
+                {
+                    // Loop when out of images/videos
+                    _this.setSlideNumberToFirst();
+                }
             }
-            else
-            {
-                // Loop when out of images/videos
-                _this.setSlideNumberToFirst();
-            }
-		
-        }, millisecondsPerSlide);
-    }*/
+            acumMs += intervalMs;
+        }, intervalMs);
+    }
 
     restartSlideshowIfOn()
     {
         
         if (this.isPlaying)
         {
-            clearTimeout(this.timer);
+            clearInterval(this.timer);
             //this.sitesManager.clearCallbacksForPreloadingSlides();
 		
-            this.tryToStartCountdown();
+            this.startCountdown();
         }
     }
 
     pauseSlideshow()
     {
-        clearTimeout(this.timer);
+        clearInterval(this.timer);
         //this.sitesManager.clearCallbacksForPreloadingSlides();
         //this.sitesManager.clearCallbacksForLoadingSlides();
 
         this.isPlaying = false;
 
         this.playingChangedEvent.notify();
+    }
+
+    lockSlideshow(){
+        this.slideshowLocked = true;
+    }
+
+    unlockSlideshow(){
+        this.slideshowLocked = false;
     }
 
     getPersonalListItemCount()

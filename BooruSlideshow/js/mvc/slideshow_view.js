@@ -5,8 +5,11 @@ class SlideshowView
         this.uiElements = uiElements;
         
         this.currentImageClickedEvent = new Event(this);
+        this.currentImageLoadedEvent = new Event(this);
         this.currentVideoClickedEvent = new Event(this);
         this.currentVideoVolumeChangedEvent = new Event(this);
+        this.currentVideoLoadedEvent = new Event(this);
+        this.currentVideoLoopedEvent = new Event(this);
         this.searchButtonClickedEvent = new Event(this);
         this.firstNavButtonClickedEvent = new Event(this);
         this.previousNavButtonClickedEvent = new Event(this);
@@ -199,6 +202,13 @@ class SlideshowView
             }
             
             _this.currentVideoVolumeChangedEvent.notify();
+        });
+
+        this.uiElements.currentVideo.addEventListener('timeupdate', () => {
+            if (this.uiElements.currentVideo.currentTime >= this.uiElements.currentVideo.duration - 0.5) {
+                this.videoLoopedOnce = true;
+                _this.currentVideoLoopedEvent.notify();
+            }
         });
         
         this.uiElements.firstNavButton.addEventListener('click', function() {
@@ -550,6 +560,7 @@ class SlideshowView
 		
 		this.clearVideo();
         this.updateSlideSize();
+        this.currentImageLoadedEvent.notify();
     }
 	
 	displayVideo(currentSlide) {
@@ -567,6 +578,7 @@ class SlideshowView
         this.updateSlideSize();
 		this.updateVideoVolume();
 		this.updateVideoMuted();
+        this.currentVideoLoadedEvent.notify();
     }
 	
 	getVideoVolume() {
