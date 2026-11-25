@@ -53,35 +53,51 @@ class SitesManager{
 		}
 	}
 
-	setupRequestHeaders()
-	{
-		// Only needed for Gelbooru at the moment
-		/* From manifest v2 (blocking)
-		var listener = function(details) {
-			details.requestHeaders.push({
-				'name': 'Referer',
-				'value': 'https://gelbooru.com'
-			});
-			return {requestHeaders: details.requestHeaders};
-		};
-		
-		var requestFilter = {
-			urls: [
-				"https://*.gelbooru.com/*"
-			],
-			types: ["image", "other"]//object?
-		};
-		
-		var extraInfoSpec = [
-			"blocking",
-			"requestHeaders"
-		];
+		setupRequestHeaders()
+		{
+		// Only needed for e621 at the moment
 
-		chrome.webRequest.onBeforeSendHeaders.addListener(
-			listener,
-			requestFilter,
-			extraInfoSpec
-		);*/
+		if (!chrome.declarativeNetRequest) {
+			console.warn("declarativeNetRequest API is not available.");
+			return;
+		}
+
+		const BS_USER_AGENT = "BooruSlideshow";
+
+		chrome.declarativeNetRequest.updateDynamicRules({
+			removeRuleIds: [1],
+			addRules: [
+				{
+					id: 1,
+					priority: 1,
+					action: {
+						type: "modifyHeaders",
+						requestHeaders: [
+							{
+								header: "User-Agent",
+								operation: "set",
+								value: BS_USER_AGENT
+							},
+							{
+								header: "Referer",
+								operation: "set",
+								value: "https://e621.net"
+							}
+						]
+					},
+					condition: {
+						requestDomains: ["e621.net", "static1.e621.net"],
+						resourceTypes: [
+							"xmlhttprequest",
+							"image",
+							"media",
+							"sub_frame",
+							"other"
+						]
+					}
+				}
+			]
+		});
 	}
 
 	addSite(id, pageLimit)
